@@ -1,0 +1,5 @@
+<Solution>
+  <Project Path="PackageFoodManagementSystem.Application/PackageFoodManagementSystem.Application.csproj" />
+  <Project Path="PackageFoodManagementSystem.Repository/PackageFoodManagementSystem.Repository.csproj" />
+  <Project Path="PackageFoodManagementSystem.Services/PackageFoodManagementSystem.Services.csproj" />
+</Solution>
