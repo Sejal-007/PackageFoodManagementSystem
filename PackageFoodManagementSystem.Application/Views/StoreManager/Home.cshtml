@@ -1,0 +1,105 @@
+﻿@model PackageFoodManagementSystem.Application.Models.HomeModel
+@{
+    ViewData["Title"] = "Store Manager Dashboard";
+}
+
+@{
+ViewData["Title"] = "Dashboard";
+}
+<!-- Header -->
+<div class="topbar">
+    <h4>| Store Name</h4>
+    <input type="text" placeholder="Search" />
+    <div class="icons">
+
+        🔔 👤
+    </div>
+</div>
+<!-- Cards -->
+<div class="cards">
+    <div class="card-box">📦 Total Products</div>
+    <div class="card-box">✔ Available Stock</div>
+    <div class="card-box">🛒 Today's Orders</div>
+    <div class="card-box">📈 Total Sales</div>
+    <div class="card-box">📈 Pending Orders</div>
+    <div class="card-box">📈 Low Stock Items</div>
+</div>
+
+<!-- ALERTS SECTION -->
+<div class="alerts-section">
+    <h5>⚠ Attention Required</h5>
+    <ul class="alerts-list">
+        <li class="alert-item danger">
+
+            🔴 5 products are low in stock
+        </li>
+        <li class="alert-item warning">
+
+            ⏳ 12 orders pending confirmation
+        </li>
+        <li class="alert-item danger">
+
+            ❌ 2 compliance checks pending
+        </li>
+        <li class="alert-item info">
+
+            🚚 3 deliveries delayed
+        </li>
+    </ul>
+</div>
+
+<!-- PERFORMANCE SNAPSHOT -->
+<div class="performance-section">
+    <h5>📊 Performance Snapshot</h5>
+    <div class="performance-cards">
+        <div class="perf-card success">
+
+            📈 Sales Up<br />
+            <span>+12% vs Yesterday</span>
+        </div>
+        <div class="perf-card warning">
+
+            📉 Returns<br />
+            <span>2 Today</span>
+        </div>
+        <div class="perf-card info">
+
+            📦 Inventory Usage<br />
+            <span>78%</span>
+        </div>
+    </div>
+</div>
+
+
+<!-- QUICK NAVIGATION -->
+<!-- QUICK NAVIGATION -->
+<div class="quick-nav-section">
+    <h5>🚀 Quick Access</h5>
+    <div class="quick-nav-cards">
+        <a asp-controller="StoreManager"
+           asp-action="Orders"
+           class="quick-card">
+
+            🛒 Manage Orders
+        </a>
+        <a asp-controller="StoreManager"
+           asp-action="Inventory"
+           class="quick-card">
+
+            📦 View Inventory
+        </a>
+        <a asp-controller="StoreManager"
+           asp-action="Reports"
+           class="quick-card">
+
+            📊 View Reports
+        </a>
+        <a asp-controller="StoreManager"
+           asp-action="Compliance"
+           class="quick-card">
+
+            ✔ Compliance Status
+        </a>
+    </div>
+</div>
+

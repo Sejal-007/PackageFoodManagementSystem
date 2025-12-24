@@ -1,0 +1,46 @@
+﻿<div class="sidebar">
+    <h2>Store</h2>
+    <ul class="sidebar-menu">
+        <li>
+            <a asp-controller="StoreManager" asp-action="Home">
+
+                🏠 Dashboard
+            </a>
+        </li>
+        <li>
+            <a asp-controller="Store" asp-action="AddProductcd pcd">
+
+                📦 Products
+            </a>
+        </li>
+        <li>
+            <a asp-controller="StoreManager" asp-action="Orders">
+
+                🛒 Orders
+            </a>
+        </li>
+        <li>
+            <a asp-controller="StoreManager" asp-action="Inventory">
+
+                📊 Inventory
+            </a>
+        </li>
+        <li>
+            <a asp-controller="StoreManager" asp-action="Compliance">
+
+                ✔ Compliance
+            </a>
+        </li>
+        <li>
+            <a asp-controller="StoreManager" asp-action="Reports">
+
+                📑 Reports
+            </a>
+        </li>
+    </ul>
+    <div class="sidebar-footer">
+        <a asp-controller="Account" asp-action="Settings">⚙ Settings</a>
+        <a asp-controller="Account" asp-action="Logout">🚪 Log Out</a>
+    </div>
+</div>
+
