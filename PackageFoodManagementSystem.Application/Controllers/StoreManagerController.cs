@@ -18,6 +18,10 @@ namespace PackageFoodManagementSystem.Application.Controllers
         {
             return View();
         }
+        public IActionResult AddProduct()
+        {
+            return View();
+        }
         public IActionResult Inventory()
         {
             return View();
