@@ -1,8 +1,10 @@
 ﻿@model dynamic
 @{
     ViewData["Title"] = "Add Product";
+
     Layout = "~/Views/Shared/_StoreManagerlayout.cshtml";
 }
+
 
 <style>
     :root {
@@ -10,18 +12,56 @@
         --active-bg: #f3f3f3;
         --purple-accent: #e070ff;
         --text-gray: #b5b5b5;
-        --bg-greyish: #f8f9fa;
+        --bg-greyish: #e5e5e5;
     }
 
-    .store-layout {
+    body {
+        background-color: var(--bg-greyish);
+        font-family: 'Segoe UI', sans-serif;
+        margin: 0;
         display: flex;
         height: 100vh;
-        background-color: var(--bg-greyish);
+        overflow: hidden;
     }
 
+    /* Sidebar Styling */
+    /*.sidebar {
+                width: 250px;
+                background-color: var(--sidebar-bg);
+                color: white;
+                display: flex;
+                flex-direction: column;
+                padding: 30px 0;
+                flex-shrink: 0;
+            }
+
+            .nav-item {
+                display: flex;
+                align-items: center;
+                padding: 15px 25px;
+                color: var(--text-gray);
+                text-decoration: none;
+                transition: 0.3s;
+            }
+
+                .nav-item i {
+                    margin-right: 15px;
+                    width: 20px;
+                }
+
+                .nav-item.active {
+                    background-color: var(--active-bg);
+                    color: #d122e3;
+                    border-radius: 15px 0 0 15px;
+                    margin-left: 15px;
+                    font-weight: bold;
+                }*/
+
+    /* Main Content */
     .main-content {
         flex-grow: 1;
         padding: 40px;
+        background-color: var(--bg-greyish);
         overflow-y: auto;
     }
 
@@ -37,16 +77,18 @@
         font-weight: bold;
         border-left: 5px solid #000;
         padding-left: 15px;
+        display: flex;
+        align-items: center;
     }
 
     .search-bar {
         background: #ffffff;
         border-radius: 20px;
-        padding: 8px 20px;
+        padding: 5px 20px;
         width: 400px;
         display: flex;
         align-items: center;
-        box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
     }
 
         .search-bar input {
@@ -62,88 +104,69 @@
         background-color: var(--purple-accent);
         color: white;
         border: none;
-        padding: 12px 30px;
+        padding: 15px 35px;
         border-radius: 12px;
         font-weight: bold;
-        font-size: 18px;
-        margin-bottom: 30px;
+        font-size: 20px;
+        margin-bottom: 40px;
     }
-
-        .btn-add:hover {
-            opacity: 0.9;
-            color: white;
-        }
 
     /* Table Styling */
     .product-table {
         width: 100%;
         border-collapse: collapse;
-        border: 1px solid #ddd;
+        background-color: transparent;
     }
 
         .product-table th, .product-table td {
+            border: 2px solid #000;
             padding: 15px;
             text-align: center;
-            border: 1px solid #ccc;
-            background-color: white;
+            background-color: #f3f3f3;
         }
 
         .product-table thead th {
-            background-color: #fcfcfc;
-            font-weight: 600;
+            background-color: #e9e9e9;
         }
 
-    .modal-content {
-        border-radius: 15px;
-        overflow: hidden;
-        border: none;
+    .img-cell img {
+        width: 50px;
+        height: 50px;
+        object-fit: contain;
     }
 
+    /* Modal Custom Styles */
     .modal-header {
-        background-color: #121120;
+        background-color: var(--sidebar-bg);
         color: white;
-        border-top-left-radius: 15px;
-        border-top-right-radius: 15px;
-    }
-
-    .modal-body {
-        background-color: #f8faff;
-        padding: 30px;
-    }
-
-    .form-label {
-        font-weight: 500;
-        color: #444;
-    }
-
-    .form-control, .form-select {
-        border-radius: 8px;
-        padding: 10px;
-        border: 1px solid #dee2e6;
+        border: none;
     }
 
     .btn-save {
-        background-color: #d666f3;
+        background-color: var(--purple-accent);
         color: white;
-        border: none;
-        padding: 10px 30px;
-        border-radius: 10px;
-        font-weight: 600;
+        font-weight: bold;
+        padding: 10px 25px;
+        border-radius: 8px;
     }
+
+        .btn-save:hover {
+            background-color: #c95ce6;
+            color: white;
+        }
 
     .btn-cancel {
         background-color: #6c757d;
         color: white;
-        border-radius: 10px;
-        padding: 10px 30px;
-    }
-
-    /* Modern Toggle Switch */
-    .form-check-input:checked {
-        background-color: #007bff;
-        border-color: #007bff;
+        font-weight: bold;
+        padding: 10px 25px;
+        border-radius: 8px;
     }
 </style>
+
+
+
+
 
 <div class="main-content">
     <div class="header-bar">
@@ -153,12 +176,12 @@
             <input type="text" placeholder="Search...">
         </div>
         <div>
-            <i class="fa-regular fa-bell px-2" style="font-size: 20px; cursor:pointer;"></i>
-            <i class="fa-solid fa-circle-user px-2" style="font-size: 24px; cursor:pointer;"></i>
+            <i class="fa-regular fa-bell px-2" style="font-size: 20px;"></i>
+            <i class="fa-solid fa-circle-user px-2" style="font-size: 24px;"></i>
         </div>
     </div>
 
-    <button class="btn btn-add" data-bs-toggle="modal" data-bs-target="#addProductModal" onclick="clearForm()">Add Product</button>
+    <button class="btn-add" data-bs-toggle="modal" data-bs-target="#addProductModal" onclick="clearForm()">Add Product</button>
 
     <table class="product-table" id="productTable">
         <thead>
@@ -174,58 +197,28 @@
         </thead>
         <tbody>
             <tr>
-                <td class="img-cell"><img src="https://www.bbassets.com/media/uploads/p/l/102750_17-lays-potato-chips-indias-magic-masala.jpg=" width= "40" /></td>
+                <td class="img-cell"><img src="https://img.icons8.com/color/96/potato-chips.png" /></td>
                 <td>Potato Chips</td>
                 <td>Snacks</td>
                 <td>10-100</td>
                 <td>01/12/2026</td>
                 <td>Active</td>
-                <td>
-                    <a href="#" onclick="editProduct(this)" class="text-primary text-decoration-underline">Edit</a> /
-                    <a href="#" onclick="deleteProduct(this)" class="text-primary text-decoration-underline">Delete</a>
-                </td>
+                <td><a href="javascript:void(0)" onclick="editProduct(this)" class="text-dark">Edit</a> / <a href="javascript:void(0)" onclick="deleteProduct(this)" class="text-dark">Delete</a></td>
             </tr>
-
-            <tr>
-                <td class="img-cell"><img src="https://img.freepik.com/free-vector/cartoon-blue-milk-cardboard-package-concept_1284-37540.jpg?semt=ais_hybrid&w=740&q=80" width="40" /></td>
-                <td>Milk</td>
-                <td>Dairy</td>
-                <td>10-20</td>
-                <td>01/12/2026</td>
-                <td>Active</td>
-                <td>
-                    <a href="#" onclick="editProduct(this)" class="text-primary text-decoration-underline">Edit</a> /
-                    <a href="#" onclick="deleteProduct(this)" class="text-primary text-decoration-underline">Delete</a>
-                </td>
-            </tr>
-
-            <tr>
-                <td class="img-cell"><img src="data:image/jpeg;base64,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" width="40" /></td>
-                <td>Coke</td>
-                <td>Beverages</td>
-                <td>10-50</td>
-                <td>01/12/2026</td>
-                <td>Active</td>
-                <td>
-                    <a href="#" onclick="editProduct(this)" class="text-primary text-decoration-underline">Edit</a> /
-                    <a href="#" onclick="deleteProduct(this)" class="text-primary text-decoration-underline">Delete</a>
-                </td>
-            </tr>
-
         </tbody>
     </table>
 </div>
 
-<div class="modal fade" id="addProductModal" tabindex="-1" aria-labelledby="modalTitle" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
+<div class="modal fade" id="addProductModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-md modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="modalTitle">Add New Product</h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body">
                 <form id="productForm">
-                    <div class="mb-3">
+                    <input type="hidden" id="editIndex"> <div class="mb-3">
                         <label class="form-label">Product Name</label>
                         <input type="text" id="prodName" class="form-control" placeholder="Lays">
                     </div>
@@ -238,11 +231,11 @@
                         </select>
                     </div>
                     <div class="row">
-                        <div class="col-6 mb-3">
+                        <div class="col-md-6 mb-3">
                             <label class="form-label">Price Range</label>
                             <input type="text" id="prodPrice" class="form-control" placeholder="20">
                         </div>
-                        <div class="col-6 mb-3">
+                        <div class="col-md-6 mb-3">
                             <label class="form-label">Expiry Date</label>
                             <input type="text" id="prodExpiry" class="form-control" placeholder="01-12-2025">
                         </div>
@@ -251,8 +244,8 @@
                         <label class="form-label">Product Image URL</label>
                         <input type="text" id="prodImg" class="form-control" placeholder="https://image-link.com">
                     </div>
-                    <div class="mb-3 d-flex align-items-center">
-                        <label class="form-label me-3 mb-0">Status</label>
+                    <div class="mb-3">
+                        <label class="form-label">Status</label>
                         <div class="form-check form-switch">
                             <input class="form-check-input" type="checkbox" id="prodStatus" checked>
                             <label class="form-check-label" for="prodStatus">Active</label>
@@ -260,109 +253,96 @@
                     </div>
                 </form>
             </div>
-            <div class="d-flex justify-content-between mt-4">
-                <button type="button" class="btn btn-secondary px-2" data-bs-dismiss="modal">Cancel</button>               
-                <button type="button" class="btn btn-save px-2" onclick="saveProduct()">Save Product</button>
+            <div class="modal-footer border-0">
+                <button type="button" class="btn btn-cancel" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-save" onclick="saveProduct()">Save Product</button>
             </div>
         </div>
     </div>
 </div>
 
-@section Scripts {
-    <script>
-        let currentRow = null;
+@*<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>*@
 
-        function clearForm() {
-            document.getElementById('productForm').reset();
-            document.getElementById('modalTitle').innerText = "Add New Product";
-            currentRow = null;
+<script>
+    let currentRow = null;
+
+    function clearForm() {
+        document.getElementById('productForm').reset();
+        document.getElementById('modalTitle').innerText = "Add New Product";
+        currentRow = null;
+    }
+
+    function saveProduct() {
+        const name = document.getElementById('prodName').value;
+        const category = document.getElementById('prodCategory').value;
+        const price = document.getElementById('prodPrice').value;
+        const expiry = document.getElementById('prodExpiry').value;
+        const imgUrl = document.getElementById('prodImg').value || "https://img.icons8.com/color/96/box.png";
+        const status = document.getElementById('prodStatus').checked ? "Active" : "Inactive";
+
+        if (!name || !price) { alert("Fill in Name and Price"); return; }
+
+        const rowContent = `
+            <td class="img-cell"><img src="${imgUrl}" /></td>
+            <td>${name}</td>
+            <td>${category}</td>
+            <td>${price}</td>
+            <td>${expiry}</td>
+            <td>${status}</td>
+            <td><a href="javascript:void(0)" onclick="editProduct(this)" class="text-dark">Edit</a> / <a href="javascript:void(0)" onclick="deleteProduct(this)" class="text-dark">Delete</a></td>
+        `;
+
+        if (currentRow) {
+            currentRow.innerHTML = rowContent;
+        } else {
+            const tableBody = document.querySelector('#productTable tbody');
+            const newRow = document.createElement('tr');
+            newRow.innerHTML = rowContent;
+            tableBody.appendChild(newRow);
         }
 
-        function saveProduct() {
-            try {
-                // 1. Get values from the form
-                const name = document.getElementById('prodName').value;
-                const category = document.getElementById('prodCategory').value;
-                const price = document.getElementById('prodPrice').value;
-                const expiry = document.getElementById('prodExpiry').value;
-                const imgUrl = document.getElementById('prodImg').value || "https://img.icons8.com/color/96/box.png";
-                const status = document.getElementById('prodStatus').checked ? "Active" : "Inactive";
+        const modalElement = document.getElementById('addProductModal');
+        const modalInstance = bootstrap.Modal.getInstance(modalElement);
+        if (modalInstance) {
+            modalInstance.hide();
+        }
 
-                // Simple validation
-                if (!name || !price) {
-                    alert("Please enter Product Name and Price");
-                    return;
-                }
-
-                // 2. Logic to update table
-                const rowContent = `
-                    <td class="img-cell"><img src="${imgUrl}" width="40" /></td>
-                    <td>${name}</td>
-                    <td>${category}</td>
-                    <td>${price}</td>
-                    <td>${expiry}</td>
-                    <td>${status}</td>
-                    <td>
-                        <a href="javascript:void(0)" onclick="editProduct(this)" class="text-primary text-decoration-underline">Edit</a> /
-                        <a href="javascript:void(0)" onclick="deleteProduct(this)" class="text-primary text-decoration-underline">Delete</a>
-                    </td>
-                `;
-
-                if (currentRow) {
-                    currentRow.innerHTML = rowContent;
-                } else {
-                    const tableBody = document.querySelector('#productTable tbody');
-                    const newRow = document.createElement('tr');
-                    newRow.innerHTML = rowContent;
-                    tableBody.appendChild(newRow);
-                }
-
-                // 3. CLOSE MODAL AND FORCE CLEANUP
-                const modalElement = document.getElementById('addProductModal');
-                const modalInstance = bootstrap.Modal.getInstance(modalElement);
-
-                if (modalInstance) {
-                    modalInstance.hide();
-                }
-
-                // --- FORCE CLEANUP: This prevents the "Stuck/Dark" screen ---
-                setTimeout(() => {
-                    const backdrop = document.querySelector('.modal-backdrop');
-                    if (backdrop) backdrop.remove();
-                    document.body.classList.remove('modal-open');
-                    document.body.style.overflow = '';
-                    document.body.style.paddingRight = '';
-                }, 100);
-
-            } catch (error) {
-                console.error("Error saving product:", error);
-                alert("An error occurred while saving.");
+        setTimeout(() => {
+            const backdrop = document.querySelector('.modal-backdrop');
+            if (backdrop) {
+                backdrop.remove();
             }
+            document.body.classList.remove('modal-open');
+            document.body.style.paddingRight = '';
+            document.body.style.overflow = 'auto';
+        }, 100);
+    }
+
+    function deleteProduct(btn) {
+        if (confirm("Are you sure you want to delete this product?")) {
+            btn.closest('tr').remove();
         }
+    }
 
-        function deleteProduct(btn) {
-            if (confirm("Are you sure?")) {
-                btn.closest('tr').remove();
-            }
+    function editProduct(btn) {
+        currentRow = btn.closest('tr');
+        const cells = currentRow.cells;
+
+        document.getElementById('prodName').value = cells[1].innerText;
+        document.getElementById('prodCategory').value = cells[2].innerText;
+        document.getElementById('prodPrice').value = cells[3].innerText;
+        document.getElementById('prodExpiry').value = cells[4].innerText;
+        document.getElementById('prodImg').value = cells[0].querySelector('img').src;
+        document.getElementById('prodStatus').checked = (cells[5].innerText === "Active");
+
+        document.getElementById('modalTitle').innerText = "Edit Product";
+
+        // Use existing instance if available to avoid stacking backdrops
+        const modalElement = document.getElementById('addProductModal');
+        let myModal = bootstrap.Modal.getInstance(modalElement);
+        if (!myModal) {
+            myModal = new bootstrap.Modal(modalElement);
         }
-
-        function editProduct(btn) {
-            currentRow = btn.closest('tr');
-            const cells = currentRow.cells;
-
-            document.getElementById('prodName').value = cells[1].innerText;
-            document.getElementById('prodCategory').value = cells[2].innerText;
-            document.getElementById('prodPrice').value = cells[3].innerText;
-            document.getElementById('prodExpiry').value = cells[4].innerText;
-            document.getElementById('prodImg').value = cells[0].querySelector('img').src;
-            document.getElementById('prodStatus').checked = (cells[5].innerText === "Active");
-
-            document.getElementById('modalTitle').innerText = "Edit Product";
-
-            // Important: Use getInstance or create new only if needed
-            let modalElement = document.getElementById('addProductModal');
-            let myModal = bootstrap.Modal.getInstance(modalElement) || new bootstrap.Modal(modalElement);
-            myModal.show();
-        }
-    </script>
-}
+        myModal.show();
+    }
+</script>

@@ -169,7 +169,7 @@ $(function () {
         }
         if (username === "storemanager" && password === "Storemanager@123") {
             alert("Store Manager login successful!");
-            window.location.href = "/Home/ManagerDashboard";
+            window.location.href = "/StoreManager/Home";
             return;
         }
 
