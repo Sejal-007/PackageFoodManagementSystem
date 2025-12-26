@@ -1,0 +1,157 @@
+﻿@{
+    Layout = null;
+    ViewData["Title"] ??= "PackagedFoodFrontend";
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - PackagedFoodFrontend</title>
+
+    <link rel="stylesheet" href="~/css/style.css" />
+    <!-- Font Awesome for eye icon -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="~/js/script.js"></script>
+</head>
+<body>
+    <!-- ===== Header / Navbar ===== -->
+    <header class="app-header">
+        <nav class="navbar navbar-expand-lg px-4 py-3">
+            <div class="container-fluid align-items-center">
+
+                <!-- Brand -->
+                <div class="col-sm-1 text-end">
+                    ~/images/applogo.png
+                </div>
+                <span class="brand">ALWAYZZZ FRESH</span>
+
+                <!-- Toggler -->
+                <button class="navbar-toggler" type="button"
+                        data-bs-toggle="collapse" data-bs-target="#mainNav"
+                        aria-controls="mainNav" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+                <!-- Nav links -->
+                <div class="collapse navbar-collapse" id="mainNav">
+                    <ul class="navbar-nav ms-auto align-items-center">
+
+                        <li class="nav-item me-3">
+                            IndexHome</a>
+                        </li>
+
+                        <li class="nav-item me-3">
+                            <!-- If Explore is MenuController.Index; change if needed -->
+                            IndexExplore</a>
+                        </li>
+
+                        <!-- 🛒 CART ICON -->
+                        <li class="nav-item me-4">
+                            MyBasket
+                            <i class="fa-solid fa-cart-shopping fa-lg" style="color:#ff6347;"></i>
+                            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">2</span>
+                            </a>
+                        </li>
+
+                        <!-- 👤 USER DASHBOARD ICON (opens popup) -->
+                        <li class="nav-item">
+                            <!-- JS-only link: no asp-* -->
+                            javascript:void(0)
+                            <i class="fa-solid fa-user-circle fa-2x"></i>
+                            </a>
+                        </li>
+
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <!-- ===== User Popup & Overlay ===== -->
+    <div id="userPopup" class="user-popup" role="dialog" aria-modal="true" aria-labelledby="userMenuTitle">
+        <div class="popup-header">
+            <span id="userMenuTitle">User Menu</span>
+            <button type="button" class="close-btn" onclick="closeUserMenu()" aria-label="Close">×</button>
+        </div>
+
+        <ul class="popup-list">
+            <li onclick="redirectTo('/User/Dashboard')"><i class="fa-solid fa-user-circle fa-lg"></i> My Profile</li>
+            <li onclick="redirectTo('/User/MyBasket')"><i class="fa-solid fa-cart-shopping fa-lg"></i> My Basket</li>
+            <li onclick="redirectTo('/User/MyOrders')"><i class="fa-solid fa-shopping-bag fa-lg"></i> My Orders</li>
+            <li onclick="redirectTo('/User/MyWallet')"><i class="fa-solid fa-wallet fa-lg"></i> My Wallet</li>
+            <li onclick="redirectTo('/User/ContactUs')"><i class="fa-solid fa-headset fa-lg"></i> ContactUs</li>
+            <li class="logout" onclick="redirectTo('/Home/Index')"><i class="fa-solid fa-arrow-right-from-bracket fa-lg"></i> Logout</li>
+        </ul>
+    </div>
+    <div id="popupOverlay" onclick="closeUserMenu()"></div>
+
+    <!-- ===== Page Content ===== -->
+    <div class="container">
+        <main role="main" class="pb-3">
+            @RenderBody()
+        </main>
+    </div>
+
+    <!-- ===== Footer ===== -->
+    <footer class="app-footer">
+        <div class="footer-container">
+
+            <!-- BRAND -->
+            <div class="footer-section">
+                <h4>PackagedFood</h4>
+                <p>Fresh • Safe • Reliable packaged food delivered to your door.</p>
+            </div>
+
+            <!-- QUICK LINKS -->
+            <div class="footer-section">
+                <h5>Quick Links</h5>
+                <ul>
+                    <li>IndexHome</a></li>
+                    <li>IndexMenu</a></li>
+                    <li>DashboardDashboard</a></li>
+                    <li>IndexCart</a></li>
+                </ul>
+            </div>
+
+            <!-- CONTACT -->
+            <div class="footer-section">
+                <h5>Contact</h5>
+                <p>Email: support@packagedfood.com</p>
+                <p>Phone: +91 98765 43210</p>
+            </div>
+
+            <!-- SOCIAL -->
+            <div class="footer-section">
+                <h5>Follow Us</h5>
+                <div class="social-icons">
+                    <i class="fa-brands fa-facebook-f"></i>
+                    <i class="fa-brands fa-instagram"></i>
+                    <i class="fa-brands fa-twitter"></i>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="footer-bottom">
+            © 2025 PackagedFood. All rights reserved.
+        </div>
+    </footer>
+
+    @await RenderSectionAsync("Scripts", required: false)
+
+    <script>
+        // Popup controls
+        function openUserMenu() {
+            document.getElementById('userPopup').classList.add('open');
+            document.getElementById('popupOverlay').classList.add('show');
+        }
+        function closeUserMenu() {
+            document.getElementById('userPopup').classList.remove('open');
+            document.getElementById('popupOverlay').classList.remove('show');
+        }
+        function redirectTo(url) { window.location.href = url; }
+    </script>
+</body>
+</html>

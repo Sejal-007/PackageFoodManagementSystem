@@ -1,7 +1,44 @@
 ﻿<!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
     <meta charset="utf-8" />
+    <title>@ViewBag.Title - PackagedFoodManagementSystem</title>
+    <link rel="stylesheet" href="~/css/style.css" />
+    <link rel="stylesheet" href="~/css/side.css"/>
+    <link rel="stylesheet" href="~/css/storemanager.css"/>
+    <!-- Font Awesome for eye icon -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="~/js/script.js"></script>
+</head>
+<body>
+    <div class="page-wrapper">
+        @await Html.PartialAsync("_StoreManagerSidebar")
+
+
+        <header class="header">
+            <nav class="navbar">
+                <!-- Left side: App title -->
+                <div class="nav-left">
+                    <h1>🍱 Packaged Food Management System</h1>
+                </div>
+
+                <!-- Right side: Login/Signup buttons -->
+                <div class="nav-right">
+                    <a href="@Url.Action("SignIn", "Home")" class="nav-btn">Login</a>
+                    <a href="@Url.Action("SignUp", "Home")" class="nav-btn">Signup</a>
+                </div>
+            </nav>
+        </header>
+
+        <main class="main-content">
+            @RenderBody()
+        </main>
+
+        <footer class="footer">
+            <p>&copy; 2025 PackagedFoodManagementSystem</p>
+        </footer>
+    </div>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - PackageFoodManagementSystem.Application</title>
     <script type="importmap"></script>
