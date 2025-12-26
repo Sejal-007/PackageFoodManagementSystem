@@ -26,7 +26,7 @@ app.UseAuthorization();
 // Single, clean default route: Home/Index
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=StoreManager}/{action=Home}/{id?}")
+    pattern: "{controller=User}/{action=Dashboard}/{id?}")
     .WithStaticAssets();
 
 

@@ -1,0 +1,39 @@
+﻿@{
+
+    ViewData["Title"] = "My Gift Cards";
+
+}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+<div class="account-layout">
+    <div class="sidebar">
+
+        @Html.Partial("_AccountSidebar")
+    </div>
+
+    <div class="main-section">
+        <h2>My Gift Cards</h2>
+        <p>You have 2 active gift cards available for use.</p>
+
+        <ul style="margin-top:20px;">
+            <li><strong>Card #1:</strong> ₹500 – Expires: 31 Jan 2026</li>
+            <li><strong>Card #2:</strong> ₹750 – Expires: 15 Feb 2026</li>
+        </ul>
+
+        <!-- Link styled as button to open AddGiftCard page -->
+        <a href="/User/AddGiftCard"
+           style="margin-top:15px;display:inline-block;padding:10px 20px;background:#3498db;color:#fff;border:none;border-radius:6px;text-decoration:none;">
+
+            Add New Gift Card
+        </a>
+
+        <!-- Show confirmation message after adding a card -->
+        @if (TempData["Message"] != null)
+
+        {
+            <p style="margin-top:20px;color:#27ae60;">@TempData["Message"]</p>
+
+        }
+    </div>
+</div>
+

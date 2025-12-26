@@ -10,8 +10,136 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="~/js/script.js"></script>
+    <script type="importmap"></script>
+    <link rel="stylesheet" href="~/PackagedFoodFrontend.styles.css" asp-append-version="true" />
 </head>
 <body>
+
+    <header class="app-header">
+        <!-- 🔹 NAVBAR -->
+        <nav class="navbar navbar-expand-lg px-4 py-3">
+            <div class="col-sm-1 text-end">
+                <img src="~/images/applogo.png"
+                     class="img-fluid app-logo"
+                     alt="Food Image">
+            </div>
+            <span class="brand">ALWAYZZZ FRESH</span>
+
+            <ul class="navbar-nav ms-auto align-items-center">
+                <li class="nav-item me-3">
+                    <a class="nav-link fw-semibold" asp-controller="Home"
+                       asp-action="Index">Home</a>
+                </li>
+                <li class="nav-item me-3">
+
+                    <a class="nav-link fw-semibold" asp-controller="Menu"
+                       asp-action="Index">Explore</a>
+                </li>
+
+
+                <!-- 🛒 CART ICON -->
+                <li class="nav-item me-4">
+                    <a class="nav-link position-relative" asp-controller="User" asp-action="MyBasket">
+                        <i class="fa-solid fa-cart-shopping fa-lg" style="color: #ff6347;"></i>
+                        <span id="cart-count" class="cart-badge">
+                            0
+                        </span>
+                    </a>
+                </li>
+
+                <!-- 👤 USER DASHBOARD -->
+                <!-- USER DASHBOARD ICON -->
+                <li class="nav-item">
+                    <a class="nav-link" href="javascript:void(0)" onclick="openUserMenu()">
+                        <i class="fa-solid fa-user-circle fa-2x" style="color: #ff6347;"></i>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+    </header>
+    <div id="userPopup" class="user-popup">
+
+        <div class="popup-header">
+            <span>User Menu</span>
+            <span class="close-btn" onclick="closeUserMenu()">×</span>
+        </div>
+
+        <ul class="popup-list">
+
+            <li onclick="redirectTo('/User/Dashboard')"><i class="fa-solid fa-user-circle fa-lg"></i> My Profile</li>
+            <li onclick="redirectTo('/User/MyBasket')"> <i class="fa-solid fa-cart-shopping fa-lg"></i> My Basket</li>
+            <li onclick="redirectTo('/User/MyOrders')"><i class="fa-solid fa-shopping-bag fa-lg"></i> My Orders</li>
+            <li onclick="redirectTo('/User/MyWallet')"><i class="fa-solid fa-wallet fa-lg"></i> My Wallet</li>
+            <li onclick="redirectTo('/User/ContactUs')"><i class="fa-solid fa-headset fa-lg"></i> ContactUs</li>
+            <li class="logout" onclick="redirectTo('/Home/Index')"><i class="fa-solid fa-arrow-right-from-bracket fa-lg"></i> Logout</li>
+        </ul>
+
+    </div>
+
+    <div id="popupOverlay" onclick="closeUserMenu()"></div>
+
+    <div class="container">
+        <main role="main" class="pb-3">
+            @RenderBody()
+        </main>
+    </div>
+    <footer class="app-footer">
+        <div class="footer-container">
+
+            <!-- BRAND -->
+            <div class="footer-section">
+                <h4>PackagedFood</h4>
+                <p>Fresh • Safe • Reliable packaged food delivered to your door.</p>
+            </div>
+
+            <!-- QUICK LINKS -->
+            <div class="footer-section">
+                <h5>Quick Links</h5>
+                <ul>
+                    <li><a asp-controller="Home" asp-action="Index">Home</a></li>
+                    <li><a asp-controller="Menu" asp-action="Index">Menu</a></li>
+                    <li><a asp-controller="User" asp-action="Dashboard">Dashboard</a></li>
+                    <li><a asp-controller="Cart" asp-action="Index">Cart</a></li>
+                </ul>
+            </div>
+
+
+
+            <!-- CONTACT -->
+            <div class="footer-section">
+                <h5>Contact</h5>
+                <p>Email: support@packagedfood.com</p>
+                <p>Phone: +91 98765 43210</p>
+            </div>
+
+            <!-- SOCIAL -->
+            <div class="footer-section">
+                <h5>Follow Us</h5>
+                <div class="social-icons">
+                    <i class="fa-brands fa-facebook-f"></i>
+                    <i class="fa-brands fa-instagram"></i>
+                    <i class="fa-brands fa-twitter"></i>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="footer-bottom">
+            © 2025 PackagedFood. All rights reserved.
+        </div>
+    </footer>
+    <span id="cart-count" class="cart-badge">0</span>
+    <script src="~/js/site.js"></script>
+
+
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+
+
+
     <div class="page-wrapper">
         @await Html.PartialAsync("_StoreManagerSidebar")
 
@@ -45,9 +173,10 @@
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/side.css?v=1"/>
-    <link rel="stylesheet" href="~/css/storemanager.css?v=1" />
+    @*<link rel="stylesheet" href="~/css/storemanager.css?v=1" />*@
+    @*<link rel="stylesheet" href="~/css/side.css?v=1" />
+    <link rel="stylesheet" href="~/css/storemanager.css?v=1" />*@
     <link rel="stylesheet" href="~/PackageFoodManagementSystem.Application.styles.css" asp-append-version="true" />
-    
 
     <div class="app-container">
         @await Html.PartialAsync("_StoreManagerSidebar")

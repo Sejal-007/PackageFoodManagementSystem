@@ -1,0 +1,58 @@
+﻿@{
+
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+    ViewData["Title"] = "My Orders";
+
+}
+
+<div class="account-layout">
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <h4>PERSONAL DETAILS</h4>
+        <ul>
+            <li><a href="/User/EditProfile">Edit Profile</a></li>
+            <li><a href="/User/DeliveryAddress">Delivery Addresses</a></li>
+            <li><a href="/User/EmailAddress">Email Addresses</a></li>
+        </ul>
+
+        <h4>SHOP FROM</h4>
+        <ul>
+            <li><a href="/User/SmartBasket">Smart Basket</a></li>
+            <li><a href="/User/PastOrders">Past Orders</a></li>
+        </ul>
+
+        <h4>MY ACCOUNT</h4>
+        <ul>
+            <li class="active"><a href="/User/MyOrders">My Orders</a></li>
+            <li><a href="/User/MyWallet">My Wallet</a></li>
+            <li><a href="/User/GiftCards">My Gift Cards</a></li>
+        </ul>
+    </div>
+
+    <!-- Main Section -->
+    <div class="main-section">
+        <h2>Welcome back, Yayati 👋</h2>
+        <p>Here’s a quick overview of your account.</p>
+
+        <!-- Dashboard Cards -->
+        <div class="dashboard-cards">
+            <div class="card">
+                <h3>Orders</h3>
+                <p>12 in last 6 months</p>
+                <a href="/User/PastOrders">View Past Orders →</a>
+            </div>
+            <div class="card">
+                <h3>Wallet</h3>
+                <p>₹ 1,250 balance</p>
+                <a href="/User/MyWallet">Go to Wallet →</a>
+            </div>
+            <div class="card">
+                <h3>Gift Cards</h3>
+                <p>2 active cards</p>
+                <a href="/User/GiftCards">Manage Cards →</a>
+            </div>
+        </div>
+    </div>
+</div>
+
