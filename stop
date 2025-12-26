@@ -1,0 +1,148 @@
+[33mcommit ae9fd2167ac9b67cb69b57571c0362a81bbe7cb4[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;31mupstream/main[m[33m, [m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m)[m
+Merge: f17b338 f74435b
+Author: Sejal-007 <SejalYogesh.Pawar@cognizant.com>
+Commit: GitHub <noreply@github.com>
+
+    Merge pull request #5 from Sejal-007/OrderManagement
+    
+    Order management
+
+[33mcommit f74435bde52033a5d29d0c4ab4a07d1d08630495[m
+Author: 2464140 <2464140@LTIN690994>
+Commit: 2464140 <2464140@LTIN690994>
+
+    merged admin page
+
+[33mcommit 616e2b360f4e1571f5cc1d07d0ae42b02f8fd683[m
+Merge: ba21b6c f17b338
+Author: 2464140 <2464140@LTIN690994>
+Commit: 2464140 <2464140@LTIN690994>
+
+    Merge remote-tracking branch 'origin/main' into OrderManagement
+
+[33mcommit ba21b6c60fd28dbb07d749c659d1768338da5782[m
+Author: 2464140 <2464140@LTIN690994>
+Commit: 2464140 <2464140@LTIN690994>
+
+    Added pages for storemanager
+
+[33mcommit f17b338653442dc797bce691ee7d93434d3eda97[m
+Merge: 8674f83 77b5fd1
+Author: Mavillapalli Eshwar <mavillapalli.eshwar@cognizant.com>
+Commit: GitHub <noreply@github.com>
+
+    Merge pull request #4 from mavillapallieshwar-cyber/UserAuthentication
+    
+    Added user authentication
+
+[33mcommit 77b5fd1c789f28ecf069d0f21a44a06abc5bfd20[m
+Merge: 5032614 8674f83
+Author: Mavillapalli Eshwar <mavillapalli.eshwar@cognizant.com>
+Commit: GitHub <noreply@github.com>
+
+    Merge branch 'main' into UserAuthentication
+
+[33mcommit 5032614e669727a96e05581608a5712be0b02eef[m
+Author: YayatiNehe <YayatiGorakshanath.Nehe@cognizant.com>
+Commit: YayatiNehe <YayatiGorakshanath.Nehe@cognizant.com>
+
+    Added user uthentication
+
+[33mcommit 3169782dd0f3afa939a6111c5b19f519613f098f[m
+Merge: f5573a1 8674f83
+Author: 2464140 <2464140@LTIN690994>
+Commit: 2464140 <2464140@LTIN690994>
+
+    Merge remote-tracking branch 'origin/main' into OrderManagement
+
+[33mcommit f5573a19edcebad8cbd5ba547b3b01e33262e42a[m
+Merge: bfb33b4 1947a90
+Author: 2464140 <2464140@LTIN690994>
+Commit: 2464140 <2464140@LTIN690994>
+
+    Merege branch 'main' into OrderManagement
+    Syncing Ordermanagement with latest changes from main to include bug
+    fixes and new features
+
+[33mcommit 1947a90073da41f31adeb1e251210b9b71e58c93[m
+Author: 2464140 <2464140@LTIN690994>
+Commit: 2464140 <2464140@LTIN690994>
+
+    Adding files
+
+[33mcommit 8674f8342dcf25191f549e86c3af3118dc131f84[m
+Merge: 01a25cf 9ce4144
+Author: VinayakCts202 <Vinayak.Joshi@cognizant.com>
+Commit: GitHub <noreply@github.com>
+
+    Merge pull request #3 from VinayakCts202/BatchManagement
+    
+    Batch management
+
+[33mcommit 9ce4144324c4ae0723f0e455f23b1b2d6b14cd33[m
+Author: Vinayak Joshi <2464038@cognizant.com>
+Commit: Vinayak Joshi <2464038@cognizant.com>
+
+    Adding file
+
+[33mcommit 4714c5435d8dce9b1d74c2ff88488206e38a0715[m
+Merge: c2c2a48 01a25cf
+Author: Vinayak Joshi <2464038@cognizant.com>
+Commit: Vinayak Joshi <2464038@cognizant.com>
+
+    Merge remote changes and resolve conflicts
+
+[33mcommit c2c2a48b46e170c2b598163bfb670d527010871b[m
+Author: Vinayak Joshi <2464038@cognizant.com>
+Commit: Vinayak Joshi <2464038@cognizant.com>
+
+    added product file
+
+[33mcommit 01a25cfae9d1a3ee40ddbba065a06ad2722f64f3[m
+Merge: 27cde4a bfb33b4
+Author: Sejal-007 <SejalYogesh.Pawar@cognizant.com>
+Commit: GitHub <noreply@github.com>
+
+    Merge pull request #2 from Sejal-007/OrderManagement
+    
+    Adding Profile and order page
+
+[33mcommit bfb33b47659d7b871ca6d4e7fdcfa9fdd6300cf1[m
+Author: 2464140 <2464140@LTIN690994>
+Commit: 2464140 <2464140@LTIN690994>
+
+    adding profile and order page
+
+[33mcommit b2f8441237ffe012776b2eb6a9938ac56bb66ecc[m
+Merge: 8c7e6fb 4ec8bfa
+Author: 2464140 <2464140@LTIN690994>
+Commit: 2464140 <2464140@LTIN690994>
+
+    Resolved StoreManager Sidebar conflict
+
+[33mcommit 4ec8bfaf442b9121f1755202692cda857ab60f18[m
+Author: 2464140 <2464140@LTIN690994>
+Commit: 2464140 <2464140@LTIN690994>
+
+    merged store manager pages
+
+[33mcommit 27cde4af0e714e557ba566b33f51292a8f8bfa98[m
+Merge: a3b51da 8c7e6fb
+Author: Sejal-007 <SejalYogesh.Pawar@cognizant.com>
+Commit: GitHub <noreply@github.com>
+
+    Merge pull request #1 from Sejal-007/OrderManagement
+    
+    Added Store Manager shared layout and sidebar
+
+[33mcommit 8c7e6fb5cec65d2ca4c581c4ad0dab4ed33fb26e[m
+Author: 2464140 <2464140@LTIN690994>
+Commit: 2464140 <2464140@LTIN690994>
+
+    Added Store Manager shared layout and sidebar
+
+[33mcommit a3b51da5c456a4e284de7024f97eb909301eb380[m
+Author: 2464140 <2464140@LTIN690994>
+Commit: 2464140 <2464140@LTIN690994>
+
+    Initial commit with proper gitignore
