@@ -1,0 +1,129 @@
+﻿@{
+    ViewBag.Title = "User Management";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";  // use your Admin layout
+}
+
+@* @section Styles {
+    <!-- Page-specific stylesheet -->
+        ~/css/users.css
+} *@
+
+<section class="page-container">
+    <header class="page-header">
+        <h1>User Management</h1>
+        <p class="sub">Client-side only (no backend / database). Data stored in <code>localStorage</code>.</p>
+    </header>
+
+    <!-- Toolbar: Search + New User -->
+    <div class="toolbar">
+        <input type="text" id="searchBox" class="input" placeholder="Search by name, email, mobile, role..." />
+        <div class="toolbar-actions">
+            <button id="btnAddNew" class="btn btn-primary">+ Add User</button>
+            <button id="btnClearAll" class="btn btn-danger" title="Clear localStorage users">Clear All</button>
+        </div>
+    </div>
+
+    <!-- Users table -->
+    <div class="table-wrap">
+        <table class="table" id="usersTable" aria-label="Users">
+            <thead>
+                <tr>
+                    <th style="width: 20%">Name</th>
+                    <th style="width: 24%">Email</th>
+                    <th style="width: 16%">Mobile</th>
+                    <th style="width: 14%">Role</th>
+                    <th style="width: 26%">Actions</th>
+                </tr>
+            </thead>
+            <tbody id="usersTbody">
+                <!-- rows injected by JS -->
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Add / Edit User Modal -->
+    <dialog id="userModal" class="modal">
+        <form id="userForm" method="dialog" novalidate>
+            <h3 id="modalTitle">Add User</h3>
+
+            <div class="form-grid">
+                <div class="form-field">
+                    <label for="name">Full Name</label>
+                    <input type="text" id="name" name="name" class="input" required />
+                    <span class="error" id="nameError"></span>
+                </div>
+
+                <div class="form-field">
+                    <label for="email">Email Id</label>
+                    <input type="email" id="email" name="email" class="input" required />
+                    <span class="error" id="emailError"></span>
+                </div>
+
+                <div class="form-field">
+                    <label for="mobile">Mobile Number</label>
+                    <input type="text" id="mobile" name="mobile" class="input" required />
+                    <span class="error" id="mobileError"></span>
+                </div>
+
+                <div class="form-field">
+                    <label for="password">Password</label>
+                    <div class="password-wrapper">
+                        <input type="password" id="password" name="password" class="input" required />
+                        <button type="button"
+                                class="toggle-password"
+                                data-target="password"
+                                aria-label="Show password"
+                                aria-pressed="false">
+                            <i class="fa fa-eye" aria-hidden="true"></i>
+                        </button>
+                    </div>
+                    <span class="error" id="passwordError"></span>
+                </div>
+
+                <div class="form-field">
+                    <label for="role">Role</label>
+                    <select id="role" name="role" class="input" required>
+                        <option value="">Select role</option>
+                        <option value="Admin">Admin</option>
+                        <option value="Manager">Manager</option>
+                        <option value="User">User</option>
+                    </select>
+                    <span class="error" id="roleError"></span>
+                </div>
+            </div>
+
+            <div class="modal-actions">
+                <button type="submit" id="btnSave" class="btn btn-primary">Save</button>
+                <button type="button" id="btnCancel" class="btn">Cancel</button>
+            </div>
+
+            <!-- Hidden: the ID of the user being edited; empty/-1 means adding -->
+            <input type="hidden" id="editIndex" value="-1" />
+        </form>
+    </dialog>
+
+    <!-- Delete by any of name/email/mobile -->
+    <details class="panel">
+        <summary>Delete by Name / Email / Mobile</summary>
+        <div class="panel-body">
+            <input type="text" id="deleteQuery" class="input" placeholder="Type part or exact value..." />
+            <button id="btnDeleteByQuery" class="btn btn-danger">Delete</button>
+            <p class="muted">This will delete all users whose name/email/mobile <strong>contains</strong> the query (case-insensitive).</p>
+        </div>
+    </details>
+
+    <!-- Show user details by any part -->
+    <details class="panel">
+        <summary>Show Details by Query</summary>
+        <div class="panel-body">
+            <input type="text" id="showQuery" class="input" placeholder="Type part of name/email/mobile/role..." />
+            <button id="btnShowByQuery" class="btn">Show</button>
+            <div id="showResults" class="cards"></div>
+        </div>
+    </details>
+</section>
+
+@* @section Scripts {
+    <!-- Reuse your common app script (contains localStorage + toggle logic) -->
+        ~/js/script.js</script>
+} *@

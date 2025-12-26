@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>@ViewData["Title"]</title>
+    <link rel="stylesheet" href="~/css/style.css" />
+</head>
+<body>
+    <div class="store-layout">
+        @await Html.PartialAsync("_AdminLayoutSidebar")
+
+        <main class="store-content">
+            @RenderBody()
+        </main>
+    </div>
+
+    @RenderSection("Scripts", required: false)
+</body>
+</html>

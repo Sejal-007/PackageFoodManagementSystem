@@ -1,25 +1,24 @@
-using System.Diagnostics;
-using Microsoft.AspNetCore.Mvc;
-using PackageFoodManagementSystem.Application.Models;
 
-namespace PackageFoodManagementSystem.Application.Controllers
+using Microsoft.AspNetCore.Mvc;
+
+namespace PackagedFoodManagementSystem.Controllers
 {
     public class HomeController : Controller
     {
-        public IActionResult Index()
-        {
-            return View();
-        }
+        public IActionResult Index() => View();
 
-        public IActionResult Privacy()
-        {
-            return View();
-        }
+        public IActionResult SignIn() => View();
 
-        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-        public IActionResult Error()
-        {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
-        }
+        public IActionResult SignUp() => View();
+
+        public IActionResult Dashboard() => View();
+
+        public IActionResult AdminDashboard() => View();
+
+        public IActionResult ManagerDashboard() => View();
+
+        // HomeController.cs
+        public IActionResult Users() => View();
+
     }
 }

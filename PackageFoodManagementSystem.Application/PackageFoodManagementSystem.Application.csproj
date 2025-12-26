@@ -6,4 +6,9 @@
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
 
+  <ItemGroup>
+    <None Include="Views\Shared\_AdminLayout.cshtml" />
+    <None Include="Views\Shared\_AdminLayoutSidebar.cshtml" />
+  </ItemGroup>
+
 </Project>

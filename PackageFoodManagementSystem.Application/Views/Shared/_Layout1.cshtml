@@ -1,0 +1,46 @@
+﻿@{
+    Layout = null;
+    var title = ViewBag.Title ?? "PFMS";
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <title>@title - Packaged Food Management System</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <link rel="stylesheet" href="~/css/style.css" />
+    <!-- Font Awesome for eye icon -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="~/js/script.js"></script>
+</head>
+<body>
+    <header class="nav" aria-label="Global Navigation">
+        <div class="nav-wrap">
+            <!-- Brand / Home -->
+            <ndex
+                <span class="logo" aria-hidden="true"></span>
+            </a>
+
+            <!-- Left → Right: About Us, Contact Us, Sign In, Sign Up -->
+            <nav class="nav-links" aria-label="Primary">
+                <div class="nav-right">
+                    <a href="@Url.Action("AboutUs", "Home")" class="nav-btn">About Us</a>
+                    <a href="@Url.Action("ContactUs", "Home")" class="nav-btn">Contact Us</a>
+                    <a href="@Url.Action("SignIn", "Home")" class="nav-btn">Login</a>
+                    <a href="@Url.Action("SignUp", "Home")" class="nav-btn">Signup</a>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <main class="main-content">
+        @RenderBody()
+    </main>
+
+    <footer class="footer">
+        <p>© @DateTime.Now.Year PFMS • All rights reserved.</p>
+    </footer>
+</body>
+</html>
