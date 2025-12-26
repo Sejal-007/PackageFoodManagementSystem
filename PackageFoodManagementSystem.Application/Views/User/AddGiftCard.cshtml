@@ -1,6 +1,31 @@
-﻿namespace PackageFoodManagementSystem.Application.Views.User
-{
-    public class AddGiftCard
-    {
-    }
+﻿@{
+
+    ViewData["Title"] = "Add New Gift Card";
+
 }
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+<div class="account-layout">
+    <div class="sidebar">@Html.Partial("_AccountSidebar")</div>
+
+    <div class="main-section">
+        <h2>Add New Gift Card</h2>
+        <form method="post" asp-action="AddGiftCard" asp-controller="User" style="margin-top:20px;">
+            <label>Card Number</label>
+            <input type="text" name="cardNumber" required style="display:block;margin-bottom:10px;" />
+
+            <label>Amount (₹)</label>
+            <input type="number" name="amount" required style="display:block;margin-bottom:10px;" />
+
+            <label>Expiry Date</label>
+            <input type="text" name="expiry" placeholder="e.g. 31 Jan 2026" required style="display:block;margin-bottom:10px;" />
+
+            <button type="submit"
+                    style="padding:10px 20px;background:#3498db;color:#fff;border:none;border-radius:6px;">
+
+                Save Gift Card
+            </button>
+        </form>
+    </div>
+</div>
+

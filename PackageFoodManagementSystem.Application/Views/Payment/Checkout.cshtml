@@ -1,6 +1,12 @@
-﻿namespace PackageFoodManagementSystem.Application.Views.Payment
-{
-    public class Checkout
-    {
-    }
+﻿@{
+    ViewData["Title"] = "Checkout";
 }
+
+<h2>💳 Checkout</h2>
+<p>Select your payment method:</p>
+
+<form asp-controller="Payment" asp-action="Confirm" method="post">
+    <button type="submit" name="method" value="Card" class="btn btn-primary">Pay by Card</button>
+    <button type="submit" name="method" value="UPI" class="btn btn-success">Pay by UPI</button>
+    <button type="submit" name="method" value="COD" class="btn btn-warning">Cash on Delivery</button>
+</form>

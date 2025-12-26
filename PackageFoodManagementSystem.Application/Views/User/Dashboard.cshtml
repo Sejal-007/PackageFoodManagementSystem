@@ -1,6 +1,12 @@
-﻿namespace PackageFoodManagementSystem.Application.Views.User
-{
-    public class Dashboard
-    {
-    }
+﻿@{
+    ViewData["Title"] = "My Account";
 }
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+<div class="account-layout">
+    <div class="sidebar">
+        @Html.Partial("_AccountSidebar")
+    </div>
+    <!-- Main Section --> <div class="main-section"> <h2>Profile Details (Edit)</h2> <p><strong>Name:</strong> Yayati Nehe</p> <p><strong>Email:</strong> yayati@gmail.com</p> <p><strong>Phone:</strong> +91 1234567</p> <div style="margin-top:20px;"> </div> </div>
+
+</div>

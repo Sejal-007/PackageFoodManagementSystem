@@ -1,6 +1,42 @@
-﻿namespace PackageFoodManagementSystem.Application.Views.User
-{
-    public class SmartBasket
-    {
-    }
+﻿@{
+
+    ViewData["Title"] = "Smart Basket";
+
 }
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+<div class="account-layout">
+    <div class="sidebar">
+
+        @Html.Partial("_AccountSidebar")
+    </div>
+
+    <div class="main-section">
+        <h2>Smart Basket</h2>
+        <p>Your personalized basket based on past purchases and preferences.</p>
+
+        <div class="dashboard-cards" style="margin-top:20px;">
+            <div class="card">
+                <h3>Milk & Dairy</h3>
+                <p>Amul Toned Milk, Nestlé Yogurt</p>
+                <a href="/Products/Dairy">Shop Dairy →</a>
+            </div>
+            <div class="card">
+                <h3>Fruits & Vegetables</h3>
+                <p>Bananas, Tomatoes, Onions</p>
+                <a href="/Products/Fresh">Shop Fresh Produce →</a>
+            </div>
+            <div class="card">
+                <h3>Snacks & Beverages</h3>
+                <p>Lay’s Chips, Tropicana Juice</p>
+                <a href="/Products/Snacks">Shop Snacks →</a>
+            </div>
+        </div>
+
+        <button style="margin-top:30px;padding:10px 20px;background:#27ae60;color:#fff;border:none;border-radius:6px;">
+
+            Add All to Basket
+        </button>
+    </div>
+</div>
+

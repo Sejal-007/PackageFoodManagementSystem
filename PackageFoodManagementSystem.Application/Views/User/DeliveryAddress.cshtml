@@ -1,6 +1,35 @@
-﻿namespace PackageFoodManagementSystem.Application.Views.User
-{
-    public class DeliveryAddress
-    {
-    }
+﻿@{
+
+    ViewData["Title"] = "Delivery Addresses";
+
 }
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+<div class="account-layout">
+    <div class="sidebar">@Html.Partial("_AccountSidebar")</div>
+
+    <div class="main-section">
+        <h2>Delivery Addresses</h2>
+        <p>Manage your saved delivery locations for faster checkout.</p>
+
+        <ul style="margin-top:20px;">
+            <li><strong>Home:</strong> Old Madras Road, Chennai, PIN 600130</li>
+            <li><strong>Office:</strong> Tidel Park, Sholinganallur, PIN 600119</li>
+        </ul>
+
+        <a href="/User/AddAddress"
+           style="margin-top:15px;display:inline-block;padding:10px 20px;background:#27ae60;color:#fff;border:none;border-radius:6px;text-decoration:none;">
+
+            Add New Address
+        </a>
+
+        @if (TempData["Message"] != null)
+
+        {
+            <p style="margin-top:20px;color:#27ae60;">@TempData["Message"]</p>
+
+        }
+    </div>
+</div>
+
+
