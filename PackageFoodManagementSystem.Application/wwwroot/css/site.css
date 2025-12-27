@@ -61,17 +61,27 @@ body {
     color: #FF6F3C;
 }
 
+/* --- GLOBAL LAYOUT FIXES --- */
+body {
+    background-color: #FFF8F3;
+    margin: 0;
+}
+
+/* --- YOUR FOOTER CSS (INTEGRATED) --- */
 .app-footer {
     background: #1f1f1f;
     color: #ccc;
     padding: 40px 30px 20px;
     margin-top: 60px;
+    width: 100%;
 }
 
 .footer-container {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
     gap: 30px;
+    max-width: 1200px;
+    margin: 0 auto;
 }
 
 .footer-section h4,
@@ -123,7 +133,6 @@ body {
     border-top: 1px solid #333;
     padding-top: 15px;
 }
-
 .user-popup {
     position: fixed;
     top: 65px;

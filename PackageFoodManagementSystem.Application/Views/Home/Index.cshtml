@@ -1,0 +1,63 @@
+﻿@{
+    ViewData["Title"] = "Customer Home";
+}
+
+@section Styles {
+    <link href="~/css/customer-home.css" rel="stylesheet" asp-append-version="true" />
+}
+
+@section Scripts {
+    <script src="~/js/customer-home.js" asp-append-version="true"></script>
+}
+
+<section class="hero">
+    <div class="row align-items-center g-0">
+        <div class="col-lg-6 text-start ps-5">
+            <p class="hero-text text-start">
+                From storage to serving,<br>
+                to keep your food fresh!!<br>
+                We make it effortless
+            </p>
+            <a class="btn custom-btn btn-lg mt-3 px-4" asp-controller="Menu" asp-action="Index">
+                Explore Menu
+            </a>
+        </div>
+
+        <div class="col-lg-6 text-end">
+            <div class="hero-image-wrapper">
+                <img src="~/images/splash-white.png" class="splash-bg" alt="Splash">
+                <img src="~/images/homeimg.png" class="img-fluid hero-image" alt="Food">
+            </div>
+        </div>
+    </div>
+</section>
+
+<div class="container mt-5 mb-5">
+    <h2 class="mb-4">Explore Our Menu</h2>
+    <div class="row g-4" id="menuGrid">
+        <div class="col-md-3">
+            <div class="card menu-card text-center p-4">
+                <h5>🥨 Snacks</h5>
+                <p>Crispy &amp; delicious</p>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card menu-card text-center p-4">
+                <h5>🥤 Beverages</h5>
+                <p>Cool &amp; refreshing</p>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card menu-card text-center p-4">
+                <h5>🍱 Ready Meals</h5>
+                <p>Instant &amp; tasty</p>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card menu-card text-center p-4">
+                <h5>🍫 Sweets</h5>
+                <p>Sweet happiness</p>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,196 +1,142 @@
 ﻿<!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
     <meta charset="utf-8" />
-    <title>@ViewBag.Title - PackagedFoodManagementSystem</title>
-    <link rel="stylesheet" href="~/css/style.css" />
-    <link rel="stylesheet" href="~/css/side.css"/>
-    <link rel="stylesheet" href="~/css/storemanager.css"/>
-    <!-- Font Awesome for eye icon -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Always Fresh</title>
+
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="~/js/script.js"></script>
-    <script type="importmap"></script>
-    <link rel="stylesheet" href="~/PackagedFoodFrontend.styles.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+
+    @await RenderSectionAsync("Styles", required: false)
 </head>
-<body>
+<body class="d-flex flex-column min-vh-100">
 
-    <header class="app-header">
-        <!-- 🔹 NAVBAR -->
-        <nav class="navbar navbar-expand-lg px-4 py-3">
-            <div class="col-sm-1 text-end">
-                <img src="~/images/applogo.png"
-                     class="img-fluid app-logo"
-                     alt="Food Image">
+    @{
+        var controller = ViewContext.RouteData.Values["Controller"]?.ToString();
+        var action = ViewContext.RouteData.Values["Action"]?.ToString();
+        bool isStoreManager = (controller == "StoreManager" || controller == "StoreManager1");
+    }
+
+    <div class="flex-grow-1">
+        @if (isStoreManager)
+        {
+            <div class="store-layout" style="display: flex; min-height: 100vh;">
+                @await Html.PartialAsync("_StoreManagerSidebar")
+                <div class="store-content" style="flex: 1; display: flex; flex-direction: column;">
+                    <header class="header px-4 py-3 bg-white border-bottom">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <h1 class="h4 mb-0">🍱 Manager Dashboard</h1>
+                            <a asp-controller="Home" asp-action="SignIn" class="btn btn-outline-danger btn-sm">Logout</a>
+                        </div>
+                    </header>
+                    <main role="main" class="p-4">
+                        @RenderBody()
+                    </main>
+                </div>
             </div>
-            <span class="brand">ALWAYZZZ FRESH</span>
+        }
+        else
+        {
+            <header class="app-header border-bottom bg-white">
+                <nav class="navbar navbar-expand-lg px-4 py-3 container-fluid">
+                    <span class="brand" style="color: #FF6F3C; font-weight: bold; font-size: 32px;">ALWAYZZZ FRESH</span>
+                    <ul class="navbar-nav ms-auto align-items-center">
+                        <li class="nav-item me-3"><a class="nav-link fw-semibold" asp-controller="Home" asp-action="Index">Home</a></li>
+                        <li class="nav-item me-3"><a class="nav-link fw-semibold" asp-controller="Menu" asp-action="Index">Explore</a></li>
+                        <li class="nav-item px-3">
+                            <a class="nav-link position-relative" asp-controller="User" asp-action="MyBasket">
+                                <i class="fa-solid fa-cart-shopping fa-lg" style="color: #ff6347;"></i>
+                                <span id="cart-count" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="font-size: 0.7rem;">0</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="javascript:void(0)" onclick="openUserMenu()">
+                                <i class="fa-solid fa-user-circle fa-2x" style="color: #ff6347;"></i>
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
+            </header>
 
-            <ul class="navbar-nav ms-auto align-items-center">
-                <li class="nav-item me-3">
-                    <a class="nav-link fw-semibold" asp-controller="Home"
-                       asp-action="Index">Home</a>
-                </li>
-                <li class="nav-item me-3">
-
-                    <a class="nav-link fw-semibold" asp-controller="Menu"
-                       asp-action="Index">Explore</a>
-                </li>
-
-
-                <!-- 🛒 CART ICON -->
-                <li class="nav-item me-4">
-                    <a class="nav-link position-relative" asp-controller="User" asp-action="MyBasket">
-                        <i class="fa-solid fa-cart-shopping fa-lg" style="color: #ff6347;"></i>
-                        <span id="cart-count" class="cart-badge">
-                            0
-                        </span>
-                    </a>
-                </li>
-
-                <!-- 👤 USER DASHBOARD -->
-                <!-- USER DASHBOARD ICON -->
-                <li class="nav-item">
-                    <a class="nav-link" href="javascript:void(0)" onclick="openUserMenu()">
-                        <i class="fa-solid fa-user-circle fa-2x" style="color: #ff6347;"></i>
-                    </a>
-                </li>
-            </ul>
-        </nav>
-    </header>
-    <div id="userPopup" class="user-popup">
-
-        <div class="popup-header">
-            <span>User Menu</span>
-            <span class="close-btn" onclick="closeUserMenu()">×</span>
-        </div>
-
-        <ul class="popup-list">
-
-            <li onclick="redirectTo('/User/Dashboard')"><i class="fa-solid fa-user-circle fa-lg"></i> My Profile</li>
-            <li onclick="redirectTo('/User/MyBasket')"> <i class="fa-solid fa-cart-shopping fa-lg"></i> My Basket</li>
-            <li onclick="redirectTo('/User/MyOrders')"><i class="fa-solid fa-shopping-bag fa-lg"></i> My Orders</li>
-            <li onclick="redirectTo('/User/MyWallet')"><i class="fa-solid fa-wallet fa-lg"></i> My Wallet</li>
-            <li onclick="redirectTo('/User/ContactUs')"><i class="fa-solid fa-headset fa-lg"></i> ContactUs</li>
-            <li class="logout" onclick="redirectTo('/Home/Index')"><i class="fa-solid fa-arrow-right-from-bracket fa-lg"></i> Logout</li>
-        </ul>
-
-    </div>
-
-    <div id="popupOverlay" onclick="closeUserMenu()"></div>
-
-    <div class="container">
-        <main role="main" class="pb-3">
-            @RenderBody()
-        </main>
-    </div>
-    <footer class="app-footer">
-        <div class="footer-container">
-
-            <!-- BRAND -->
-            <div class="footer-section">
-                <h4>PackagedFood</h4>
-                <p>Fresh • Safe • Reliable packaged food delivered to your door.</p>
-            </div>
-
-            <!-- QUICK LINKS -->
-            <div class="footer-section">
-                <h5>Quick Links</h5>
-                <ul>
-                    <li><a asp-controller="Home" asp-action="Index">Home</a></li>
-                    <li><a asp-controller="Menu" asp-action="Index">Menu</a></li>
-                    <li><a asp-controller="User" asp-action="Dashboard">Dashboard</a></li>
-                    <li><a asp-controller="Cart" asp-action="Index">Cart</a></li>
+            @* 👤 USER POPUP MENU *@
+            <div id="userPopup" class="user-popup" style="display: none; position: fixed; top: 85px; right: 20px; width: 240px; background: white; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.15); z-index: 1001; overflow: hidden; border: 1px solid #eee;">
+                <div class="p-3 border-bottom bg-light fw-bold">My Account</div>
+                <ul class="list-unstyled mb-0">
+                    <li class="p-3 border-bottom menu-hover-item" onclick="location.href='@Url.Action("Dashboard", "User")'" style="cursor:pointer;">
+                        <i class="fa-solid fa-user me-2"></i> Profile
+                    </li>
+                    <li class="p-3 border-bottom menu-hover-item" onclick="location.href='@Url.Action("MyBasket", "User")'" style="cursor:pointer;">
+                        <i class="fa-solid fa-basket-shopping me-2"></i> My Basket
+                    </li>
+                    <li class="p-3 text-danger menu-hover-item" onclick="location.href='@Url.Action("SignIn", "Home")'" style="cursor:pointer;">
+                        <i class="fa-solid fa-right-from-bracket me-2"></i> Logout
+                    </li>
                 </ul>
             </div>
+            <div id="popupOverlay" onclick="closeUserMenu()" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.2); z-index: 1000;"></div>
 
-
-
-            <!-- CONTACT -->
-            <div class="footer-section">
-                <h5>Contact</h5>
-                <p>Email: support@packagedfood.com</p>
-                <p>Phone: +91 98765 43210</p>
-            </div>
-
-            <!-- SOCIAL -->
-            <div class="footer-section">
-                <h5>Follow Us</h5>
-                <div class="social-icons">
-                    <i class="fa-brands fa-facebook-f"></i>
-                    <i class="fa-brands fa-instagram"></i>
-                    <i class="fa-brands fa-twitter"></i>
+            <div class="container-fluid p-0">
+                <div class="row g-0">
+                    @if (controller == "User" && action != "Index")
+                    {
+                        <aside class="col-md-3 col-lg-2 border-end bg-light" style="min-height: 90vh;">
+                            <div class="p-3">@await Html.PartialAsync("_AccountSidebar")</div>
+                        </aside>
+                        <main role="main" class="col-md-9 col-lg-10 p-4">@RenderBody()</main>
+                    }
+                    else
+                    {
+                        <main role="main" class="col-12">@RenderBody()</main>
+                    }
                 </div>
             </div>
+        }
+    </div>
 
-        </div>
-
-        <div class="footer-bottom">
-            © 2025 PackagedFood. All rights reserved.
-        </div>
-    </footer>
-    <span id="cart-count" class="cart-badge">0</span>
-    <script src="~/js/site.js"></script>
-
-
-
-    <script src="~/lib/jquery/dist/jquery.min.js"></script>
-    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="~/js/site.js" asp-append-version="true"></script>
-    @await RenderSectionAsync("Scripts", required: false)
-
-
-
-    <div class="page-wrapper">
-        @await Html.PartialAsync("_StoreManagerSidebar")
-
-
-        <header class="header">
-            <nav class="navbar">
-                <!-- Left side: App title -->
-                <div class="nav-left">
-                    <h1>🍱 Packaged Food Management System</h1>
+    @if (!isStoreManager)
+    {
+        <footer class="app-footer">
+            <div class="footer-container">
+                <div class="footer-section">
+                    <h4>PackagedFood</h4>
+                    <p>Fresh • Safe • Reliable packaged food delivered to your door.</p>
                 </div>
-
-                <!-- Right side: Login/Signup buttons -->
-                <div class="nav-right">
-                    <a href="@Url.Action("SignIn", "Home")" class="nav-btn">Login</a>
-                    <a href="@Url.Action("SignUp", "Home")" class="nav-btn">Signup</a>
+                <div class="footer-section">
+                    <h5>Quick Links</h5>
+                    <ul>
+                        <li><a asp-controller="Home" asp-action="Index">Home</a></li>
+                        <li><a asp-controller="Menu" asp-action="Index">Menu</a></li>
+                    </ul>
                 </div>
-            </nav>
-        </header>
-
-        <main class="main-content">
-            @RenderBody()
-        </main>
-
-        <footer class="footer">
-            <p>&copy; 2025 PackagedFoodManagementSystem</p>
+                <div class="footer-section">
+                    <h5>Follow Us</h5>
+                    <div class="social-icons">
+                        <i class="fa-brands fa-facebook-f p-2"></i>
+                        <i class="fa-brands fa-instagram p-2"></i>
+                        <i class="fa-brands fa-twitter p-2"></i>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">© 2025 PackagedFood. All rights reserved.</div>
         </footer>
-    </div>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - PackageFoodManagementSystem.Application</title>
-    <script type="importmap"></script>
-    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/css/side.css?v=1"/>
-    @*<link rel="stylesheet" href="~/css/storemanager.css?v=1" />*@
-    @*<link rel="stylesheet" href="~/css/side.css?v=1" />
-    <link rel="stylesheet" href="~/css/storemanager.css?v=1" />*@
-    <link rel="stylesheet" href="~/PackageFoodManagementSystem.Application.styles.css" asp-append-version="true" />
+    }
 
-    <div class="app-container">
-        @await Html.PartialAsync("_StoreManagerSidebar")
-
-        <div class="content">
-            @RenderBody()
-        </div>
-
-    </div>
-
-    
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
+
+    <script>
+        function openUserMenu() {
+            document.getElementById("userPopup").style.display = "block";
+            document.getElementById("popupOverlay").style.display = "block";
+        }
+        function closeUserMenu() {
+            document.getElementById("userPopup").style.display = "none";
+            document.getElementById("popupOverlay").style.display = "none";
+        }
+    </script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>
