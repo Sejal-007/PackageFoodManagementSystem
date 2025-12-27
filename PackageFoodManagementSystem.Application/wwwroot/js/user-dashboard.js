@@ -1,6 +1,3 @@
-﻿namespace PackageFoodManagementSystem.Application.wwwroot.js
-{
-    public class user_dashboard
-    {
-    }
-}
+﻿document.querySelector(".logout-btn").addEventListener("click", () => {
+    alert("Logout functionality coming soon!");
+});
