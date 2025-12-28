@@ -15,6 +15,8 @@ namespace PackagedFoodManagementSystem.Controllers
 
         public IActionResult AdminDashboard() => View();
 
+        public IActionResult AdminInventory() => View();
+
         public IActionResult ManagerDashboard() => View();
 
         // HomeController.cs
