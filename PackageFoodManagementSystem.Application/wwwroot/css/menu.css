@@ -1,6 +1,118 @@
-﻿namespace PackageFoodManagementSystem.Application.wwwroot.css
-{
-    public class menu
-    {
-    }
+﻿body {
+    background-color: #f8f9fa;
 }
+
+/* CARD */
+
+.product-card {
+    width: 300px;
+    padding: 12px;
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+    text-align: center;
+}
+
+/* IMAGE BOX */
+
+.product-img-box {
+    position: relative;
+    width: 100%;
+    height: 150px; /* FIXED HEIGHT */
+
+    overflow: hidden; /* VERY IMPORTANT */
+
+    border-radius: 10px;
+    background: #f5f5f5;
+}
+
+    /* IMAGE */
+
+    .product-img-box img {
+        width: 100%;
+        height: 100%;
+        object-fit: contain; /* keeps image inside */
+    }
+
+}
+
+.product-img-box img {
+    width: 100%;
+    height: 160px;
+    object-fit: cover;
+}
+
+/* Hover Info */
+
+.product-hover-info {
+    position: absolute;
+    inset: 0;
+    background: rgba(0,0,0,0.75);
+    color: #fff;
+    padding: 10px;
+    opacity: 0;
+    transition: 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    font-size: 13px;
+}
+
+    .product-hover-info img {
+        width: 70px;
+        margin-bottom: 8px;
+        border-radius: 6px;
+    }
+
+.product-img-box:hover .product-hover-info {
+    opacity: 1;
+}
+
+.price {
+    font-weight: bold;
+    margin: 5px 0;
+}
+
+
+.product-card:hover {
+    transform: translateY(-5px);
+}
+
+.product-card img {
+    height: 140px;
+    object-fit: contain;
+    margin-bottom: 10px;
+}
+
+.product-card h6 {
+    font-weight: 600;
+    margin-bottom: 5px;
+}
+
+.price {
+    color: #28a745;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.cart-actions {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+}
+
+    .cart-actions button {
+        border: none;
+        background: #28a745;
+        color: white;
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        font-size: 18px;
+    }
+
+    .cart-actions .qty {
+        font-weight: bold;
+    }

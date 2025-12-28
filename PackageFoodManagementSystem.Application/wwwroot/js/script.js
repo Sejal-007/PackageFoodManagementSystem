@@ -178,7 +178,7 @@ $(function () {
         const emailOk = /^[^\s@]+@[^\s@]+\.com$/.test(username);
         if ((mobileOk || emailOk) && password.length >= 6) {
             alert("User login successful!");
-            window.location.href = "/Home/Dashboard";
+            window.location.href = "/Home/Index";
         } else {
             alert("Invalid credentials. Please try again.");
         }
