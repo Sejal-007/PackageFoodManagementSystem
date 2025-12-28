@@ -1,0 +1,9 @@
+﻿@{
+    ViewData["Title"] = "Order Success";
+}
+
+<h2>✅ Payment initiated</h2>
+<p>Method: @TempData["PaymentMethod"]</p>
+<p>Thanks for your order!</p>
+
+<a asp-controller="Home" asp-action="Index" class="btn btn-primary mt-3">Continue Shopping</a>

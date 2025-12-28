@@ -30,7 +30,7 @@ body {
 
 .sidebar {
 	width: 250px;
-	background-color: #f8fafc;
+	background-color: #D9DADB;
 	padding: 20px;
 }
 
@@ -39,7 +39,7 @@ body {
 .store-content {
 	flex: 1;
 	padding: 25px;
-	background-color: #f1f5f9;
+	background-color: #CACCCF;
 }
 
 /* SIDEBAR MENU */
@@ -51,6 +51,7 @@ body {
 	color: #1e293b;
 }
  
+
 
 /* Sidebar */
 
@@ -125,7 +126,7 @@ body {
 			.store-sidebar ul li a {
 				display: block;
 				text-decoration: none;
-				color: #white;
+				color: #FFFFFF;
 				padding: 10px 14px;
 				border-radius: 8px;
 				transition: all 0.3s ease;
@@ -141,8 +142,8 @@ body {
 				/* Active link */
 
 				.store-sidebar ul li a.active {
-					background-color: #6c63ff;
-					color: white;
+					background-color: #FFFFFF;
+					color: #000000;
 				}
 
 /* Footer */
@@ -178,7 +179,7 @@ body {
 	margin-left: 240px;
 	padding: 30px;
 	width: 100%;
-	background-color: #f9fafb;
+	background-color: #E4E9ED;
 }
  
 
@@ -194,7 +195,7 @@ body {
 .content {
 	flex: 1;
 	padding: 30px; /* Reduced padding to move content up */
-	background: #D7D9D9;
+	background: #C7C8C9;
 	overflow-y: auto;
 }
 

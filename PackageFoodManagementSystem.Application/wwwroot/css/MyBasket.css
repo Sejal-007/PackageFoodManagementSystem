@@ -1,0 +1,38 @@
+﻿.basket-container {
+    display: flex;
+    gap: 30px;
+    padding: 30px;
+}
+
+.basket-left {
+    flex: 2;
+}
+
+.basket-item {
+    background: #fff;
+    padding: 15px;
+    margin-bottom: 15px;
+    border-radius: 10px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+}
+
+.basket-right {
+    flex: 1;
+    position: sticky;
+    top: 100px;
+    background: #ffffff;
+    padding: 20px;
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+    height: fit-content;
+}
+
+.checkout-btn {
+    width: 100%;
+    padding: 12px;
+    background: #27ae60;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+}

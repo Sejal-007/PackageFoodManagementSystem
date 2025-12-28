@@ -1,0 +1,30 @@
+﻿@{
+
+    ViewData["Title"] = "Add New Address";
+
+}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+<div class="account-layout">
+    <div class="sidebar">@Html.Partial("_AccountSidebar")</div>
+
+    <div class="main-section">
+        <h2>Add New Address</h2>
+        <form method="post" asp-action="AddAddress" asp-controller="User" style="margin-top:20px;">
+            <label>Street</label>
+            <input type="text" name="street" required style="display:block;margin-bottom:10px;" />
+
+            <label>City</label>
+            <input type="text" name="city" required style="display:block;margin-bottom:10px;" />
+
+            <label>PIN Code</label>
+            <input type="text" name="pin" required style="display:block;margin-bottom:10px;" />
+
+            <button type="submit" style="padding:10px 20px;background:#27ae60;color:#fff;border:none;border-radius:6px;">
+
+                Save Address
+            </button>
+        </form>
+    </div>
+</div>
+
