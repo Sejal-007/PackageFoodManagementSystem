@@ -1,0 +1,47 @@
+﻿@{
+    ViewData["Title"] = "Report";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<div class="container my-4">
+    <h2 class="mb-4 text-center">Monthly Stock Report</h2>
+
+    <div class="row" mb-3>
+        <!-- Report Filter Form -->
+        <div class="col-12 mb-4">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <form class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label">Select Month</label>
+                            <select class="form-select" required>
+                                <option value="">-- Choose Month --</option>
+                                <option>January</option>
+                                <option>February</option>
+                                <option>March</option>
+                                <option>April</option>
+                                <option>May</option>
+                                <option>June</option>
+                                <option>July</option>
+                                <option>August</option>
+                                <option>September</option>
+                                <option>October</option>
+                                <option>November</option>
+                                <option>December</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Enter Year</label>
+                            <input type="number" class="form-control" placeholder="e.g. 2025" required />
+                        </div>
+                        <div class="col-12">
+                            <button type="submit" class="btn btn-success w-100">Generate Report</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        
+    </div>
+</div>
