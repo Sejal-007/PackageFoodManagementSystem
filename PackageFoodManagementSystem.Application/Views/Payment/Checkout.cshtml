@@ -2,11 +2,97 @@
     ViewData["Title"] = "Checkout";
 }
 
-<h2>💳 Checkout</h2>
-<p>Select your payment method:</p>
+<div class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow border-0 p-4" style="border-radius: 20px;">
+                <h2 class="fw-bold mb-4 text-center">💳 Secure <span class="text-warning">Checkout</span></h2>
+                <p class="text-muted text-center mb-4">Select your preferred payment method to complete the order.</p>
 
-<form asp-controller="Payment" asp-action="Confirm" method="post">
-    <button type="submit" name="method" value="Card" class="btn btn-primary">Pay by Card</button>
-    <button type="submit" name="method" value="UPI" class="btn btn-success">Pay by UPI</button>
-    <button type="submit" name="method" value="COD" class="btn btn-warning">Cash on Delivery</button>
-</form>
+                <form asp-controller="Payment" asp-action="Confirm" method="post" id="paymentForm">
+                    <div class="payment-options d-flex flex-column gap-3 mb-4">
+
+                        <label class="payment-card p-3 border rounded-3 d-flex align-items-center cursor-pointer">
+                            <input type="radio" name="method" value="Card" class="d-none" required>
+                            <div class="icon-box me-3 bg-primary text-white rounded-circle d-flex align-items-center justify-content-center" style="width:50px; height:50px;">
+                                <i class="fa-solid fa-credit-card"></i>
+                            </div>
+                            <div class="flex-grow-1">
+                                <h6 class="mb-0 fw-bold">Pay by Card</h6>
+                                <small class="text-muted">Visa, Mastercard, RuPay</small>
+                            </div>
+                            <div class="check-mark opacity-0 text-success"><i class="fa-solid fa-circle-check fs-4"></i></div>
+                        </label>
+
+                        <label class="payment-card p-3 border rounded-3 d-flex align-items-center cursor-pointer">
+                            <input type="radio" name="method" value="UPI" class="d-none">
+                            <div class="icon-box me-3 bg-success text-white rounded-circle d-flex align-items-center justify-content-center" style="width:50px; height:50px;">
+                                <i class="fa-solid fa-mobile-screen-button"></i>
+                            </div>
+                            <div class="flex-grow-1">
+                                <h6 class="mb-0 fw-bold">Pay by UPI</h6>
+                                <small class="text-muted">Google Pay, PhonePe, Paytm</small>
+                            </div>
+                            <div class="check-mark opacity-0 text-success"><i class="fa-solid fa-circle-check fs-4"></i></div>
+                        </label>
+
+                        <label class="payment-card p-3 border rounded-3 d-flex align-items-center cursor-pointer">
+                            <input type="radio" name="method" value="COD" class="d-none">
+                            <div class="icon-box me-3 bg-warning text-dark rounded-circle d-flex align-items-center justify-content-center" style="width:50px; height:50px;">
+                                <i class="fa-solid fa-hand-holding-dollar"></i>
+                            </div>
+                            <div class="flex-grow-1">
+                                <h6 class="mb-0 fw-bold">Cash on Delivery</h6>
+                                <small class="text-muted">Pay when you receive</small>
+                            </div>
+                            <div class="check-mark opacity-0 text-success"><i class="fa-solid fa-circle-check fs-4"></i></div>
+                        </label>
+
+                    </div>
+
+                    <button type="submit" class="btn btn-dark btn-lg w-100 py-3 shadow-sm rounded-pill fw-bold mt-2" id="btnPlaceOrder">
+                        Place Order <i class="fa-solid fa-arrow-right ms-2"></i>
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .payment-card {
+        transition: all 0.3s ease;
+        cursor: pointer;
+        border: 2px solid #f1f1f1 !important;
+    }
+
+        .payment-card:hover {
+            background-color: #f8f9fa;
+            transform: translateY(-2px);
+        }
+
+    /* Selection Logic */
+    input[type="radio"]:checked + .icon-box + div + .check-mark,
+    input[type="radio"]:checked ~ .check-mark {
+        opacity: 1 !important;
+    }
+
+    label:has(input[type="radio"]:checked) {
+        border-color: #198754 !important; /* Green Border */
+        background-color: #f0fff4;
+    }
+
+    .cursor-pointer {
+        cursor: pointer;
+    }
+</style>
+
+<script>
+    // Optional: Add a subtle vibration or sound effect when selecting
+    document.querySelectorAll('.payment-card').forEach(card => {
+        card.addEventListener('click', () => {
+            // Logic to clear other borders if :has() selector isn't supported in old browsers
+            document.querySelectorAll('.payment-card').forEach(c => c.classList.remove('border-success'));
+        });
+    });
+</script>

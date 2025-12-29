@@ -1,35 +1,96 @@
 ﻿@{
-
     ViewData["Title"] = "Delivery Addresses";
-
+    var userName = User.Identity.IsAuthenticated ? User.Identity.Name : "User";
 }
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
-<div class="account-layout">
-    <div class="sidebar">@Html.Partial("_AccountSidebar")</div>
+<div class="container my-5">
+    <div class="row">
+        <div class="col-md-3">
+            <div class="card border-0 shadow-sm p-3" style="border-radius: 15px;">
+                @Html.Partial("_AccountSidebar")
+            </div>
+        </div>
 
-    <div class="main-section">
-        <h2>Delivery Addresses</h2>
-        <p>Manage your saved delivery locations for faster checkout.</p>
+        <div class="col-md-9">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div>
+                    <h2 class="fw-bold mb-0">Delivery <span class="text-success">Addresses</span></h2>
+                    <p class="text-muted small">Locations saved for @userName</p>
+                </div>
+                <div class="d-flex gap-2">
+                    <a href="/User/EditAddress?id=1" class="btn btn-sm btn-outline-dark rounded-pill px-3">Edit</a>
+                    <button class="btn btn-sm btn-outline-danger rounded-pill px-3" onclick="confirmDelete(this)">Remove</button>
+                </div>
+            </div>
 
-        <ul style="margin-top:20px;">
-            <li><strong>Home:</strong> Old Madras Road, Chennai, PIN 600130</li>
-            <li><strong>Office:</strong> Tidel Park, Sholinganallur, PIN 600119</li>
-        </ul>
+            @if (TempData["Message"] != null)
+            {
+                <div class="alert alert-success border-0 shadow-sm rounded-3">
+                    <i class="fa-solid fa-circle-check me-2"></i> @TempData["Message"]
+                </div>
+            }
 
-        <a href="/User/AddAddress"
-           style="margin-top:15px;display:inline-block;padding:10px 20px;background:#27ae60;color:#fff;border:none;border-radius:6px;text-decoration:none;">
+            <div class="row g-3">
+                <div class="col-md-6 address-item">
+                    <div class="card h-100 border-0 shadow-sm p-3 position-relative" style="border-radius: 15px;">
+                        <span class="badge bg-success position-absolute top-0 end-0 m-3 rounded-pill">Default</span>
+                        <div class="d-flex align-items-center mb-2">
+                            <div class="bg-light p-2 rounded-circle me-3">
+                                <i class="fa-solid fa-house text-success fs-5"></i>
+                            </div>
+                            <h6 class="fw-bold mb-0">Home</h6>
+                        </div>
+                        <p class="text-muted small mb-3">Old Madras Road, Chennai,<br>PIN 600130</p>
+                        <div class="d-flex gap-2">
+                            <button class="btn btn-sm btn-outline-dark rounded-pill px-3">Edit</button>
+                            <button class="btn btn-sm btn-outline-danger rounded-pill px-3" onclick="confirmDelete(this)">Remove</button>
+                        </div>
+                    </div>
+                </div>
 
-            Add New Address
-        </a>
-
-        @if (TempData["Message"] != null)
-
-        {
-            <p style="margin-top:20px;color:#27ae60;">@TempData["Message"]</p>
-
-        }
+                <div class="col-md-6 address-item">
+                    <div class="card h-100 border-0 shadow-sm p-3" style="border-radius: 15px;">
+                        <div class="d-flex align-items-center mb-2">
+                            <div class="bg-light p-2 rounded-circle me-3">
+                                <i class="fa-solid fa-briefcase text-primary fs-5"></i>
+                            </div>
+                            <h6 class="fw-bold mb-0">Office</h6>
+                        </div>
+                        <p class="text-muted small mb-3">Tidel Park, Sholinganallur,<br>PIN 600119</p>
+                        <div class="d-flex gap-2">
+                            <button class="btn btn-sm btn-outline-dark rounded-pill px-3">Edit</button>
+                            <button class="btn btn-sm btn-outline-danger rounded-pill px-3" onclick="confirmDelete(this)">Remove</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 
+<script>
+    function confirmDelete(btn) {
+        if(confirm("Are you sure you want to remove this address?")) {
+            const card = btn.closest('.address-item');
+            card.style.transition = "all 0.4s ease";
+            card.style.opacity = "0";
+            card.style.transform = "scale(0.8)";
 
+            setTimeout(() => {
+                card.remove();
+                // Optionally call an API here to delete from DB
+            }, 400);
+        }
+    }
+</script>
+
+<style>
+    .card {
+        transition: transform 0.2s;
+    }
+
+        .card:hover {
+            transform: translateY(-5px);
+        }
+</style>

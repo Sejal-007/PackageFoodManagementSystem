@@ -1,31 +1,127 @@
 ﻿@{
-
     ViewData["Title"] = "Add New Gift Card";
-
+    var userName = User.Identity.IsAuthenticated ? User.Identity.Name : "User";
 }
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
-<div class="account-layout">
-    <div class="sidebar">@Html.Partial("_AccountSidebar")</div>
+<div class="container my-5">
+    <div class="row">
+        <div class="col-md-3">
+            <div class="card border-0 shadow-sm p-3" style="border-radius: 15px;">
+                @Html.Partial("_AccountSidebar")
+            </div>
+        </div>
 
-    <div class="main-section">
-        <h2>Add New Gift Card</h2>
-        <form method="post" asp-action="AddGiftCard" asp-controller="User" style="margin-top:20px;">
-            <label>Card Number</label>
-            <input type="text" name="cardNumber" required style="display:block;margin-bottom:10px;" />
+        <div class="col-md-9">
+            <div class="card border-0 shadow-sm p-4" style="border-radius: 20px;">
+                <h2 class="fw-bold mb-4">Add New <span class="text-primary">Gift Card</span></h2>
 
-            <label>Amount (₹)</label>
-            <input type="number" name="amount" required style="display:block;margin-bottom:10px;" />
+                <div class="row">
+                    <div class="col-lg-5 mb-4">
+                        <div class="gift-card-preview p-4 text-white shadow-lg position-relative"
+                             style="background: linear-gradient(135deg, #3498db, #2980b9); border-radius: 15px; height: 200px; overflow: hidden;">
+                            <div class="d-flex justify-content-between align-items-start">
+                                <i class="fa-solid fa-gift fs-1 opacity-50"></i>
+                                <span class="fw-bold">Alwayzzz Fresh</span>
+                            </div>
+                            <div class="mt-4">
+                                <h4 class="mb-0" id="previewNumber">XXXX XXXX XXXX XXXX</h4>
+                                <p class="small opacity-75 mt-1">GIFT CARD NUMBER</p>
+                            </div>
+                            <div class="d-flex justify-content-between align-items-end mt-2">
+                                <div>
+                                    <h6 class="mb-0 text-uppercase">@userName</h6>
+                                    <p class="small mb-0" style="font-size: 0.7rem;">CARD HOLDER</p>
+                                </div>
+                                <div class="text-end">
+                                    <h5 class="mb-0">₹<span id="previewAmount">0</span></h5>
+                                    <p class="small mb-0" style="font-size: 0.7rem;">BALANCE</p>
+                                </div>
+                            </div>
+                            <div class="position-absolute" style="bottom: -20px; right: -20px; font-size: 100px; opacity: 0.1;">
+                                <i class="fa-solid fa-cookie-bite"></i>
+                            </div>
+                        </div>
+                    </div>
 
-            <label>Expiry Date</label>
-            <input type="text" name="expiry" placeholder="e.g. 31 Jan 2026" required style="display:block;margin-bottom:10px;" />
+                    <div class="col-lg-7">
+                        <form method="post" asp-action="AddGiftCard" asp-controller="User" id="giftCardForm">
+                            <div class="mb-3">
+                                <label class="form-label fw-bold small text-muted">CARD NUMBER</label>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-light border-0"><i class="fa-solid fa-credit-card text-primary"></i></span>
+                                    <input type="text" name="cardNumber" id="inputNumber" maxlength="19" class="form-control bg-light border-0" placeholder="0000 0000 0000 0000" required>
+                                </div>
+                            </div>
 
-            <button type="submit"
-                    style="padding:10px 20px;background:#3498db;color:#fff;border:none;border-radius:6px;">
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <label class="form-label fw-bold small text-muted">AMOUNT (₹)</label>
+                                    <input type="number" name="amount" id="inputAmount" class="form-control bg-light border-0" placeholder="500" required>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label fw-bold small text-muted">EXPIRY DATE</label>
+                                    <input type="text" name="expiry" class="form-control bg-light border-0" placeholder="e.g. 31 Jan 2026" required>
+                                </div>
+                            </div>
 
-                Save Gift Card
-            </button>
-        </form>
+                            <button type="submit" class="btn btn-primary w-100 py-2 rounded-pill fw-bold shadow-sm mt-3">
+                                Activate Gift Card <i class="fa-solid fa-bolt ms-2"></i>
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 
+<style>
+    .input-group-text {
+        border-radius: 12px 0 0 12px !important;
+    }
+
+    .form-control {
+        border-radius: 12px !important;
+        transition: all 0.3s;
+    }
+
+    .input-group .form-control {
+        border-radius: 0 12px 12px 0 !important;
+    }
+
+    .form-control:focus {
+        background-color: #fff !important;
+        border: 1px solid #3498db !important;
+    }
+
+    .gift-card-preview {
+        transition: transform 0.3s ease;
+    }
+
+        .gift-card-preview:hover {
+            transform: scale(1.02) rotate(1deg);
+        }
+</style>
+
+<script>
+    // Live Sync for Card Number
+    document.getElementById('inputNumber').addEventListener('input', function (e) {
+        // Formats number with spaces
+        let value = e.target.value.replace(/\s+/g, '').replace(/[^0-9]/gi, '');
+        let formattedValue = value.match(/.{1,4}/g)?.join(' ') || '';
+        e.target.value = formattedValue;
+        document.getElementById('previewNumber').innerText = formattedValue || "XXXX XXXX XXXX XXXX";
+    });
+
+    // Live Sync for Amount
+    document.getElementById('inputAmount').addEventListener('input', function (e) {
+        document.getElementById('previewAmount').innerText = e.target.value || "0";
+    });
+
+    // Submission Animation
+    document.getElementById('giftCardForm').addEventListener('submit', function() {
+        const btn = this.querySelector('button');
+        btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span> Activating...';
+    });
+</script>
