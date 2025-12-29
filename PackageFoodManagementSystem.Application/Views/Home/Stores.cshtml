@@ -13,6 +13,11 @@
     .table thead {
         background-color: #343a40;
         color: #fff;
+        
+    }
+
+    .table {
+        border-radius: 12px;
     }
 
     .modal-header {
@@ -20,8 +25,8 @@
         color: #fff;
     }
 </style>
-<div class="container mt-5">
-    <div class="d-flex justify-content-between align-items-center mb-3">
+<div class="card">
+    <div class="card-header d-flex justify-content-between align-items-center">
         <h2>Store List</h2>
         <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addStoreModal">
             <i class="bi bi-plus-circle"></i> Add Store
@@ -29,10 +34,11 @@
     </div>
 
     <!-- Store Table -->
+    
     <table class="table table-bordered table-hover">
         <thead>
             <tr>
-                <th>#</th>
+                <th>Id</th>
                 <th>Store Name</th>
                 <th>Location</th>
                 <th>Manager</th>
@@ -58,6 +64,7 @@
             <!-- More rows dynamically -->
         </tbody>
     </table>
+    
 </div>
 
 <!-- Add Store Modal -->
