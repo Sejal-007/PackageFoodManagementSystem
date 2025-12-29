@@ -1,30 +1,125 @@
 ﻿@{
-
     ViewData["Title"] = "Add New Address";
-
+    var userName = User.Identity.IsAuthenticated ? User.Identity.Name : "User";
 }
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
-<div class="account-layout">
-    <div class="sidebar">@Html.Partial("_AccountSidebar")</div>
+<div class="container my-5">
+    <div class="row">
+        <div class="col-md-3">
+            <div class="card border-0 shadow-sm p-3" style="border-radius: 15px;">
+                @Html.Partial("_AccountSidebar")
+            </div>
+        </div>
 
-    <div class="main-section">
-        <h2>Add New Address</h2>
-        <form method="post" asp-action="AddAddress" asp-controller="User" style="margin-top:20px;">
-            <label>Street</label>
-            <input type="text" name="street" required style="display:block;margin-bottom:10px;" />
+        <div class="col-md-9">
+            <div class="card border-0 shadow-sm p-4" style="border-radius: 20px;">
+                <div class="d-flex align-items-center mb-4">
+                    <a href="/User/DeliveryAddress" class="btn btn-light rounded-circle me-3">
+                        <i class="fa-solid fa-arrow-left"></i>
+                    </a>
+                    <div>
+                        <h2 class="fw-bold mb-0">Add New <span class="text-success">Location</span></h2>
+                        <p class="text-muted small mb-0">Shipping details for <strong>@userName</strong></p>
+                    </div>
+                </div>
 
-            <label>City</label>
-            <input type="text" name="city" required style="display:block;margin-bottom:10px;" />
+                <form method="post" asp-action="AddAddress" asp-controller="User" id="addressForm">
+                    <div class="mb-4">
+                        <label class="form-label fw-bold small text-muted text-uppercase">Address Type</label>
+                        <div class="d-flex gap-2">
+                            <input type="radio" class="btn-check" name="addressType" id="typeHome" value="Home" checked>
+                            <label class="btn btn-outline-success rounded-pill px-4" for="typeHome">
+                                <i class="fa-solid fa-house me-2"></i>Home
+                            </label>
 
-            <label>PIN Code</label>
-            <input type="text" name="pin" required style="display:block;margin-bottom:10px;" />
+                            <input type="radio" class="btn-check" name="addressType" id="typeOffice" value="Office">
+                            <label class="btn btn-outline-success rounded-pill px-4" for="typeOffice">
+                                <i class="fa-solid fa-briefcase me-2"></i>Office
+                            </label>
 
-            <button type="submit" style="padding:10px 20px;background:#27ae60;color:#fff;border:none;border-radius:6px;">
+                            <input type="radio" class="btn-check" name="addressType" id="typeOther" value="Other">
+                            <label class="btn btn-outline-success rounded-pill px-4" for="typeOther">
+                                <i class="fa-solid fa-location-dot me-2"></i>Other
+                            </label>
+                        </div>
+                    </div>
 
-                Save Address
-            </button>
-        </form>
+                    <div class="row g-3">
+                        <div class="col-12">
+                            <label class="form-label fw-bold small text-muted">STREET / LANDMARK</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light border-0"><i class="fa-solid fa-map-pin text-success"></i></span>
+                                <input type="text" name="street" class="form-control bg-light border-0 py-2" placeholder="e.g. Flat No, Building Name, Street" required>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold small text-muted">CITY</label>
+                            <input type="text" name="city" class="form-control bg-light border-0 py-2" placeholder="e.g. Chennai" required>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold small text-muted">PIN CODE</label>
+                            <input type="text" name="pin" class="form-control bg-light border-0 py-2" placeholder="6-digit PIN" pattern="\d{6}" maxlength="6" required>
+                        </div>
+                    </div>
+
+                    <div class="mt-5 d-flex align-items-center justify-content-between">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="setPrimary">
+                            <label class="form-check-label small text-muted" for="setPrimary">
+                                Set as default shipping address
+                            </label>
+                        </div>
+                        <button type="submit" class="btn btn-success px-5 py-2 rounded-pill fw-bold shadow-sm transition-btn">
+                            Save Address <i class="fa-solid fa-circle-check ms-2"></i>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
     </div>
 </div>
 
+<style>
+    .input-group-text {
+        border-radius: 12px 0 0 12px !important;
+    }
+
+    .form-control {
+        border-radius: 12px !important;
+    }
+
+    .input-group .form-control {
+        border-radius: 0 12px 12px 0 !important;
+    }
+
+    .form-control:focus {
+        background-color: #fff !important;
+        box-shadow: 0 0 0 0.25rem rgba(25, 135, 84, 0.1) !important;
+        border: 1px solid #198754 !important;
+    }
+
+    .transition-btn:active {
+        transform: scale(0.95);
+    }
+</style>
+
+<script>
+    // Simple visual feedback for PIN code
+    document.getElementsByName('pin')[0].addEventListener('input', function(e) {
+        if(this.value.length === 6) {
+            this.classList.add('is-valid');
+            this.classList.remove('is-invalid');
+        } else {
+            this.classList.remove('is-valid');
+        }
+    });
+
+    // Loading effect on save
+    document.getElementById('addressForm').addEventListener('submit', function() {
+        const btn = this.querySelector('button[type="submit"]');
+        btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span> Saving...';
+    });
+</script>

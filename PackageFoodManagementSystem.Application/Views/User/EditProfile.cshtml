@@ -3,18 +3,133 @@
 }
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
-<div class="account-layout">
-    <div class="sidebar">@Html.Partial("_AccountSidebar")</div>
-    <div class="main-section">
-        <h2>Edit Profile</h2>
-        <form>
-            <label>Name</label>
-            <input type="text" value="Yayati Nehe" />
-            <label>Email</label>
-            <input type="email" value="yayatinehe@gmail.com" />
-            <label>Phone</label>
-            <input type="tel" value="+91 7249662489" />
-            <button type="submit">Save Changes</button>
-        </form>
+<div class="container my-5">
+    <div class="row">
+        <div class="col-md-3">
+            <div class="card border-0 shadow-sm p-3" style="border-radius: 15px;">
+                @Html.Partial("_AccountSidebar")
+            </div>
+        </div>
+
+        <div class="col-md-9">
+            <div class="card border-0 shadow-sm p-4" style="border-radius: 20px;">
+                <div class="d-flex align-items-center mb-4">
+                    <div class="bg-success text-white rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 45px; height: 45px;">
+                        <i class="fa-solid fa-user-gear fs-5"></i>
+                    </div>
+                    <h2 class="fw-bold mb-0">Edit <span class="text-success">Profile</span></h2>
+                </div>
+
+                <form id="editProfileForm">
+                    <div class="text-center mb-5">
+                        <div class="position-relative d-inline-block">
+                            <img id="profilePreview" src="https://ui-avatars.com/api/?name=Yayati+Nehe&background=198754&color=fff"
+                                 class="rounded-circle border border-4 border-white shadow"
+                                 style="width: 120px; height: 120px; object-fit: cover;" alt="Profile">
+                            <label for="uploadImg" class="btn btn-sm btn-dark position-absolute bottom-0 end-0 rounded-circle shadow">
+                                <i class="fa-solid fa-camera"></i>
+                                <input type="file" id="uploadImg" class="d-none" accept="image/*" onchange="previewImage(this)">
+                            </label>
+                        </div>
+                        <p class="small text-muted mt-2">Update your profile photo</p>
+                    </div>
+
+                    <div class="row g-4">
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold small text-muted">FULL NAME</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light border-0"><i class="fa-solid fa-signature text-success"></i></span>
+                                <input type="text" class="form-control bg-light border-0 shadow-none py-2" value="Yayati Nehe" required>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold small text-muted">PHONE NUMBER</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light border-0"><i class="fa-solid fa-phone text-success"></i></span>
+                                <input type="tel" class="form-control bg-light border-0 shadow-none py-2" value="+91 7249662489" required>
+                            </div>
+                        </div>
+
+                        <div class="col-12">
+                            <label class="form-label fw-bold small text-muted">EMAIL ADDRESS</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light border-0"><i class="fa-solid fa-envelope text-success"></i></span>
+                                <input type="email" class="form-control bg-light border-0 shadow-none py-2" value="yayatinehe@gmail.com" required>
+                            </div>
+                        </div>
+                    </div>
+
+                    <hr class="my-5 text-muted opacity-25">
+
+                    <div class="d-flex justify-content-between align-items-center">
+                        <button type="reset" class="btn btn-link text-decoration-none text-muted fw-bold">Discard Changes</button>
+                        <button type="submit" class="btn btn-success px-5 py-2 rounded-pill fw-bold shadow-sm" id="saveBtn">
+                            Save Changes <i class="fa-solid fa-circle-check ms-2"></i>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
     </div>
 </div>
+
+<div id="saveToast" class="position-fixed bottom-0 end-0 p-3" style="z-index: 11">
+    <div class="toast hide align-items-center text-white bg-success border-0 shadow-lg" role="alert" aria-live="assertive" aria-atomic="true" style="border-radius: 12px;">
+        <div class="d-flex">
+            <div class="toast-body p-3">
+                <i class="fa-solid fa-check-double me-2"></i> Profile updated successfully!
+            </div>
+            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+    </div>
+</div>
+
+<style>
+    .input-group-text {
+        border-radius: 12px 0 0 12px !important;
+    }
+
+    .form-control {
+        border-radius: 0 12px 12px 0 !important;
+    }
+
+        .form-control:focus {
+            background-color: #f8f9fa !important;
+            border: 1px solid #198754 !important;
+        }
+</style>
+
+<script>
+    // Image Preview Functionality
+    function previewImage(input) {
+        if (input.files && input.files[0]) {
+            var reader = new FileReader();
+            reader.onload = function(e) {
+                document.getElementById('profilePreview').src = e.target.result;
+            }
+            reader.readAsDataURL(input.files[0]);
+        }
+    }
+
+    // Interactive Submit Simulation
+    document.getElementById('editProfileForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        const btn = document.getElementById('saveBtn');
+        const originalContent = btn.innerHTML;
+
+        // Visual Feedback
+        btn.disabled = true;
+        btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span> Updating...';
+
+        setTimeout(() => {
+            btn.innerHTML = originalContent;
+            btn.disabled = false;
+
+            // Show Bootstrap Toast
+            var toastEl = document.querySelector('.toast');
+            var toast = new bootstrap.Toast(toastEl);
+            toast.show();
+        }, 1500);
+    });
+</script>

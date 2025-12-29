@@ -1,7 +1,4 @@
-﻿// Please see documentation at https://learn.microsoft.com/aspnet/core/client-side/bundling-and-minification
-// for details on configuring this project to bundle and minify static web assets.
-
-// Write your JavaScript code.
+﻿// --- User Menu Logic ---
 function openUserMenu() {
     document.getElementById("userPopup").classList.add("open");
     document.getElementById("popupOverlay").classList.add("show");
@@ -15,17 +12,19 @@ function closeUserMenu() {
 function redirectTo(url) {
     window.location.href = url;
 }
+
+// --- Cart Logic ---
+
 function increase(btn) {
     const card = btn.closest(".product-card");
     const qtySpan = card.querySelector(".qty");
 
     let qty = parseInt(qtySpan.innerText);
-    qtySpan.innerText = qty + 1;
+    qty = qty + 1;
+    qtySpan.innerText = qty;
 
-    updateCartCount(1);
-
-    // OPTIONAL: send to backend
-    sendToCart(card);
+    saveToLocalStorage(card, qty);
+    updateCartBadge();
 }
 
 function decrease(btn) {
@@ -34,57 +33,81 @@ function decrease(btn) {
 
     let qty = parseInt(qtySpan.innerText);
     if (qty > 0) {
-        qtySpan.innerText = qty - 1;
-        updateCartCount(-1);
+        qty = qty - 1;
+        qtySpan.innerText = qty;
+        saveToLocalStorage(card, qty);
+        updateCartBadge();
     }
 }
 
-function updateCartCount(change) {
-    const badge = document.getElementById("cart-count");
-    let count = parseInt(badge.innerText) || 0;
+function saveToLocalStorage(card, qty) {
+    // 1. Get existing cart or empty array
+    let cart = JSON.parse(localStorage.getItem("myCart")) || [];
 
-    count += change;
-    if (count < 0) count = 0;
+    const productId = card.dataset.id;
+    const itemData = {
+        id: productId,
+        name: card.dataset.name,
+        price: parseFloat(card.dataset.price),
+        image: card.querySelector("img").src,
+        qty: qty
+    };
 
-    badge.innerText = count;
+    // 2. Check if this specific product is already in the array
+    const existingItemIndex = cart.findIndex(item => item.id === productId);
 
-    // small animation
-    badge.style.transform = "scale(1.3)";
-    setTimeout(() => badge.style.transform = "scale(1)", 150);
+    if (existingItemIndex > -1) {
+        // If it exists, update its quantity or remove it if qty is 0
+        if (qty > 0) {
+            cart[existingItemIndex].qty = qty;
+        } else {
+            cart.splice(existingItemIndex, 1);
+        }
+    } else if (qty > 0) {
+        // 3. If it's a NEW item, PUSH it so it doesn't overlap
+        cart.push(itemData);
+    }
+
+    // 4. Save the full list back to memory
+    localStorage.setItem("myCart", JSON.stringify(cart));
 }
 
-function sendToCart(card) {
-    const id = card.dataset.id;
-    const name = card.dataset.name;
-    const price = card.dataset.price;
-    const quantity = card.dataset.quantity;
+function updateCartBadge() {
+    const cart = JSON.parse(localStorage.getItem("myCart")) || [];
+    const badge = document.getElementById("cart-count");
 
-    fetch('/Cart/AddToCart', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-        body: `id=${id}&name=${encodeURIComponent(name)}&quantity=${quantity}&price=${price}`
+    if (badge) {
+        // FIXED: Sum all quantities (3 chips + 3 juices = 6)
+        const totalItems = cart.reduce((sum, item) => sum + parseInt(item.qty), 0);
+
+        badge.innerText = totalItems;
+
+        // Start from 0: Hide if empty, show if > 0
+        if (totalItems > 0) {
+            badge.style.display = "flex";
+        } else {
+            badge.style.display = "none";
+        }
+    }
+}
+
+// Sync the numbers on the cards when you return to the page
+function syncCardNumbers() {
+    const cart = JSON.parse(localStorage.getItem("myCart")) || [];
+    document.querySelectorAll(".product-card").forEach(card => {
+        const productId = card.dataset.id;
+        const qtySpan = card.querySelector(".qty");
+        const item = cart.find(i => i.id === productId);
+        if (item) {
+            qtySpan.innerText = item.qty;
+        } else {
+            qtySpan.innerText = "0";
+        }
     });
 }
 
-function addToCart(button) {
-    // Increase cart count UI
-    let cartBadge = document.getElementById("cart-count");
-    let currentCount = parseInt(cartBadge.innerText) || 0;
-    cartBadge.innerText = currentCount + 1;
-
-    // OPTIONAL: send data to backend
-    const card = button.closest(".product-card");
-
-    if (card) {
-        const id = card.dataset.id;
-        const name = card.dataset.name;
-        const quantity = card.dataset.quantity;
-        const price = card.dataset.price;
-
-        fetch('/Cart/AddToCart', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-            body: `id=${id}&name=${encodeURIComponent(name)}&quantity=${encodeURIComponent(quantity)}&price=${price}`
-        });
-    }
-}
+// Run when page loads
+document.addEventListener("DOMContentLoaded", () => {
+    updateCartBadge();
+    syncCardNumbers();
+});
