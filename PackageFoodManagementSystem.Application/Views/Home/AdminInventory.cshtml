@@ -9,20 +9,14 @@
     body {
         background: linear-gradient(to right, #f8f9fa, #e9ecef);
         font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        background: #f8f9fa;
         font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
     }
 
-    h2 {
-        font-weight: 700;
-        font-weight: 600;
-        color: #343a40;
-    }
+    
 
     .card-summary {
         border-radius: 12px;
         box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-        transition: transform 0.2s, box-shadow 0.2s;
         border-radius: 10px;
         box-shadow: 0 2px 6px rgba(0,0,0,0.1);
         transition: 0.2s;
@@ -41,46 +35,14 @@
         .card-summary h3 {
             color:  #FF6F3C;
             font-weight: bold;
-            transform: translateY(-4px);
-            box-shadow: 0 4px 10px rgba(0,0,0,0.15);
         }
 
     .table {
         border-radius: 10px;
-        overflow: hidden;
-    }
-
-        .table thead {
-            background: #0d6efd;
-            color: #fff;
-        }
-
-        .table tbody tr:hover {
-            background-color: #f1f5ff;
-            transition: background-color 0.3s;
-    .status-ok {
-        color: #198754;
-        font-weight: 500;
-        }
-
-    .status-expired {
-        color: #dc3545;
-        font-weight: bold;
-    }
-
-    .status-warning {
-        color: #fd7e14;
-        font-weight: bold;
-        font-weight: 500;
-    }
-
-    .status-ok {
-        color: #198754;
-        font-weight: bold;
     }
 
     .btn {
-        border-radius: 8px;
+        border-radius: 7px;
     }
 
     .modal-content {
@@ -89,7 +51,7 @@
     }
 
     .modal-header {
-        background: #0d6efd;
+        background: #FF6F3C;
         color: #fff;
         border-top-left-radius: 12px;
         border-top-right-radius: 12px;
@@ -101,31 +63,16 @@
     .modal-footer {
         background: #f8f9fa;
     }
-    .custom-header {
-        background-color: #FF6F3C !important;
-    }
+    
 
-    /* Ensure button is green */
-    .btn-success {
-        background-color: #28a745; /* Bootstrap green */
-        border-color: #28a745;
-        color: #fff;
-    }
-
-        .btn-success:hover {
-            background-color: #218838;
-            border-color: #1e7e34;
-        }
 </style>
 
 
 
 <div class="container my-4">
     <h2 class="mb-4 text-center">Inventory Management</h2>
-    <h2 class="text-center mb-4">📦 Admin Inventory Management</h2>
 
-    <!-- Dashboard Summary -->
-    <!-- Dashboard -->
+    <!-- Inventory -->
     <div class="row mb-4">
         <div class="col-md-3">
             <div class="card card-summary text-center">
@@ -148,8 +95,7 @@
                 <div class="card-body">
                     <h5>Batches</h5>
                     <h3>35</h3>
-                    <h5>Out of Stock</h5>
-                    <h3>8</h3>
+                    
                 </div>
             </div>
         </div>
@@ -158,24 +104,20 @@
                 <div class="card-body">
                     <h5>Out of Stock</h5>
                     <h3>8</h3>
-                    <h5>Expiring Soon</h5>
-                    <h3>5</h3>
+                    
                 </div>
             </div>
         </div>
     </div>
 
     <!-- Inventory Table -->
-    <div class="card shadow-lg">
-    <div class="card shadow-sm">
-        <div class="card-header d-flex justify-content-between align-items-center bg-primary text-white">
+    <div class="card">
+        <div class="card-header d-flex justify-content-between align-items-center">
             <h5>Inventory Details</h5>
-            <button class="btn btn-light" data-bs-toggle="modal" data-bs-target="#addProductModal">Add Product</button>
-            <h5 class="mb-0">Inventory Details</h5>
-            <button class="btn btn-light btn-sm" data-bs-toggle="modal" data-bs-target="#addProductModal">➕ Add Product</button>
+            <button class="btn btn-primary btn-sm " data-bs-toggle="modal" data-bs-target="#addProductModal">Add Product</button>
         </div>
         <div class="card-body">
-            <table class="table table-bordered table-hover">
+            <table class="table table-bordered">
                 <thead>
                     <tr>
                         <th>Product Name</th>
@@ -192,7 +134,7 @@
                         <td>BP-101</td>
                         <td>200</td>
                         <td>2025-01-15</td>
-                        <td class="status-warning">⚠ Going to Expire</td>
+                        <td >Going to Expire</td>
                         <td>
                             <button class="btn btn-sm btn-warning" data-bs-toggle="modal" data-bs-target="#editProductModal">Edit</button>
                             <button class="btn btn-sm btn-danger">Delete</button>
@@ -203,7 +145,7 @@
                         <td>CB-202</td>
                         <td>0</td>
                         <td>2024-12-01</td>
-                        <td class="status-expired">❌ Out of Stock</td>
+                        <td>Out of Stock</td>
                         <td>
                             <button class="btn btn-sm btn-warning" data-bs-toggle="modal" data-bs-target="#editProductModal">Edit</button>
                             <button class="btn btn-sm btn-danger">Delete</button>
@@ -214,9 +156,9 @@
                         <td>JP-303</td>
                         <td>500</td>
                         <td>2025-06-20</td>
-                        <td class="status-ok">✅ In Stock</td>
+                        <td>In Stock</td>
                         <td>
-                            <button class="btn btn-sm btn-warning" data-bs-toggle="modal" data-bs-target="#editProductModal">Edit</button>
+                            <button class="btn btn-sm px-2 py-1 btn-warning" data-bs-toggle="modal" data-bs-target="#editProductModal">Edit</button>
                             <button class="btn btn-sm btn-danger">Delete</button>
                         </td>
                     </tr>
@@ -226,9 +168,8 @@
     </div>
 </div>
 
-<!-- Add Product Modal -->
+<!--add product-->
 <div class="modal fade" id="addProductModal" tabindex="-1" aria-hidden="true">
-<div class="modal fade" id="addProductModal" tabindex="-1">
     <div class="modal-dialog">
         <form class="modal-content">
             <div class="modal-header">
@@ -239,62 +180,54 @@
                 <div class="mb-3">
                     <label class="form-label">Product Name</label>
                     <input type="text" class="form-control" placeholder="Enter product name">
-                    <input type="text" class="form-control" placeholder="Enter product name" required />
                 </div>
                 <div class="mb-3">
                     <label class="form-label">Batch No</label>
                     <input type="text" class="form-control" placeholder="Enter batch number">
-                    <input type="text" class="form-control" placeholder="Enter batch number" required />
                 </div>
                 <div class="mb-3">
                     <label class="form-label">Quantity</label>
                     <input type="number" class="form-control" placeholder="Enter quantity">
-                    <input type="number" class="form-control" placeholder="Enter quantity" required />
                 </div>
                 <div class="mb-3">
                     <label class="form-label">Expiry Date</label>
                     <input type="date" class="form-control">
-                    <input type="date" class="form-control" required />
                 </div>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                <button type="submit" class="btn btn-primary">Save Product</button>
+                <button type="submit" class="btn">Save Product</button>
             </div>
         </form>
     </div>
 </div>
 
-<!-- Edit Product Modal -->
+
+<!-- Add Product Modal -->
 <div class="modal fade" id="editProductModal" tabindex="-1" aria-hidden="true">
-<div class="modal fade" id="editProductModal" tabindex="-1">
     <div class="modal-dialog">
         <form class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title">Edit Product</h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body">
                 <!-- Same fields as Add Product -->
                 <div class="mb-3">
                     <label class="form-label">Product Name</label>
                     <input type="text" class="form-control" value="Milk Powder">
-                    <input type="text" class="form-control" value="Milk Powder" />
                 </div>
                 <div class="mb-3">
                     <label class="form-label">Batch No</label>
                     <input type="text" class="form-control" value="BP-101">
-                    <input type="text" class="form-control" value="BP-101" />
                 </div>
                 <div class="mb-3">
                     <label class="form-label">Quantity</label>
                     <input type="number" class="form-control" value="200">
-                    <input type="number" class="form-control" value="200" />
                 </div>
                 <div class="mb-3">
                     <label class="form-label">Expiry Date</label>
                     <input type="date" class="form-control" value="2025-01-15">
-                    <input type="date" class="form-control" value="2025-01-15" />
                 </div>
             </div>
             <div class="modal-footer">
