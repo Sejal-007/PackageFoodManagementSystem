@@ -110,7 +110,21 @@ namespace PackagedFoodFrontend.Controllers
             TempData["Message"] = $"Gift card added: {cardNumber} ₹{amount} – Expires: {expiry}";
             return RedirectToAction("GiftCards");
         }
+        // GET: User/EditAddress/5
+        public IActionResult EditAddress(int id)
+        {
+            // In a real app, you would fetch the address from a database using the 'id'
+            // For now, we return the view
+            return View();
+        }
 
+        [HttpPost]
+        public IActionResult UpdateAddress(int id, string street, string city, string pin)
+        {
+            // Logic to save changes goes here
+            TempData["Message"] = "Address updated successfully!";
+            return RedirectToAction("DeliveryAddress");
+        }
 
     }
 }

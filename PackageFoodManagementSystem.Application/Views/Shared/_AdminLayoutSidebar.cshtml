@@ -1,5 +1,5 @@
 ﻿
-<div class="sidebar">
+<div class="store-sidebar">
     <h2>Admin</h2>
     <ul class="sidebar-menu">
         <li>
@@ -15,19 +15,20 @@
             </a>
         </li>
         <li>
-            <a asp-controller="StoreManager" asp-action="Home">
+            <a asp-controller="Home" asp-action="Stores">
 
                 📦 StoreManagers
             </a>
         </li>
         <li>
-            <a asp-controller="Inventory" asp-action="Home">
+            <a asp-controller="Home" asp-action="AdminInventory">
+      
 
                 🛒 Inventory
             </a>
         </li>
         <li>
-            <a asp-controller="Report" asp-action="Home">
+            <a asp-controller="Home" asp-action="Report">
 
                 📊 Reports
             </a>
@@ -42,9 +43,7 @@
 
     </ul>
 
-    @* <div class="sidebar-footer">
-        <a asp-controller="Account" asp-action="Settings">⚙ Settings</a>
-        <a asp-controller="Home" asp-action="SignIn">🚪 Log Out</a>
-    </div> *@
+
 </div>
+
 

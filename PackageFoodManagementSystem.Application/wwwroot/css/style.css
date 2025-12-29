@@ -1,6 +1,6 @@
-
+﻿
 /* =========================================================
-   PFMS � Optimized CSS (Functionality Preserved)
+   PFMS — Optimized CSS (Functionality Preserved)
    Sections: Base, Layout, Navbar, Sidebar/Dashboard,
    Hero (image band), Forms/Buttons, Tables, User Popup,
    Footer, Responsive
@@ -297,6 +297,19 @@ input, select, textarea {
         transform: translateY(-6px);
         box-shadow: 0 8px 20px rgba(0,0,0,0.2);
     }
+
+@media (max-width: 992px) {
+    .cards {
+        grid-template-columns: repeat(2, minmax(240px, 1fr));
+    }
+}
+/* Mobile screens (≤ 576px): stack cards in 1 column */
+
+@media (max-width: 576px) {
+    .cards {
+        grid-template-columns: 1fr;
+    }
+}
 
 /* =========================================================
    Hero / Image Band (between sticky nav and fixed footer)
@@ -850,3 +863,5 @@ footer, .app-footer {
     margin-top: calc(-1 * var(--nav-h));
     visibility: hidden;
 }
+
+/*Admin Inventory css*/
