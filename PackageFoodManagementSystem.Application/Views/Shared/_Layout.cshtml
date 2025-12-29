@@ -3,140 +3,174 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - Always Fresh</title>
-
+    <title>@ViewData["Title"] - ALWAYZZZ FRESH</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
-
-    @await RenderSectionAsync("Styles", required: false)
 </head>
-<body class="d-flex flex-column min-vh-100">
-
-    @{
-        var controller = ViewContext.RouteData.Values["Controller"]?.ToString();
-        var action = ViewContext.RouteData.Values["Action"]?.ToString();
-        bool isStoreManager = (controller == "StoreManager" || controller == "StoreManager1");
-    }
-
-    <div class="flex-grow-1">
-        @if (isStoreManager)
-        {
-            <div class="store-layout" style="display: flex; min-height: 100vh;">
-                @await Html.PartialAsync("_StoreManagerSidebar")
-                <div class="store-content" style="flex: 1; display: flex; flex-direction: column;">
-                    <header class="header px-4 py-3 bg-white border-bottom">
-                        <div class="d-flex justify-content-between align-items-center">
-                            <h1 class="h4 mb-0">🍱 Manager Dashboard</h1>
-                            <a asp-controller="Home" asp-action="SignIn" class="btn btn-outline-danger btn-sm">Logout</a>
-                        </div>
-                    </header>
-                    <main role="main" class="p-4">
-                        @RenderBody()
-                    </main>
-                </div>
+<body>
+    <header class="app-header">
+        <nav class="navbar navbar-expand-lg px-4 py-3 shadow-sm">
+            <div class="d-flex align-items-center">
+                <img src="~/images/applogo.png" class="app-logo me-2" style="width:50px;" alt="Logo">
+                <span class="brand fw-bold text-orange">ALWAYZZZ FRESH</span>
             </div>
-        }
-        else
-        {
-            <header class="app-header border-bottom bg-white">
-                <nav class="navbar navbar-expand-lg px-4 py-3 container-fluid">
-                    <span class="brand" style="color: #FF6F3C; font-weight: bold; font-size: 32px;">ALWAYZZZ FRESH</span>
-                    <ul class="navbar-nav ms-auto align-items-center">
-                        <li class="nav-item me-3"><a class="nav-link fw-semibold" asp-controller="Home" asp-action="Index">Home</a></li>
-                        <li class="nav-item me-3"><a class="nav-link fw-semibold" asp-controller="Menu" asp-action="Index">Explore</a></li>
-                        <li class="nav-item px-3">
-                            <a class="nav-link position-relative" asp-controller="User" asp-action="MyBasket">
-                                <i class="fa-solid fa-cart-shopping fa-lg" style="color: #ff6347;"></i>
-                                <span id="cart-count" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="font-size: 0.7rem;">0</span>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="javascript:void(0)" onclick="openUserMenu()">
-                                <i class="fa-solid fa-user-circle fa-2x" style="color: #ff6347;"></i>
-                            </a>
-                        </li>
-                    </ul>
-                </nav>
-            </header>
 
-            @* 👤 USER POPUP MENU *@
-            <div id="userPopup" class="user-popup" style="display: none; position: fixed; top: 85px; right: 20px; width: 240px; background: white; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.15); z-index: 1001; overflow: hidden; border: 1px solid #eee;">
-                <div class="p-3 border-bottom bg-light fw-bold">My Account</div>
-                <ul class="list-unstyled mb-0">
-                    <li class="p-3 border-bottom menu-hover-item" onclick="location.href='@Url.Action("Dashboard", "User")'" style="cursor:pointer;">
-                        <i class="fa-solid fa-user me-2"></i> Profile
-                    </li>
-                    <li class="p-3 border-bottom menu-hover-item" onclick="location.href='@Url.Action("MyBasket", "User")'" style="cursor:pointer;">
-                        <i class="fa-solid fa-basket-shopping me-2"></i> My Basket
-                    </li>
-                    <li class="p-3 text-danger menu-hover-item" onclick="location.href='@Url.Action("SignIn", "Home")'" style="cursor:pointer;">
-                        <i class="fa-solid fa-right-from-bracket me-2"></i> Logout
-                    </li>
-                </ul>
-            </div>
-            <div id="popupOverlay" onclick="closeUserMenu()" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.2); z-index: 1000;"></div>
+            <ul class="navbar-nav ms-auto align-items-center">
+                <li class="nav-item me-3"><a class="nav-link" asp-controller="Home" asp-action="Index">Home</a></li>
+                <li class="nav-item me-3"><a class="nav-link" asp-controller="Menu" asp-action="Index">Explore</a></li>
 
-            <div class="container-fluid p-0">
-                <div class="row g-0">
-                    @if (controller == "User" && action != "Index")
-                    {
-                        <aside class="col-md-3 col-lg-2 border-end bg-light" style="min-height: 90vh;">
-                            <div class="p-3">@await Html.PartialAsync("_AccountSidebar")</div>
-                        </aside>
-                        <main role="main" class="col-md-9 col-lg-10 p-4">@RenderBody()</main>
-                    }
-                    else
-                    {
-                        <main role="main" class="col-12">@RenderBody()</main>
-                    }
-                </div>
-            </div>
-        }
+                <li class="nav-item me-4">
+                    <a class="nav-link position-relative" asp-controller="User" asp-action="MyBasket">
+                        <i class="fa-solid fa-cart-shopping fa-lg" style="color: #ff6347;"></i>
+                        <span id="cart-count" class="badge bg-danger rounded-circle position-absolute top-0 start-100 translate-middle" style="display: none; font-size: 0.7rem;">0</span>
+                    </a>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link" href="javascript:void(0)" onclick="openUserMenu()">
+                        <i class="fa-solid fa-user-circle fa-2x" style="color: #ff6347;"></i>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+    </header>
+
+    <div id="userPopup" class="user-popup">
+        <div class="popup-header">
+            <span>User Menu</span>
+            <span class="close-btn" onclick="closeUserMenu()">×</span>
+        </div>
+        <ul class="popup-list">
+            <li onclick="redirectTo('/User/Dashboard')"><i class="fa-solid fa-user-circle"></i> My Profile</li>
+            <li onclick="redirectTo('/User/MyBasket')"><i class="fa-solid fa-cart-shopping"></i> My Basket</li>
+            <li onclick="redirectTo('/User/MyOrders')"><i class="fa-solid fa-shopping-bag"></i> My Orders</li>
+            <li onclick="redirectTo('/User/ContactUs')"><i class="fa-solid fa-headset"></i> Contact Us</li>
+            <li class="logout" onclick="redirectTo('/Home/Index')"><i class="fa-solid fa-arrow-right-from-bracket"></i> Logout</li>
+        </ul>
     </div>
+    <div id="popupOverlay" onclick="closeUserMenu()"></div>
 
-    @if (!isStoreManager)
-    {
-        <footer class="app-footer">
-            <div class="footer-container">
-                <div class="footer-section">
-                    <h4>PackagedFood</h4>
-                    <p>Fresh • Safe • Reliable packaged food delivered to your door.</p>
+    <div class="container mt-4">
+        <main role="main" class="pb-3">
+            @RenderBody()
+        </main>
+    </div>
+    <footer class="footer-section bg-dark text-white pt-5 pb-3 mt-5">
+        <div class="container">
+            <div class="row gy-4 mb-5">
+                <div class="col-lg-4 col-md-6">
+                    <h4 class="fw-bold text-orange mb-4">ALWAYZZZ FRESH</h4>
+                    <p class="text-white-50 pe-lg-5">
+                        Providing high-quality farm-fresh produce and daily essentials delivered directly to your doorstep in just 30 minutes.
+                    </p>
+                    <div class="d-flex gap-3 mt-4">
+                        <a href="#" class="social-icon-box"><i class="fa-brands fa-facebook-f"></i></a>
+                        <a href="#" class="social-icon-box"><i class="fa-brands fa-instagram"></i></a>
+                        <a href="#" class="social-icon-box"><i class="fa-brands fa-twitter"></i></a>
+                    </div>
                 </div>
-                <div class="footer-section">
-                    <h5>Quick Links</h5>
-                    <ul>
+
+                <div class="col-lg-2 col-6">
+                    <h6 class="fw-bold text-white mb-4">Quick Links</h6>
+                    <ul class="list-unstyled footer-links">
                         <li><a asp-controller="Home" asp-action="Index">Home</a></li>
-                        <li><a asp-controller="Menu" asp-action="Index">Menu</a></li>
+                        <li><a asp-controller="Menu" asp-action="Index">Explore Menu</a></li>
+                        <li><a asp-controller="User" asp-action="ContactUs">Contact Us</a></li>
                     </ul>
                 </div>
-                <div class="footer-section">
-                    <h5>Follow Us</h5>
-                    <div class="social-icons">
-                        <i class="fa-brands fa-facebook-f p-2"></i>
-                        <i class="fa-brands fa-instagram p-2"></i>
-                        <i class="fa-brands fa-twitter p-2"></i>
+
+                <div class="col-lg-3 col-6">
+                    <h6 class="fw-bold text-white mb-4">Why Fresh?</h6>
+                    <ul class="list-unstyled footer-links">
+                        <li><i class="fa-solid fa-check text-orange me-2"></i> 30-Min Delivery</li>
+                        <li><i class="fa-solid fa-check text-orange me-2"></i> Secure Checkout</li>
+                        <li><i class="fa-solid fa-check text-orange me-2"></i> Farm-to-Fork</li>
+                        <li><i class="fa-solid fa-check text-orange me-2"></i> 24/7 Support</li>
+                    </ul>
+                </div>
+
+                <div class="col-lg-3 col-md-6">
+                    <h6 class="fw-bold text-white mb-4">Stay Fresh</h6>
+                    <p class="small text-white-50">Subscribe to get the latest deals on essentials.</p>
+                    <div class="input-group mb-3">
+                        <input type="text" class="form-control bg-transparent border-secondary text-white small" placeholder="Your Email">
+                        <button class="btn btn-orange btn-sm px-3" type="button">Join</button>
                     </div>
                 </div>
             </div>
-            <div class="footer-bottom">© 2025 PackagedFood. All rights reserved.</div>
-        </footer>
-    }
+
+            <hr class="border-secondary opacity-25">
+
+            <div class="row align-items-center pt-3">
+                <div class="col-md-6 text-center text-md-start">
+                    <p class="small text-white-50 mb-0">&copy; 2024 Alwayzzz Fresh. All rights reserved.</p>
+                </div>
+                <div class="col-md-6 text-center text-md-end">
+                    <div class="payment-methods opacity-50">
+                        <i class="fa-brands fa-cc-visa fs-3 mx-2"></i>
+                        <i class="fa-brands fa-cc-mastercard fs-3 mx-2"></i>
+                        <i class="fa-solid fa-credit-card fs-3 mx-2"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <style>
+        /* Footer Styling */
+        .bg-dark {
+            background-color: #1a1a1a !important;
+        }
+
+        .footer-links li {
+            margin-bottom: 12px;
+        }
+
+        .footer-links a {
+            color: rgba(255,255,255,0.6);
+            text-decoration: none;
+            transition: 0.3s;
+        }
+
+            .footer-links a:hover {
+                color: var(--brand-orange);
+                padding-left: 5px;
+            }
+
+        .social-icon-box {
+            width: 38px;
+            height: 38px;
+            background: rgba(255,255,255,0.05);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            text-decoration: none;
+            transition: 0.3s;
+        }
+
+            .social-icon-box:hover {
+                background: var(--brand-orange);
+                color: white;
+                transform: translateY(-3px);
+            }
+
+        .text-orange {
+            color: #FF6B00 !important;
+        }
+
+        .btn-orange {
+            background-color: #FF6B00;
+            border: none;
+            color: white;
+        }
+    </style>
 
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
-
-    <script>
-        function openUserMenu() {
-            document.getElementById("userPopup").style.display = "block";
-            document.getElementById("popupOverlay").style.display = "block";
-        }
-        function closeUserMenu() {
-            document.getElementById("userPopup").style.display = "none";
-            document.getElementById("popupOverlay").style.display = "none";
-        }
-    </script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>
