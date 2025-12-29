@@ -6,6 +6,8 @@
 /* --------------------------
  * Password visibility toggle
  * -------------------------- */
+
+
 (function () {
     function toggle(btn) {
         const id = btn.getAttribute("data-target");
