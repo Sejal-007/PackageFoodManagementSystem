@@ -1,39 +1,128 @@
 ﻿@{
-
     ViewData["Title"] = "My Gift Cards";
-
+    var userName = User.Identity.IsAuthenticated ? User.Identity.Name : "User";
 }
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
-<div class="account-layout">
-    <div class="sidebar">
+<div class="container my-5">
+    <div class="row">
+        <div class="col-md-3">
+            <div class="card border-0 shadow-sm p-3" style="border-radius: 15px;">
+                @Html.Partial("_AccountSidebar")
+            </div>
+        </div>
 
-        @Html.Partial("_AccountSidebar")
-    </div>
+        <div class="col-md-9">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div>
+                    <h2 class="fw-bold mb-0">My <span class="text-primary">Gift Cards</span></h2>
+                    <p class="text-muted small">You have <span class="badge bg-primary rounded-pill">2 Active</span> cards for <strong>@userName</strong></p>
+                </div>
+                <a href="/User/AddGiftCard" class="btn btn-primary rounded-pill px-4 fw-bold shadow-sm">
+                    <i class="fa-solid fa-plus me-2"></i> Add New
+                </a>
+            </div>
 
-    <div class="main-section">
-        <h2>My Gift Cards</h2>
-        <p>You have 2 active gift cards available for use.</p>
+            @if (TempData["Message"] != null)
+            {
+                <div class="alert alert-success border-0 shadow-sm rounded-pill px-4 mb-4">
+                    <i class="fa-solid fa-circle-check me-2"></i> @TempData["Message"]
+                </div>
+            }
 
-        <ul style="margin-top:20px;">
-            <li><strong>Card #1:</strong> ₹500 – Expires: 31 Jan 2026</li>
-            <li><strong>Card #2:</strong> ₹750 – Expires: 15 Feb 2026</li>
-        </ul>
+            <div class="row g-4">
+                <div class="col-md-6">
+                    <div class="gift-card p-4 text-white shadow position-relative"
+                         style="background: linear-gradient(135deg, #3498db, #8e44ad); border-radius: 20px; overflow: hidden;">
+                        <div class="d-flex justify-content-between mb-4">
+                            <i class="fa-solid fa-gift fs-2 opacity-50"></i>
+                            <span class="fw-bold small">ALWAYZZZ FRESH</span>
+                        </div>
+                        <div class="mb-3">
+                            <h4 class="mb-0 letter-spacing">4452 8891 0021 7734</h4>
+                            <button class="btn btn-sm text-white opacity-75 p-0 border-0" onclick="copyCard('4452 8891 0021 7734', this)">
+                                <i class="fa-regular fa-copy me-1"></i> Copy Code
+                            </button>
+                        </div>
+                        <div class="d-flex justify-content-between align-items-end">
+                            <div>
+                                <small class="opacity-75 d-block">BALANCE</small>
+                                <h3 class="fw-bold mb-0">₹500</h3>
+                            </div>
+                            <div class="text-end">
+                                <small class="opacity-75 d-block">EXPIRES</small>
+                                <span class="fw-bold">31 Jan 2026</span>
+                            </div>
+                        </div>
+                        <i class="fa-solid fa-cookie-bite position-absolute" style="bottom: -15px; right: -15px; font-size: 80px; opacity: 0.1;"></i>
+                    </div>
+                </div>
 
-        <!-- Link styled as button to open AddGiftCard page -->
-        <a href="/User/AddGiftCard"
-           style="margin-top:15px;display:inline-block;padding:10px 20px;background:#3498db;color:#fff;border:none;border-radius:6px;text-decoration:none;">
+                <div class="col-md-6">
+                    <div class="gift-card p-4 text-white shadow position-relative"
+                         style="background: linear-gradient(135deg, #2ecc71, #27ae60); border-radius: 20px; overflow: hidden;">
+                        <div class="d-flex justify-content-between mb-4">
+                            <i class="fa-solid fa-gift fs-2 opacity-50"></i>
+                            <span class="fw-bold small">ALWAYZZZ FRESH</span>
+                        </div>
+                        <div class="mb-3">
+                            <h4 class="mb-0 letter-spacing">9901 2234 5561 0082</h4>
+                            <button class="btn btn-sm text-white opacity-75 p-0 border-0" onclick="copyCard('9901 2234 5561 0082', this)">
+                                <i class="fa-regular fa-copy me-1"></i> Copy Code
+                            </button>
+                        </div>
+                        <div class="d-flex justify-content-between align-items-end">
+                            <div>
+                                <small class="opacity-75 d-block">BALANCE</small>
+                                <h3 class="fw-bold mb-0">₹750</h3>
+                            </div>
+                            <div class="text-end">
+                                <small class="opacity-75 d-block">EXPIRES</small>
+                                <span class="fw-bold">15 Feb 2026</span>
+                            </div>
+                        </div>
+                        <i class="fa-solid fa-ice-cream position-absolute" style="bottom: -15px; right: -15px; font-size: 80px; opacity: 0.1;"></i>
+                    </div>
+                </div>
+            </div>
 
-            Add New Gift Card
-        </a>
-
-        <!-- Show confirmation message after adding a card -->
-        @if (TempData["Message"] != null)
-
-        {
-            <p style="margin-top:20px;color:#27ae60;">@TempData["Message"]</p>
-
-        }
+            <div class="mt-5 p-4 bg-light rounded-4 text-center border border-dashed">
+                <p class="text-muted mb-0">Want to gift fresh food to someone? <a href="#" class="text-primary fw-bold text-decoration-none">Buy a New Gift Card</a></p>
+            </div>
+        </div>
     </div>
 </div>
 
+<style>
+    .letter-spacing {
+        letter-spacing: 2px;
+    }
+
+    .gift-card {
+        transition: all 0.3s ease;
+        cursor: default;
+    }
+
+        .gift-card:hover {
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.15) !important;
+        }
+
+    .border-dashed {
+        border: 2px dashed #dee2e6 !important;
+    }
+</style>
+
+<script>
+    function copyCard(code, btn) {
+        navigator.clipboard.writeText(code);
+        const originalHtml = btn.innerHTML;
+        btn.innerHTML = '<i class="fa-solid fa-check me-1"></i> Copied!';
+        btn.classList.add('text-warning');
+
+        setTimeout(() => {
+            btn.innerHTML = originalHtml;
+            btn.classList.remove('text-warning');
+        }, 2000);
+    }
+</script>

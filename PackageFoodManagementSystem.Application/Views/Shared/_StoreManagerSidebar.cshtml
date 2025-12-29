@@ -1,57 +1,67 @@
-﻿
+﻿@{
+    var currentAction = ViewContext.RouteData.Values["action"]?.ToString();
+}
+
 <div class="store-sidebar">
     <h2>Store</h2>
     <ul class="sidebar-menu">
         <li>
-            <a asp-controller="StoreManager" asp-action="Home">
+            <a asp-controller="StoreManager" asp-action="Home"
+            class="@(currentAction == "Home" ? "active" : "")">
 
                 🏠 Dashboard
             </a>
         </li>
 
         <li>
-            <a asp-controller="StoreManager1" asp-action="AddProduct">
+            <a asp-controller="StoreManager1" asp-action="AddProduct"
+               class="@(currentAction == "AddProduct" ? "active" : "")">
 
                 📦 Products
             </a>
         </li>
         <li>
-            <a asp-controller="StoreManager" asp-action="Orders">
+            <a asp-controller="StoreManager" asp-action="Orders"
+               class="@(currentAction == "Orders" ? "active" : "")">
 
                 🛒 Orders
             </a>
         </li>
         <li>
-            <a asp-controller="StoreManager" asp-action="Inventory">
+            <a asp-controller="StoreManager" asp-action="Inventory"
+               class="@(currentAction == "Inventory" ? "active" : "")">
 
                 📊 Inventory
             </a>
         </li>
         <li>
-            <a asp-controller="StoreManager" asp-action="Compliance">
+            <a asp-controller="StoreManager" asp-action="Compliance"
+               class="@(currentAction == "Compliance" ? "active" : "")">
 
                 ✔ Compliance
             </a>
         </li>
         <li>
-            <a asp-controller="StoreManager" asp-action="Reports">
+            <a asp-controller="StoreManager" asp-action="Reports"
+               class="@(currentAction == "Reports" ? "active" : "")">
 
                 📑 Reports
             </a>
         </li>
         <li>
-            <a asp-controller="StoreManager" asp-action="Settings">⚙ Settings</a>
+            <a asp-controller="StoreManager" asp-action="Settings"
+               class="@(currentAction == "Settings" ? "active" : "")">
+                ⚙ Settings
+                </a>
         </li>
         <li>
-            <a asp-controller="Home" asp-action="SignIn">🚪 Log Out</a>
+            <a asp-controller="Home" asp-action="SignIn"
+               class="@(currentAction == "SignIn" ? "active" : "")">
+                🚪 Log Out
             </a>
         </li>
     </ul>
 
-    @* <div class="sidebar-footer">
-        
-        
-        <a asp-controller="Home" asp-action="SignIn" class="nav-btn">🚪 Log Out</a>
-    </div> *@
+    
 </div>
 

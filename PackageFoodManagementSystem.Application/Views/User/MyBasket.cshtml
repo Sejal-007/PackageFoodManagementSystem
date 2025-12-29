@@ -1,77 +1,99 @@
-﻿@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
-
-@{
-
+﻿@{
     ViewData["Title"] = "My Basket";
-
 }
 
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<div class="container my-5">
+    <div id="basket-content" style="display: none;">
+        <h2 class="text-center mb-4">Your <span class="text-warning">Selection</span></h2>
 
-<div class="basket-container" id="fullBasketView" style="display: none;">
-    <div class="basket-left" id="basketItems"></div>
+        <div class="row">
+            <div class="col-md-8" id="basketItems"></div>
 
-    <div class="basket-right">
-        <h4>🛒 Cart Summary</h4>
-        <div id="summaryItems"></div>
-        <hr>
-        <h5>Total: ₹<span id="totalAmount">0</span></h5>
+            <div class="col-md-4">
+                <div class="card p-4 shadow border-0" style="border-radius:15px;">
+                    <h4>🛒 Order Summary</h4>
+                    <div id="summaryItems" class="my-3"></div>
+                    <hr>
+                    <div class="d-flex justify-content-between mb-4">
+                        <span class="h5">Grand Total:</span>
+                        <span class="h4 text-success fw-bold">₹<span id="totalAmount">0</span></span>
+                    </div>
+                    <button class="btn btn-success btn-lg w-100" onclick="location.href='/Payment/Checkout'">Proceed to Checkout</button>
+                </div>
+            </div>
+        </div>
+    </div>
 
-
-
+    <div id="empty-basket" class="text-center py-5">
+        <h2 class="mb-3">Let's fill the empty <span class="text-warning">Basket</span></h2>
+        <a href="/Menu/Index" class="btn btn-dark px-4 py-2">Continue Shopping</a>
     </div>
 </div>
 
-@section Scripts {
-    <script>
+<script>
+    document.addEventListener("DOMContentLoaded", renderBasket);
 
-                document.addEventListener("DOMContentLoaded", () => {
+    function renderBasket() {
+        const cart = JSON.parse(localStorage.getItem("myCart")) || [];
+        const basketContent = document.getElementById("basket-content");
+        const emptyView = document.getElementById("empty-basket");
+        const basketItems = document.getElementById("basketItems");
+        const summaryItems = document.getElementById("summaryItems");
+        const totalAmount = document.getElementById("totalAmount");
 
-                    const fullBasketView = document.getElementById("fullBasketView");
+        if (cart.length === 0) {
+            basketContent.style.display = "none";
+            emptyView.style.display = "block";
+            return;
+        }
 
-                    const basketItems = document.getElementById("basketItems");
+        basketContent.style.display = "block";
+        emptyView.style.display = "none";
 
-                    const summaryItems = document.getElementById("summaryItems");
+        let grandTotal = 0;
+        basketItems.innerHTML = "";
+        summaryItems.innerHTML = "";
 
-                    const totalAmount = document.getElementById("totalAmount");
+        cart.forEach(item => {
+            let itemTotal = item.price * item.qty;
+            grandTotal += itemTotal;
 
-                    let cart = JSON.parse(localStorage.getItem("myCart")) || [];
+            // Render Item Card with Remove button
+            basketItems.innerHTML += `
+                <div class="card mb-3 p-3 shadow-sm border-0">
+                    <div class="d-flex align-items-center">
+                        <img src="${item.image}" style="width:80px; height:80px; object-fit:cover; border-radius:8px;" class="me-3">
+                        <div class="flex-grow-1">
+                            <h5 class="mb-0 fw-bold">${item.name}</h5>
+                            <p class="text-muted mb-0">₹${item.price} x ${item.qty}</p>
+                        </div>
+                        <div class="text-end">
+                            <h5 class="fw-bold mb-0">₹${itemTotal}</h5>
+                            <a href="javascript:void(0)" class="text-danger small text-decoration-none" onclick="removeItem('${item.id}')">Remove</a>
+                        </div>
+                    </div>
+                </div>`;
 
-                    if (cart.length > 0) {
+            summaryItems.innerHTML += `
+                <div class="d-flex justify-content-between mb-2">
+                    <span>${item.name} (x${item.qty})</span>
+                    <span>₹${itemTotal}</span>
+                </div>`;
+        });
 
-                        fullBasketView.style.display = "flex";
+        totalAmount.innerText = grandTotal;
+    }
 
-                        let total = 0;
+    function removeItem(id) {
+        let cart = JSON.parse(localStorage.getItem("myCart")) || [];
+        // Keep everything EXCEPT the item we want to delete
+        cart = cart.filter(item => item.id !== id);
+        localStorage.setItem("myCart", JSON.stringify(cart));
 
-                        cart.forEach(item => {
+        // Refresh the page view
+        renderBasket();
 
-                            let itemTotal = item.price * item.qty;
-
-                            total += itemTotal;
-
-                            basketItems.innerHTML += `
-        <div class="basket-item d-flex align-items-center mb-3 p-3 border rounded shadow-sm bg-white">
-        <img src="/images/${item.image}" style="width:80px; height:80px; object-fit:cover; margin-right:20px; border-radius:8px;">
-        <div class="flex-grow-1">
-        <h5 class="mb-1">${item.name}</h5>
-        <p class="text-muted mb-0">Price: ₹${item.price} x ${item.qty}</p>
-        </div>
-        <h5 class="fw-bold">₹${itemTotal}</h5>
-        </div>`;
-
-                            summaryItems.innerHTML += `
-        <div class="d-flex justify-content-between mb-2">
-        <span>${item.name} (x${item.qty})</span>
-        <span>₹${itemTotal}</span>
-        </div>`;
-
-                        });
-
-                        totalAmount.innerText = total;
-
-                    }
-
-                });
-    </script>
-
-}
+        // Update the top badge if you have it in your layout
+        if (typeof updateCartBadge === "function") updateCartBadge();
+    }
+</script>
