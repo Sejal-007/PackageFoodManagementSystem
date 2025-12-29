@@ -4,9 +4,66 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - ALWAYZZZ FRESH</title>
+
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+
+    <style>
+        :root {
+            --brand-orange: #FF6B00;
+        }
+
+        .bg-dark {
+            background-color: #1a1a1a !important;
+        }
+
+        .text-orange {
+            color: var(--brand-orange) !important;
+        }
+
+        .btn-orange {
+            background-color: var(--brand-orange);
+            border: none;
+            color: white;
+        }
+
+        .footer-links li {
+            margin-bottom: 12px;
+        }
+
+        .footer-links a {
+            color: rgba(255,255,255,0.6);
+            text-decoration: none;
+            transition: 0.3s;
+        }
+
+            .footer-links a:hover {
+                color: var(--brand-orange);
+                padding-left: 5px;
+            }
+
+        .social-icon-box {
+            width: 38px;
+            height: 38px;
+            background: rgba(255,255,255,0.05);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            text-decoration: none;
+            transition: 0.3s;
+        }
+
+            .social-icon-box:hover {
+                background: var(--brand-orange);
+                color: white;
+                transform: translateY(-3px);
+            }
+    </style>
+
+    @await RenderSectionAsync("Styles", required: false)
 </head>
 <body>
     <header class="app-header">
@@ -56,6 +113,7 @@
             @RenderBody()
         </main>
     </div>
+
     <footer class="footer-section bg-dark text-white pt-5 pb-3 mt-5">
         <div class="container">
             <div class="row gy-4 mb-5">
@@ -104,7 +162,7 @@
 
             <div class="row align-items-center pt-3">
                 <div class="col-md-6 text-center text-md-start">
-                    <p class="small text-white-50 mb-0">&copy; 2024 Alwayzzz Fresh. All rights reserved.</p>
+                    <p class="small text-white-50 mb-0">&copy; @DateTime.Now.Year Alwayzzz Fresh. All rights reserved.</p>
                 </div>
                 <div class="col-md-6 text-center text-md-end">
                     <div class="payment-methods opacity-50">
@@ -116,57 +174,6 @@
             </div>
         </div>
     </footer>
-
-    <style>
-        /* Footer Styling */
-        .bg-dark {
-            background-color: #1a1a1a !important;
-        }
-
-        .footer-links li {
-            margin-bottom: 12px;
-        }
-
-        .footer-links a {
-            color: rgba(255,255,255,0.6);
-            text-decoration: none;
-            transition: 0.3s;
-        }
-
-            .footer-links a:hover {
-                color: var(--brand-orange);
-                padding-left: 5px;
-            }
-
-        .social-icon-box {
-            width: 38px;
-            height: 38px;
-            background: rgba(255,255,255,0.05);
-            color: white;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 50%;
-            text-decoration: none;
-            transition: 0.3s;
-        }
-
-            .social-icon-box:hover {
-                background: var(--brand-orange);
-                color: white;
-                transform: translateY(-3px);
-            }
-
-        .text-orange {
-            color: #FF6B00 !important;
-        }
-
-        .btn-orange {
-            background-color: #FF6B00;
-            border: none;
-            color: white;
-        }
-    </style>
 
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
