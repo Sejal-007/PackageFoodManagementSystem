@@ -1,7 +1,7 @@
 ﻿document.addEventListener("DOMContentLoaded", loadBasket);
 
 function loadBasket() {
-    const cart = JSON.parse(localStorage.getItem("cart")) || [];
+    const cart = JSON.parse(localStorage.getItem("myCart")) || [];
 
     const basketItems = document.getElementById("basketItems");
     const summaryItems = document.getElementById("summaryItems");

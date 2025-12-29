@@ -1,51 +1,134 @@
 ﻿@{
-
     ViewData["Title"] = "Contact Us";
-
+    var userName = User.Identity.IsAuthenticated ? User.Identity.Name : "";
+    // Assuming your friend sets the email claim as well
+    var userEmail = User.Claims.FirstOrDefault(c => c.Type == System.Security.Claims.ClaimTypes.Email)?.Value ?? "";
 }
+
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
-<div class="contact-container">
-    <h2>Contact Us</h2>
-    <p>We’re here to help you with any questions or support you need.</p>
-
-    <!-- Contact Cards -->
-    <div class="contact-cards">
-        <div class="contact-card">
-            <i class="fas fa-envelope"></i>
-            <h3>Email Us</h3>
-            <p><a href="mailto:support@alwayzzzfresh.com">support@alwayzzzfresh.com</a></p>
-        </div>
-
-        <div class="contact-card">
-            <i class="fas fa-phone"></i>
-            <h3>Call Us</h3>
-            <p><a href="tel:18601231000">1860-123-1000</a></p>
-        </div>
-
-        <div class="contact-card">
-            <i class="fas fa-map-marker-alt"></i>
-            <h3>Office Address</h3>
-            <p>
-
-                AlwayzzzFresh HQ<br>
-
-                Old Madras Road, Chennai, India<br>
-
-                PIN: 600130
-            </p>
-        </div>
+<div class="container my-5">
+    <div class="text-center mb-5">
+        <h1 class="fw-bold">Get In <span class="text-success">Touch</span></h1>
+        <p class="text-muted">We’re here to help you with any questions or support you need.</p>
     </div>
 
-    <!-- Contact Form -->
-    <div class="contact-form">
-        <h3>Send us a message</h3>
-        <form>
-            <input type="text" placeholder="Your Name" required />
-            <input type="email" placeholder="Your Email" required />
-<textarea placeholder="Your Message" rows="4" required></textarea>
-            <button type="submit">Submit</button>
-        </form>
+    <div class="row g-4">
+        <div class="col-lg-4">
+            <div class="d-flex flex-column gap-3">
+
+                <div class="contact-card p-4 shadow-sm border-0 d-flex align-items-center" style="border-radius: 15px; background: #f0fff4;">
+                    <div class="icon-box bg-success text-white rounded-circle me-3 d-flex align-items-center justify-content-center" style="width: 50px; height: 50px;">
+                        <i class="fas fa-envelope"></i>
+                    </div>
+                    <div>
+                        <h6 class="fw-bold mb-1">Email Us</h6>
+                        <a href="mailto:support@alwayzzzfresh.com" class="text-decoration-none text-dark small">support@alwayzzzfresh.com</a>
+                    </div>
+                </div>
+
+                <div class="contact-card p-4 shadow-sm border-0 d-flex align-items-center" style="border-radius: 15px; background: #fffcf0;">
+                    <div class="icon-box bg-warning text-dark rounded-circle me-3 d-flex align-items-center justify-content-center" style="width: 50px; height: 50px;">
+                        <i class="fas fa-phone"></i>
+                    </div>
+                    <div>
+                        <h6 class="fw-bold mb-1">Call Us</h6>
+                        <a href="tel:18601231000" class="text-decoration-none text-dark small">1860-123-1000</a>
+                    </div>
+                </div>
+
+                <div class="contact-card p-4 shadow-sm border-0 d-flex align-items-center" style="border-radius: 15px; background: #f0f7ff;">
+                    <div class="icon-box bg-primary text-white rounded-circle me-3 d-flex align-items-center justify-content-center" style="width: 50px; height: 50px;">
+                        <i class="fas fa-map-marker-alt"></i>
+                    </div>
+                    <div>
+                        <h6 class="fw-bold mb-1">Office Address</h6>
+                        <p class="mb-0 text-muted small">Old Madras Road, Chennai, 600130</p>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <div class="col-lg-8">
+            <div class="card border-0 shadow p-4 p-md-5" style="border-radius: 20px;">
+                <h3 class="fw-bold mb-4">Send us a message</h3>
+                <form id="contactForm">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label small fw-bold">YOUR NAME</label>
+                            <input type="text" class="form-control bg-light border-0 py-2" placeholder="Enter Name" value="@userName" required />
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label small fw-bold">YOUR EMAIL</label>
+                            <input type="email" class="form-control bg-light border-0 py-2" placeholder="Enter Email" value="@userEmail" required />
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label small fw-bold">SUBJECT</label>
+                            <select class="form-select bg-light border-0 py-2">
+                                <option selected>Order Inquiry</option>
+                                <option>Product Feedback</option>
+                                <option>Payment Issue</option>
+                                <option>Other</option>
+                            </select>
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label small fw-bold">MESSAGE</label>
+                            <textarea class="form-control bg-light border-0" rows="4" placeholder="How can we help?" required></textarea>
+                        </div>
+                        <div class="col-12 mt-4">
+                            <button type="submit" class="btn btn-dark btn-lg w-100 rounded-pill fw-bold shadow-sm" id="submitBtn">
+                                Send Message <i class="fa-solid fa-paper-plane ms-2"></i>
+                            </button>
+                        </div>
+                    </div>
+                </form>
+
+                <div id="successMsg" class="text-center d-none py-4">
+                    <div class="mb-3 text-success">
+                        <i class="fa-solid fa-circle-check display-3"></i>
+                    </div>
+                    <h4 class="fw-bold">Message Sent!</h4>
+                    <p class="text-muted">Thanks @userName, we will get back to you within 24 hours.</p>
+                    <button class="btn btn-outline-success rounded-pill px-4 mt-2" onclick="location.reload()">Send another</button>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 
+<style>
+    .contact-card {
+        transition: all 0.3s ease;
+    }
+
+        .contact-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.08) !important;
+        }
+
+    .form-control:focus, .form-select:focus {
+        background-color: #fff !important;
+        border: 1px solid #198754 !important;
+        box-shadow: none;
+    }
+</style>
+
+<script>
+    document.getElementById('contactForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        const btn = document.getElementById('submitBtn');
+        const form = document.getElementById('contactForm');
+        const success = document.getElementById('successMsg');
+
+        // Loading State
+        btn.disabled = true;
+        btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span> Sending...';
+
+        // Simulate API call
+        setTimeout(() => {
+            form.classList.add('d-none');
+            success.classList.remove('d-none');
+        }, 1500);
+    });
+</script>
