@@ -15,6 +15,7 @@ namespace PackagedFoodManagementSystem.Controllers
 
         public IActionResult AdminDashboard() => View();
 
+
         public IActionResult ManagerDashboard() => View();
 
         public IActionResult Users() => View();
@@ -23,6 +24,17 @@ namespace PackagedFoodManagementSystem.Controllers
 
         public IActionResult ContactUs() => View();
 
-
+        public IActionResult AdminInventory()
+        {
+            return View();
+        }
+        public IActionResult Report()
+        {
+            return View();
+        }
+        public IActionResult Stores()
+        {
+            return View();
+        }
     }
 }

@@ -4,23 +4,29 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - ALWAYZZZ FRESH</title>
+
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
 
+    @* --- FIX: This renders the CSS from your individual pages --- *@
+    @await RenderSectionAsync("Styles", required: false)
+
     @RenderSection("Styles", required: false)
 </head>
-<body>
+<body class="d-flex flex-column min-vh-100">
+    @* Flexbox ensures sticky footer *@
+
     <header class="app-header">
-        <nav class="navbar navbar-expand-lg px-4 py-3 shadow-sm">
+        <nav class="navbar navbar-expand-lg px-4 py-3 shadow-sm bg-white">
             <div class="d-flex align-items-center">
                 <img src="~/images/applogo.png" class="app-logo me-2" style="width:50px;" alt="Logo">
-                <span class="brand fw-bold text-orange">ALWAYZZZ FRESH</span>
+                <span class="brand fw-bold text-orange" style="font-size: 24px;">ALWAYZZZ FRESH</span>
             </div>
 
             <ul class="navbar-nav ms-auto align-items-center">
-                <li class="nav-item me-3"><a class="nav-link" asp-controller="Home" asp-action="Index">Home</a></li>
-                <li class="nav-item me-3"><a class="nav-link" asp-controller="Menu" asp-action="Index">Explore</a></li>
+                <li class="nav-item me-3"><a class="nav-link fw-semibold" asp-controller="Home" asp-action="Index">Home</a></li>
+                <li class="nav-item me-3"><a class="nav-link fw-semibold" asp-controller="Menu" asp-action="Index">Explore</a></li>
 
                 <li class="nav-item me-4">
                     <a class="nav-link position-relative" asp-controller="User" asp-action="MyBasket">
@@ -38,12 +44,31 @@
         </nav>
     </header>
 
+    @* --- User Popup Menu --- *@
     <div id="userPopup" class="user-popup">
         <div class="popup-header">
             <span>User Menu</span>
             <span class="close-btn" onclick="closeUserMenu()">×</span>
         </div>
         <ul class="popup-list">
+            <li onclick="location.href='/User/Dashboard'"><i class="fa-solid fa-user-circle"></i> My Profile</li>
+            <li onclick="location.href='/User/MyBasket'"><i class="fa-solid fa-cart-shopping"></i> My Basket</li>
+            <li onclick="location.href='/User/MyOrders'"><i class="fa-solid fa-shopping-bag"></i> My Orders</li>
+            <li onclick="location.href='/User/ContactUs'"><i class="fa-solid fa-headset"></i> Contact Us</li>
+            <li class="logout">
+                @if (User.Identity.IsAuthenticated)
+                {
+                    <a href="/Home/Logout" style="text-decoration: none; color: inherit;">
+                        <i class="fa-solid fa-arrow-right-from-bracket"></i> Logout
+                    </a>
+                }
+                else
+                {
+                    <a href="/Home/SignIn" style="text-decoration: none; color: inherit;">
+                        <i class="fa-solid fa-right-to-bracket"></i> LogIn
+                    </a>
+                }
+            </li>
             <li onclick="redirectTo('/User/Dashboard')"><i class="fa-solid fa-user-circle"></i> My Profile</li>
             <li onclick="redirectTo('/User/MyBasket')"><i class="fa-solid fa-cart-shopping"></i> My Basket</li>
             <li onclick="redirectTo('/User/MyOrders')"><i class="fa-solid fa-shopping-bag"></i> My Orders</li>
@@ -53,11 +78,14 @@
     </div>
     <div id="popupOverlay" onclick="closeUserMenu()"></div>
 
-    <div class="container mt-4">
+    @* --- Main Content Wrapper --- *@
+    <div class="flex-grow-1">
         <main role="main" class="pb-3">
             @RenderBody()
         </main>
     </div>
+
+    @* --- Footer --- *@
 
     <footer class="footer-section bg-dark text-white pt-5 pb-3 mt-5">
         <div class="container">
@@ -85,7 +113,7 @@
 
                 <div class="col-lg-3 col-6">
                     <h6 class="fw-bold text-white mb-4">Why Fresh?</h6>
-                    <ul class="list-unstyled footer-links">
+                    <ul class="list-unstyled footer-links text-white-50">
                         <li><i class="fa-solid fa-check text-orange me-2"></i> 30-Min Delivery</li>
                         <li><i class="fa-solid fa-check text-orange me-2"></i> Secure Checkout</li>
                         <li><i class="fa-solid fa-check text-orange me-2"></i> Farm-to-Fork</li>
@@ -107,7 +135,7 @@
 
             <div class="row align-items-center pt-3">
                 <div class="col-md-6 text-center text-md-start">
-                    <p class="small text-white-50 mb-0">&copy; 2024 Alwayzzz Fresh. All rights reserved.</p>
+                    <p class="small text-white-50 mb-0">&copy; 2025 Alwayzzz Fresh. All rights reserved.</p>
                 </div>
                 <div class="col-md-6 text-center text-md-end">
                     <div class="payment-methods opacity-50">
@@ -120,7 +148,27 @@
         </div>
     </footer>
 
+    @* --- CSS Integration --- *@
     <style>
+        :root {
+            --brand-orange: #FF6B00;
+        }
+
+        .text-orange {
+            color: var(--brand-orange) !important;
+        }
+
+        .btn-orange {
+            background-color: var(--brand-orange);
+            color: white;
+            border: none;
+        }
+
+            .btn-orange:hover {
+                background-color: #e66000;
+                color: white;
+            }
+
         /* ... (Your styles remain here) ... */
         .bg-dark {
             background-color: #1a1a1a !important;
@@ -155,24 +203,89 @@
         }
 
             .social-icon-box:hover {
-                background: #FF6B00;
+                background: var(--brand-orange);
                 transform: translateY(-3px);
+                color: white;
+                background: #FF6B00;
             }
 
-        .text-orange {
-            color: #FF6B00 !important;
+        /* User Popup Styling */
+        .user-popup {
+            position: fixed;
+            top: 80px;
+            right: 20px;
+            width: 250px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            z-index: 1000;
+            display: none;
+            overflow: hidden;
         }
 
-        .btn-orange {
-            background-color: #FF6B00;
-            border: none;
-            color: white;
+        .popup-header {
+            padding: 15px;
+            background: #f8f9fa;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            justify-content: space-between;
+            font-weight: bold;
+        }
+
+        .popup-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+            .popup-list li {
+                padding: 12px 20px;
+                border-bottom: 1px solid #f1f1f1;
+                cursor: pointer;
+                transition: 0.2s;
+            }
+
+                .popup-list li:hover {
+                    background: #fff5f0;
+                    color: var(--brand-orange);
+                }
+
+                .popup-list li i {
+                    margin-right: 10px;
+                    width: 20px;
+                }
+
+                .popup-list li.logout {
+                    color: #dc3545;
+                }
+
+        #popupOverlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.3);
+            display: none;
+            z-index: 999;
         }
     </style>
 
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
+
+    <script>
+        function openUserMenu() {
+            document.getElementById('userPopup').style.display = 'block';
+            document.getElementById('popupOverlay').style.display = 'block';
+        }
+        function closeUserMenu() {
+            document.getElementById('userPopup').style.display = 'none';
+            document.getElementById('popupOverlay').style.display = 'none';
+        }
+    </script>
+
 
     @await RenderSectionAsync("Scripts", required: false)
 </body>
