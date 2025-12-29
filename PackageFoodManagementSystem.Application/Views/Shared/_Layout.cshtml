@@ -53,7 +53,20 @@
             <li onclick="location.href='/User/MyBasket'"><i class="fa-solid fa-cart-shopping"></i> My Basket</li>
             <li onclick="location.href='/User/MyOrders'"><i class="fa-solid fa-shopping-bag"></i> My Orders</li>
             <li onclick="location.href='/User/ContactUs'"><i class="fa-solid fa-headset"></i> Contact Us</li>
-            <li class="logout" onclick="location.href='/Home/SignIn'"><i class="fa-solid fa-arrow-right-from-bracket"></i> Logout</li>
+            <li class="logout">
+                @if (User.Identity.IsAuthenticated)
+                {
+                    <a href="/Home/Logout" style="text-decoration: none; color: inherit;">
+                        <i class="fa-solid fa-arrow-right-from-bracket"></i> Logout
+                    </a>
+                }
+                else
+                {
+                    <a href="/Home/SignIn" style="text-decoration: none; color: inherit;">
+                        <i class="fa-solid fa-right-to-bracket"></i> LogIn
+                    </a>
+                }
+            </li>
         </ul>
     </div>
     <div id="popupOverlay" onclick="closeUserMenu()"></div>
