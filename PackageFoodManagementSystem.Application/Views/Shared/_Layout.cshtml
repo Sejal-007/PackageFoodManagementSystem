@@ -7,6 +7,8 @@
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+
+    @RenderSection("Styles", required: false)
 </head>
 <body>
     <header class="app-header">
@@ -56,6 +58,7 @@
             @RenderBody()
         </main>
     </div>
+
     <footer class="footer-section bg-dark text-white pt-5 pb-3 mt-5">
         <div class="container">
             <div class="row gy-4 mb-5">
@@ -118,7 +121,7 @@
     </footer>
 
     <style>
-        /* Footer Styling */
+        /* ... (Your styles remain here) ... */
         .bg-dark {
             background-color: #1a1a1a !important;
         }
@@ -134,7 +137,7 @@
         }
 
             .footer-links a:hover {
-                color: var(--brand-orange);
+                color: #FF6B00;
                 padding-left: 5px;
             }
 
@@ -152,8 +155,7 @@
         }
 
             .social-icon-box:hover {
-                background: var(--brand-orange);
-                color: white;
+                background: #FF6B00;
                 transform: translateY(-3px);
             }
 
@@ -171,6 +173,7 @@
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
+
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>
