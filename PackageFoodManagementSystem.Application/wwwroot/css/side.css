@@ -1,5 +1,7 @@
 body {
     margin: 0;
+    height: 100%;
+    width: 100%;
     font-family: Arial, sans-serif;
 }
 
@@ -24,6 +26,7 @@ body {
 .store-layout {
     display: flex;
     min-height: 100vh;
+    width: 100vw;
 }
 
 /* SIDEBAR */
@@ -40,6 +43,7 @@ body {
     flex: 1;
     padding: 25px;
     background-color: #f1f5f9;
+    overflow-x: hidden;
 }
 
 /* SIDEBAR MENU */
