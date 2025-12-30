@@ -19,15 +19,15 @@
     <header class="nav" aria-label="Global Navigation">
         <div class="nav-wrap">
             <!-- Brand / Home -->
-            <ndex
+            <a>
                 <span class="logo" aria-hidden="true"></span>
             </a>
 
             <!-- Left → Right: About Us, Contact Us, Sign In, Sign Up -->
             <nav class="nav-links" aria-label="Primary">
                 <div class="nav-right">
-                    <a href="@Url.Action("AboutUs", "Home")" class="nav-btn">About Us</a>
-                    <a href="@Url.Action("ContactUs", "Home")" class="nav-btn">Contact Us</a>
+                    @* <a href="@Url.Action("AboutUs", "Home")" class="nav-btn">About Us</a>
+                    <a href="@Url.Action("ContactUs", "Home")" class="nav-btn">Contact Us</a> *@
                     <a href="@Url.Action("SignIn", "Home")" class="nav-btn">Login</a>
                     <a href="@Url.Action("SignUp", "Home")" class="nav-btn">Signup</a>
                 </div>
