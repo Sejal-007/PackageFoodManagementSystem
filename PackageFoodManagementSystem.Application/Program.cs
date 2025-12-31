@@ -1,9 +1,11 @@
-﻿
+﻿//Initializes and configures the web application for Package Food Management System.
 var builder = WebApplication.CreateBuilder(args);
+
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 
+//Finalizes the application setup,.
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -26,7 +28,7 @@ app.UseAuthorization();
 // Single, clean default route: Home/Index
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Home}/{action=Index}/{id?}")
+    pattern: "{controller=Home}/{action=SignIn}/{id?}")
     .WithStaticAssets();
 
 

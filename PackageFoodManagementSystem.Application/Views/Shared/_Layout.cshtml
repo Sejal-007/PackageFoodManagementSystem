@@ -56,14 +56,14 @@
             <li class="logout">
                 @if (User.Identity.IsAuthenticated)
                 {
-                    <a href="/Home/Logout" style="text-decoration: none; color: inherit;">
+                    <a href="/Home/SignIn" style="text-decoration: none; color: inherit;">
                         <i class="fa-solid fa-arrow-right-from-bracket"></i> Logout
                     </a>
                 }
                 else
                 {
                     <a href="/Home/SignIn" style="text-decoration: none; color: inherit;">
-                        <i class="fa-solid fa-right-to-bracket"></i> LogIn
+                        <i class="fa-solid fa-right-to-bracket"></i> Logout
                     </a>
                 }
             </li>

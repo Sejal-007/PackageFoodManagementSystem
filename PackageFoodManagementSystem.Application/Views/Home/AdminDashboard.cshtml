@@ -1,31 +1,10 @@
 ﻿@{
+
     ViewData["Title"] = "Admin Dashboard";
+
     Layout = "~/Views/Shared/_AdminLayout.cshtml";
+
 }
-<style>
-    .card-summary {
-        border-radius: 12px;
-        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-        border-radius: 10px;
-        box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-        transition: 0.2s;
-    }
-
-        .card-summary:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 6px 12px rgba(0,0,0,0.15);
-        }
-
-        .card-summary h5 {
-            color: #6c757d;
-            font-size: 1rem;
-        }
-
-        .card-summary h3 {
-            color: #FF6F3C;
-            font-weight: bold;
-        }
-</style>
 <div class="row mb-4">
     <div class="col-md-4">
         <div class="card card-summary text-center">
@@ -42,9 +21,9 @@
         <div class="card card-summary text-center">
             <div class="card-body">
                 <div class="card-head">
-                <div class="card-title">ACTIVE STORES</div>
-            </div>
-            <div class="card-value">0</div>
+                    <div class="card-title">ACTIVE STORES</div>
+                </div>
+                <div class="card-value">0</div>
 
             </div>
         </div>
@@ -68,16 +47,6 @@
                 </div>
                 <div class="card-value">0</div>
 
-            <!-- Row 3 -->
-            <article class="card">
-                <div class="card-head">
-                    <div class="card-title">CANCELLED ORDERS</div>
-                </div>
-                <div class="card-value">3</div>
-                <div class="card-sub">Cancelled Order</div>
-            </article>
-        </section>
-    </main>
             </div>
         </div>
     </div>
@@ -92,7 +61,5 @@
             </div>
         </div>
     </div>
-    
 </div>
 
-    
