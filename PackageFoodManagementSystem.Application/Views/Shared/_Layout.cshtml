@@ -10,7 +10,9 @@
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
 
     @* --- FIX: This renders the CSS from your individual pages --- *@
-    @await RenderSectionAsync("Styles", required: false)
+    @* @await RenderSectionAsync("Styles", required: false) *@
+
+    @RenderSection("Styles", required: false)
 </head>
 <body class="d-flex flex-column min-vh-100">
     @* Flexbox ensures sticky footer *@
@@ -38,6 +40,11 @@
                         <i class="fa-solid fa-user-circle fa-2x" style="color: #ff6347;"></i>
                     </a>
                 </li>
+                @* <li class="nav-item">
+                    <a class="nav-link" href='/Home/SignIn' onclick="openUserMenu()">
+                        <i class="fa fa-sign-in" style="color: #ff6347;"> <h style="font-family:Algerian;color:i">Sign In</h></i>
+                    </a>
+                </li> *@
             </ul>
         </nav>
     </header>
@@ -53,20 +60,26 @@
             <li onclick="location.href='/User/MyBasket'"><i class="fa-solid fa-cart-shopping"></i> My Basket</li>
             <li onclick="location.href='/User/MyOrders'"><i class="fa-solid fa-shopping-bag"></i> My Orders</li>
             <li onclick="location.href='/User/ContactUs'"><i class="fa-solid fa-headset"></i> Contact Us</li>
-            <li class="logout">
-                @if (User.Identity.IsAuthenticated)
+            <li onclick="location.href='/Home/Welcome'"><i class="fa-solid fa-right-to-bracket"></i> Sign Out</li>
+
+            @* <a href="/Home/SignIn" style="text-decoration: none; color: inherit;">
+                <i class="fa-solid fa-right-to-bracket"></i> LogIn
+            </a> *@
+           @* // <li class="logout"> *@
+
+                @* @if (User.Identity.IsAuthenticated)
                 {
                     <a href="/Home/Logout" style="text-decoration: none; color: inherit;">
                         <i class="fa-solid fa-arrow-right-from-bracket"></i> Logout
                     </a>
                 }
-                else
+                 else
                 {
                     <a href="/Home/SignIn" style="text-decoration: none; color: inherit;">
                         <i class="fa-solid fa-right-to-bracket"></i> LogIn
                     </a>
-                }
-            </li>
+                }  *@
+            
         </ul>
     </div>
     <div id="popupOverlay" onclick="closeUserMenu()"></div>
@@ -79,6 +92,7 @@
     </div>
 
     @* --- Footer --- *@
+
     <footer class="footer-section bg-dark text-white pt-5 pb-3 mt-5">
         <div class="container">
             <div class="row gy-4 mb-5">
@@ -161,6 +175,7 @@
                 color: white;
             }
 
+        /* ... (Your styles remain here) ... */
         .bg-dark {
             background-color: #1a1a1a !important;
         }
@@ -176,7 +191,7 @@
         }
 
             .footer-links a:hover {
-                color: var(--brand-orange);
+                color: #FF6B00;
                 padding-left: 5px;
             }
 
@@ -197,6 +212,7 @@
                 background: var(--brand-orange);
                 transform: translateY(-3px);
                 color: white;
+                background: #FF6B00;
             }
 
         /* User Popup Styling */
@@ -275,6 +291,7 @@
             document.getElementById('popupOverlay').style.display = 'none';
         }
     </script>
+
 
     @await RenderSectionAsync("Scripts", required: false)
 </body>
