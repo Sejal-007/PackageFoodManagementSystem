@@ -16,7 +16,6 @@ body {
     color: white;
     padding: 100px 20px;
     text-align: center;
-    /* Added this to ensure it clears the float of the sidebar if needed */
     width: 100%;
 }
 
@@ -42,7 +41,7 @@ body {
 .menu-card {
     border-radius: 20px;
     transition: 0.3s;
-    background: white; /* Ensure visibility */
+    background: white; 
 }
 
     .menu-card:hover {
