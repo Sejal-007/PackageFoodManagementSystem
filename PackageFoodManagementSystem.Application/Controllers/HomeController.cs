@@ -36,5 +36,14 @@ namespace PackagedFoodManagementSystem.Controllers
         {
             return View();
         }
+        public IActionResult Welcome()
+        {
+            // If already logged in, skip the welcome page and go to the store
+            if (User.Identity.IsAuthenticated)
+            {
+                return RedirectToAction("Index", "Home");
+            }
+            return View();
+        }
     }
 }
