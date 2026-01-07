@@ -1,5 +1,11 @@
-﻿@model PackagedFoodFrontend.Models.Wallet
+﻿@model PackageFoodManagementSystem.Application.Models.Wallet
 
+@{
+    ViewData["Title"] = "My Wallet";
+}
+
+<h1>My Wallet</h1>
+<p>Current Balance: @Model.Balance</p>
 @{
     ViewData["Title"] = "My Wallet";
     var userName = User.Identity.IsAuthenticated ? User.Identity.Name : "User";
