@@ -9,11 +9,8 @@
 <head>
     <meta charset="utf-8" />
     <title>Menu</title>
-
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-
     <link href="~/css/menu.css" rel="stylesheet" />
 </head>
 
@@ -24,238 +21,223 @@
 
         <div class="row g-4">
 
-            // CHIPS
-
             <div class="col-md-4">
-                <div class="product-card" data-id="1"
-                     data-name="Potato Chips"
-                     data-price="50"
-                     data-quantity="1 pack">
-
-                    <img src="~/images/chips.png" alt="Juice">
-                    <h6>Potato Chips</h6>
-                    <p class="price">₹50</p>
-
-                    <div class="cart-actions">
-                        <button onclick="decrease(this)">−</button>
-                        <span class="qty">0</span>
-                        <button onclick="increase(this)">+</button>
-                    </div>
-                </div>
-            </div>
-
-            //JUICE
-
-            <div class="col-md-4">
-                <div class="product-card" data-id="2" data-name="Fruit Juice" data-price="80" data-image="/images/juice.png">
-                    <img src="~/images/juice.png" alt="Juice">
-                    <h6>Fruit Juice</h6>
-                    <p class="price">₹80</p>
-                    <div class="cart-actions">
-                        <button onclick="changeQty(this, -1)">−</button>
-                        <span class="qty" id="qty-2">0</span>
-                        <button onclick="changeQty(this, 1)">+</button>
+                <div class="product-card shadow-sm border-0 p-3" style="border-radius: 15px;"
+                     data-id="1" data-name="Potato Chips" data-price="50" data-image="/images/chips.png">
+                    <img src="~/images/chips.png" alt="Chips" class="img-fluid rounded mb-3" style="height:110px; object-fit:cover;">
+                    <h6 class="fw-bold">Potato Chips</h6>
+                    <p class="price text-success fw-bold">₹50</p>
+                    <div class="cart-actions d-flex justify-content-center align-items-center bg-light rounded-pill p-2 mx-auto" style="width: fit-content;">
+                        <button class="btn btn-sm btn-success rounded-circle" onclick="changeQty(this, -1)">−</button>
+                        <span class="qty fw-bold mx-3" id="qty-1">0</span>
+                        <button class="btn btn-sm btn-success rounded-circle" onclick="changeQty(this, 1)">+</button>
                     </div>
                 </div>
             </div>
 
             <div class="col-md-4">
-                <div class="product-card" data-id="3" data-name="Instant Noodles" data-price="60" data-image="/images/noodles.png">
-                    <img src="~/images/noodles.png" alt="Noodles">
-                    <h6>Instant Noodles</h6>
-                    <p class="price">₹60</p>
-                    <div class="cart-actions">
-                        <button onclick="changeQty(this, -1)">−</button>
-                        <span class="qty" id="qty-3">0</span>
-                        <button onclick="changeQty(this, 1)">+</button>
+                <div class="product-card shadow-sm border-0 p-3" style="border-radius: 15px;"
+                     data-id="2" data-name="Fruit Juice" data-price="80" data-image="/images/juice.png">
+                    <img src="~/images/juice.png" alt="Juice" class="img-fluid rounded mb-3" style="height:110px; object-fit:cover;">
+                    <h6 class="fw-bold">Fruit Juice</h6>
+                    <p class="price text-success fw-bold">₹80</p>
+                    <div class="cart-actions d-flex justify-content-center align-items-center bg-light rounded-pill p-2 mx-auto" style="width: fit-content;">
+                        <button class="btn btn-sm btn-success rounded-circle" onclick="changeQty(this, -1)">−</button>
+                        <span class="qty fw-bold mx-3" id="qty-2">0</span>
+                        <button class="btn btn-sm btn-success rounded-circle" onclick="changeQty(this, 1)">+</button>
                     </div>
                 </div>
             </div>
 
             <div class="col-md-4">
-                <div class="product-card" data-id="4" data-name="Traditional Sweets" data-price="120" data-image="/images/sweets.png">
-                    <img src="~/images/sweets.png" alt="Sweets">
-                    <h6>Traditional Sweets</h6>
-                    <p class="price">₹120</p>
-                    <div class="cart-actions">
-                        <button onclick="changeQty(this, -1)">−</button>
-                        <span class="qty" id="qty-4">0</span>
-                        <button onclick="changeQty(this, 1)">+</button>
+                <div class="product-card shadow-sm border-0 p-3" style="border-radius: 15px;"
+                     data-id="3" data-name="Instant Noodles" data-price="60" data-image="/images/noodles.png">
+                    <img src="~/images/noodles.png" alt="Noodles" class="img-fluid rounded mb-3" style="height:110px; object-fit:cover;">
+                    <h6 class="fw-bold">Instant Noodles</h6>
+                    <p class="price text-success fw-bold">₹60</p>
+                    <div class="cart-actions d-flex justify-content-center align-items-center bg-light rounded-pill p-2 mx-auto" style="width: fit-content;">
+                        <button class="btn btn-sm btn-success rounded-circle" onclick="changeQty(this, -1)">−</button>
+                        <span class="qty fw-bold mx-3" id="qty-3">0</span>
+                        <button class="btn btn-sm btn-success rounded-circle" onclick="changeQty(this, 1)">+</button>
                     </div>
                 </div>
             </div>
 
             <div class="col-md-4">
-                <div class="product-card" data-id="5" data-name="Milk" data-price="80" data-image="/images/milk.png">
-                    <img src="~/images/milk.png" alt="Milk">
-                    <h6>Milk</h6>
-                    <p class="price">₹80</p>
-                    <div class="cart-actions">
-                        <button onclick="changeQty(this, -1)">−</button>
-                        <span class="qty" id="qty-5">0</span>
-                        <button onclick="changeQty(this, 1)">+</button>
+                <div class="product-card shadow-sm border-0 p-3" style="border-radius: 15px;"
+                     data-id="4" data-name="Traditional Sweets" data-price="120" data-image="/images/sweets.png">
+                    <img src="~/images/sweets.png" alt="Sweets" class="img-fluid rounded mb-3" style="height:110px; object-fit:cover;">
+                    <h6 class="fw-bold">Traditional Sweets</h6>
+                    <p class="price text-success fw-bold">₹120</p>
+                    <div class="cart-actions d-flex justify-content-center align-items-center bg-light rounded-pill p-2 mx-auto" style="width: fit-content;">
+                        <button class="btn btn-sm btn-success rounded-circle" onclick="changeQty(this, -1)">−</button>
+                        <span class="qty fw-bold mx-3" id="qty-4">0</span>
+                        <button class="btn btn-sm btn-success rounded-circle" onclick="changeQty(this, 1)">+</button>
                     </div>
                 </div>
             </div>
 
             <div class="col-md-4">
-                <div class="product-card" data-id="6" data-name="Meat" data-price="80" data-image="/images/meat.png">
-                    <img src="~/images/meat.png" alt="Meat">
-                    <h6>Meat</h6>
-                    <p class="price">₹80</p>
-                    <div class="cart-actions">
-                        <button onclick="changeQty(this, -1)">−</button>
-                        <span class="qty" id="qty-6">0</span>
-                        <button onclick="changeQty(this, 1)">+</button>
+                <div class="product-card shadow-sm border-0 p-3" style="border-radius: 15px;"
+                     data-id="5" data-name="Milk" data-price="40" data-image="/images/milk.png">
+                    <img src="~/images/milk.png" alt="Milk" class="img-fluid rounded mb-3" style="height:110px; object-fit:cover;">
+                    <h6 class="fw-bold">Milk</h6>
+                    <p class="price text-success fw-bold">₹40</p>
+                    <div class="cart-actions d-flex justify-content-center align-items-center bg-light rounded-pill p-2 mx-auto" style="width: fit-content;">
+                        <button class="btn btn-sm btn-success rounded-circle" onclick="changeQty(this, -1)">−</button>
+                        <span class="qty fw-bold mx-3" id="qty-5">0</span>
+                        <button class="btn btn-sm btn-success rounded-circle" onclick="changeQty(this, 1)">+</button>
                     </div>
                 </div>
             </div>
 
             <div class="col-md-4">
-                <div class="product-card" data-id="7" data-name="Corn" data-price="80" data-image="/images/corn.png">
-                    <img src="~/images/corn.png" alt="Corn">
-                    <h6>Corn</h6>
-                    <p class="price">₹80</p>
-                    <div class="cart-actions">
-                        <button onclick="changeQty(this, -1)">−</button>
-                        <span class="qty" id="qty-7">0</span>
-                        <button onclick="changeQty(this, 1)">+</button>
+                <div class="product-card shadow-sm border-0 p-3" style="border-radius: 15px;"
+                     data-id="6" data-name="Meat" data-price="80" data-image="/images/meat.png">
+                    <img src="~/images/meat.png" alt="Meat" class="img-fluid rounded mb-3" style="height:110px; object-fit:cover;">
+                    <h6 class="fw-bold">Meat</h6>
+                    <p class="price text-success fw-bold">₹25</p>
+                    <div class="cart-actions d-flex justify-content-center align-items-center bg-light rounded-pill p-2 mx-auto" style="width: fit-content;">
+                        <button class="btn btn-sm btn-success rounded-circle" onclick="changeQty(this, -1)">−</button>
+                        <span class="qty fw-bold mx-3" id="qty-6">0</span>
+                                    <button class="btn btn-sm btn-success rounded-circle" onclick="changeQty(this, 1)">+</button>
                     </div>
                 </div>
             </div>
 
             <div class="col-md-4">
-                <div class="product-card" data-id="8" data-name="Chocolates" data-price="80" data-image="/images/Chocolates.png">
-                    <img src="~/images/Chocolates.png" alt="Chocolates">
-                    <h6>Chocolates</h6>
-                    <p class="price">₹80</p>
-                    <div class="cart-actions">             
-                        <button onclick="changeQty(this, -1)">−</button>
-                        <span class="qty" id="qty-8">0</span>
-                        <button onclick="changeQty(this, 1)">+</button>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div class="product-card" data-id="8" data-name="Chocolates" data-price="80" data-image="/images/Chocolates.png">
-                    <img src="~/images/Chocolates.png" alt="Chocolates">
-                    <h6>Chocolates</h6>
-                    <p class="price">₹80</p>
-                    <div class="cart-actions">
-                        <button onclick="changeQty(this, -1)">−</button>
-                        <span class="qty" id="qty-8">0</span>
-                        <button onclick="changeQty(this, 1)">+</button>
-                    </div>
-                </div>
-            </div>
-             <div class="col-md-4">
-                <div class="product-card" data-id="8" data-name="Chocolates" data-price="80" data-image="/images/Chocolates.png">
-                    <img src="~/images/Chocolates.png" alt="Chocolates">
-                    <h6>Chocolates</h6>
-                    <p class="price">₹80</p>
-                    <div class="cart-actions">
-                        <button onclick="changeQty(this, -1)">−</button>
-                        <span class="qty" id="qty-8">0</span>
-                        <button onclick="changeQty(this, 1)">+</button>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div class="product-card" data-id="8" data-name="Chocolates" data-price="80" data-image="/images/Chocolates.png">
-                    <img src="~/images/Chocolates.png" alt="Chocolates">
-                    <h6>Chocolates</h6>
-                    <p class="price">₹80</p>
-                    <div class="cart-actions">
-                        <button onclick="changeQty(this, -1)">−</button>
-                        <span class="qty" id="qty-8">0</span>
-                        <button onclick="changeQty(this, 1)">+</button>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div class="product-card" data-id="8" data-name="Chocolates" data-price="80" data-image="/images/Chocolates.png">
-                    <img src="~/images/Chocolates.png" alt="Chocolates">
-                    <h6>Chocolates</h6>
-                    <p class="price">₹80</p>
-                    <div class="cart-actions">
-                        <button onclick="changeQty(this, -1)">−</button>
-                        <span class="qty" id="qty-8">0</span>
-                        <button onclick="changeQty(this, 1)">+</button>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div class="product-card" data-id="8" data-name="Chocolates" data-price="80" data-image="/images/Chocolates.png">
-                    <img src="~/images/Chocolates.png" alt="Chocolates">
-                    <h6>Chocolates</h6>
-                    <p class="price">₹80</p>
-                    <div class="cart-actions">
-                        <button onclick="changeQty(this, -1)">−</button>
-                        <span class="qty" id="qty-8">0</span>
-                        <button onclick="changeQty(this, 1)">+</button>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div class="product-card" data-id="8" data-name="Chocolates" data-price="80" data-image="/images/Chocolates.png">
-                    <img src="~/images/Chocolates.png" alt="Chocolates">
-                    <h6>Chocolates</h6>
-                    <p class="price">₹80</p>
-                    <div class="cart-actions">
-                        <button onclick="changeQty(this, -1)">−</button>
-                        <span class="qty" id="qty-8">0</span>
-                        <button onclick="changeQty(this, 1)">+</button>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div class="product-card" data-id="8" data-name="Chocolates" data-price="80" data-image="/images/Chocolates.png">
-                    <img src="~/images/Chocolates.png" alt="Chocolates">
-                    <h6>Chocolates</h6>
-                    <p class="price">₹80</p>
-                    <div class="cart-actions">
-                        <button onclick="changeQty(this, -1)">−</button>
-                        <span class="qty" id="qty-8">0</span>
-                        <button onclick="changeQty(this, 1)">+</button>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div class="product-card" data-id="8" data-name="Chocolates" data-price="80" data-image="/images/Chocolates.png">
-                    <img src="~/images/Chocolates.png" alt="Chocolates">
-                    <h6>Chocolates</h6>
-                    <p class="price">₹80</p>
-                    <div class="cart-actions">
-                        <button onclick="changeQty(this, -1)">−</button>
-                        <span class="qty" id="qty-8">0</span>
-                        <button onclick="changeQty(this, 1)">+</button>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div class="product-card" data-id="8" data-name="Chocolates" data-price="80" data-image="/images/Chocolates.png">
-                    <img src="~/images/Chocolates.png" alt="Chocolates">
-                    <h6>Chocolates</h6>
-                    <p class="price">₹80</p>
-                    <div class="cart-actions">
-                        <button onclick="changeQty(this, -1)">−</button>
-                        <span class="qty" id="qty-8">0</span>
-                        <button onclick="changeQty(this, 1)">+</button>
+                <div class="product-card shadow-sm border-0 p-3" style="border-radius: 15px;"
+                     data-id="7" data-name="Bread" data-price="80" data-image="/images/Bread.jpg">
+                    <img src="~/images/Bread.jpg" alt="Bread" class="img-fluid rounded mb-3" style="height:110px; object-fit:cover;">
+                    <h6 class="fw-bold">Bread</h6>
+                    <p class="price text-success fw-bold">₹50</p>
+                    <div class="cart-actions d-flex justify-content-center align-items-center bg-light rounded-pill p-2 mx-auto" style="width: fit-content;">
+                        <button class="btn btn-sm btn-success rounded-circle" onclick="changeQty(this, -1)">−</button>
+                        <span class="qty fw-bold mx-3" id="qty-6">0</span>
+                                    <button class="btn btn-sm btn-success rounded-circle" onclick="changeQty(this, 1)">+</button>
                     </div>
                 </div>
             </div>
 
+ 
+            <div class="col-md-4">
+                <div class="product-card shadow-sm border-0 p-3" style="border-radius: 15px;"
+                     data-id="7" data-name="Dairy Milk" data-price="80" data-image="/images/DairyMilk.jpg">
+                    <img src="~/images/DairyMilk.jpg" alt="DairyMilk" class="img-fluid rounded mb-3" style="height:110px; object-fit:cover;">
+                    <h6 class="fw-bold">Dairy Milk</h6>
+                    <p class="price text-success fw-bold">₹80</p>
+                    <div class="cart-actions d-flex justify-content-center align-items-center bg-light rounded-pill p-2 mx-auto" style="width: fit-content;">
+                        <button class="btn btn-sm btn-success rounded-circle" onclick="changeQty(this, -1)">−</button>
+                        <span class="qty fw-bold mx-3" id="qty-6">0</span>
+                                    <button class="btn btn-sm btn-success rounded-circle" onclick="changeQty(this, 1)">+</button>
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="col-md-4">
+                <div class="product-card shadow-sm border-0 p-3" style="border-radius: 15px;"
+                     data-id="7" data-name="Hide And Seek" data-price="80" data-image="/images/HideAndSeek.jpg">
+                    <img src="~/images/HideAndSeek.jpg" alt="HideAndSeek" class="img-fluid rounded mb-3" style="height:110px; object-fit:cover;">
+                    <h6 class="fw-bold">HideAndSeek</h6>
+                    <p class="price text-success fw-bold">₹40</p>
+                    <div class="cart-actions d-flex justify-content-center align-items-center bg-light rounded-pill p-2 mx-auto" style="width: fit-content;">
+                        <button class="btn btn-sm btn-success rounded-circle" onclick="changeQty(this, -1)">−</button>
+                        <span class="qty fw-bold mx-3" id="qty-6">0</span>
+                        <button class="btn btn-sm btn-success rounded-circle" onclick="changeQty(this, 1)">+</button>
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="col-md-4">
+                <div class="product-card shadow-sm border-0 p-3" style="border-radius: 15px;"
+                     data-id="7" data-name="Oil" data-price="120" data-image="/images/Oil.jpg">
+                    <img src="~/images/Oil.jpg" alt="Oil" class="img-fluid rounded mb-3" style="height:110px; object-fit:cover;">
+                    <h6 class="fw-bold">Oil</h6>
+                    <p class="price text-success fw-bold">₹120</p>
+                    <div class="cart-actions d-flex justify-content-center align-items-center bg-light rounded-pill p-2 mx-auto" style="width: fit-content;">
+                        <button class="btn btn-sm btn-success rounded-circle" onclick="changeQty(this, -1)">−</button>
+                        <span class="qty fw-bold mx-3" id="qty-6">0</span>
+                        <button class="btn btn-sm btn-success rounded-circle" onclick="changeQty(this, 1)">+</button>
+                    </div>
+                </div>
+            </div>
+ 
+
+
+            <div class="col-md-4">
+                <div class="product-card shadow-sm border-0 p-3" style="border-radius: 15px;"
+                     data-id="7" data-name="Dry Fruits" data-price="250" data-image="/images/DryFruits.jpg">
+                    <img src="~/images/DryFruits.jpg" alt="Dry Fruits" class="img-fluid rounded mb-3" style="height:110px; object-fit:cover;">
+                    <h6 class="fw-bold">Dry Fruits</h6>
+                    <p class="price text-success fw-bold">₹250</p>
+                    <div class="cart-actions d-flex justify-content-center align-items-center bg-light rounded-pill p-2 mx-auto" style="width: fit-content;">
+                        <button class="btn btn-sm btn-success rounded-circle" onclick="changeQty(this, -1)">−</button>
+                        <span class="qty fw-bold mx-3" id="qty-6">0</span>
+                        <button class="btn btn-sm btn-success rounded-circle" onclick="changeQty(this, 1)">+</button>
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="col-md-4">
+                <div class="product-card shadow-sm border-0 p-3" style="border-radius: 15px;"
+                     data-id="7" data-name="Masala" data-price="20" data-image="/images/Masala.jpg">
+                    <img src="~/images/Masala.jpg" alt="Masala" class="img-fluid rounded mb-3" style="height:110px; object-fit:cover;">
+                    <h6 class="fw-bold">Masala</h6>
+                    <p class="price text-success fw-bold">₹20</p>
+                    <div class="cart-actions d-flex justify-content-center align-items-center bg-light rounded-pill p-2 mx-auto" style="width: fit-content;">
+                        <button class="btn btn-sm btn-success rounded-circle" onclick="changeQty(this, -1)">−</button>
+                        <span class="qty fw-bold mx-3" id="qty-6">0</span>
+                        <button class="btn btn-sm btn-success rounded-circle" onclick="changeQty(this, 1)">+</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="product-card shadow-sm border-0 p-3" style="border-radius: 15px;"
+                     data-id="7" data-name="Kurkure" data-price="30" data-image="/images/Kurkure.jpg">
+                    <img src="~/images/Kurkure.jpg" alt="Kurkure" class="img-fluid rounded mb-3" style="height:110px; object-fit:cover;">
+                    <h6 class="fw-bold">Kurkure</h6>
+                    <p class="price text-success fw-bold">₹30</p>
+                    <div class="cart-actions d-flex justify-content-center align-items-center bg-light rounded-pill p-2 mx-auto" style="width: fit-content;">
+                        <button class="btn btn-sm btn-success rounded-circle" onclick="changeQty(this, -1)">−</button>
+                        <span class="qty fw-bold mx-3" id="qty-6">0</span>
+                        <button class="btn btn-sm btn-success rounded-circle" onclick="changeQty(this, 1)">+</button>
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="col-md-4">
+                <div class="product-card shadow-sm border-0 p-3" style="border-radius: 15px;"
+                     data-id="7" data-name="Sweets" data-price="180" data-image="/images/Sweets.jpg">
+                    <img src="~/images/Sweets.jpg" alt="Sweets" class="img-fluid rounded mb-3" style="height:110px; object-fit:cover;">
+                    <h6 class="fw-bold">Sweets</h6>
+                    <p class="price text-success fw-bold">₹180</p>
+                    <div class="cart-actions d-flex justify-content-center align-items-center bg-light rounded-pill p-2 mx-auto" style="width: fit-content;">
+                        <button class="btn btn-sm btn-success rounded-circle" onclick="changeQty(this, -1)">−</button>
+                        <span class="qty fw-bold mx-3" id="qty-6">0</span>
+                        <button class="btn btn-sm btn-success rounded-circle" onclick="changeQty(this, 1)">+</button>
+                    </div>
+                </div>
+            </div>
+
+
+
+ 
+ 
+            
+ 
+ 
         </div>
-    </div>
-
+</div>
+ 
     <script>
 
-        // Initialize cart from localStorage
-
         let cart = JSON.parse(localStorage.getItem("myCart")) || [];
-
-        // On page load, sync quantities shown on screen with what's in the cart
-
+ 
         document.addEventListener("DOMContentLoaded", () => {
 
             cart.forEach(item => {
@@ -266,8 +248,10 @@
 
             });
 
-        });
+            updateCartBadge();
 
+        });
+ 
         function changeQty(button, change) {
 
             const card = button.closest('.product-card');
@@ -281,23 +265,23 @@
             const image = card.getAttribute('data-image');
 
             const qtySpan = card.querySelector('.qty');
-
+ 
             let currentQty = parseInt(qtySpan.innerText);
 
             currentQty += change;
-
+ 
             if (currentQty < 0) currentQty = 0;
 
             qtySpan.innerText = currentQty;
-
+ 
             updateCart(id, name, price, image, currentQty);
 
         }
-
+ 
         function updateCart(id, name, price, image, qty) {
 
             const index = cart.findIndex(item => item.id === id);
-
+ 
             if (qty > 0) {
 
                 if (index > -1) {
@@ -315,14 +299,30 @@
                 if (index > -1) cart.splice(index, 1);
 
             }
-
-            // Save the updated cart to localStorage
-
+ 
             localStorage.setItem("myCart", JSON.stringify(cart));
 
-        }
-    </script>
+            updateCartBadge();
 
+        }
+ 
+        function updateCartBadge() {
+
+            // Assuming your layout has an element with id="cart-count"
+
+            const badge = document.getElementById("cart-count");
+
+            if (badge) {
+
+                const total = cart.reduce((sum, item) => sum + item.qty, 0);
+
+                badge.innerText = total;
+
+            }
+
+        }
+</script>
+ 
 </body>
 </html>
-
+ 
