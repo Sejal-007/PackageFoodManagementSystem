@@ -2,7 +2,7 @@
     background-color: #f8f9fa;
 }
 
-
+/* CARD */
 
 .product-card {
     width: 300px;
@@ -13,25 +13,25 @@
     text-align: center;
 }
 
-
+/* IMAGE BOX */
 
 .product-img-box {
     position: relative;
     width: 100%;
-    height: 150px; 
+    height: 150px; /* FIXED HEIGHT */
 
-    overflow: hidden; 
+    overflow: hidden; /* VERY IMPORTANT */
 
     border-radius: 10px;
     background: #f5f5f5;
 }
 
-   
+    /* IMAGE */
 
     .product-img-box img {
         width: 100%;
         height: 100%;
-        object-fit: contain; 
+        object-fit: contain; /* keeps image inside */
     }
 
 }
