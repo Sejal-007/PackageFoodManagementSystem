@@ -9,4 +9,12 @@ namespace PackageFoodManagementSystem.Application.Controllers
             return View();
         }
     }
+    //public async Task<IActionResult> Index()
+    //    {
+    //        var activeProducts = await _context.Products
+    //                                    .Where(p => p.Status == "ACTIVE")
+    //                                    .ToListAsync();
+    //        return View(activeProducts);
+    //    }
+    //}
 }
