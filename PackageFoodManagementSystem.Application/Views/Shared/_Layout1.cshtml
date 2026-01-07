@@ -1,12 +1,10 @@
-﻿@{
-    Layout = null;
-    var title = ViewBag.Title ?? "PFMS";
-}
+﻿
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
-    <title>@title - Packaged Food Management System</title>
+    <title>@ViewBag.Title - Always Fresh</title>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
 
     <link rel="stylesheet" href="~/css/style.css" />
@@ -18,6 +16,7 @@
 <body>
     <header class="nav" aria-label="Global Navigation">
         <div class="nav-wrap">
+            <a>
             <!-- Brand / Home -->
             <a>
                 <span class="logo" aria-hidden="true"></span>

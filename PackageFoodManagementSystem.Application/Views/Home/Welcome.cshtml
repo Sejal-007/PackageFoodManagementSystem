@@ -1,0 +1,119 @@
+﻿@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welcome to ALWAYZZZ FRESH</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <style>
+        body, html {
+            height: 100%;
+            margin: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        .bg-image {
+            background-image: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url('https://images.unsplash.com/photo-1542838132-92c53300491e?ixlib=rb-1.2.1&auto=format&fit=crop&w=1920&q=80');
+            height: 100%;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-size: cover;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            color: white;
+        }
+
+        .welcome-box {
+            max-width: 700px;
+            padding: 40px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .brand-name {
+            font-size: 3.5rem;
+            font-weight: 800;
+            letter-spacing: 2px;
+            margin-bottom: 10px;
+        }
+
+        .text-orange {
+            color: #FF6B00;
+        }
+
+        .btn-signin {
+            background-color: #FF6B00;
+            color: white;
+            padding: 15px 40px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            border-radius: 50px;
+            text-decoration: none;
+            transition: 0.3s;
+            display: inline-block;
+            border: none;
+            margin-top: 20px;
+        }
+
+            .btn-signin:hover {
+                background-color: #e66000;
+                transform: scale(1.05);
+                color: white;
+                box-shadow: 0 10px 20px rgba(255, 107, 0, 0.4);
+            }
+
+        .features {
+            margin-top: 30px;
+            display: flex;
+            justify-content: space-around;
+        }
+
+        .feature-item i {
+            color: #FF6B00;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="bg-image">
+        <div class="welcome-box shadow-lg">
+            <h1 class="brand-name">ALWAYZZZ <span class="text-orange">FRESH</span></h1>
+            <p class="lead mb-4">Farm-to-table groceries delivered to your doorstep in 30 minutes. Freshness you can taste, quality you can trust.</p>
+
+            <div class="features mb-4">
+                <div class="feature-item">
+                    <i class="fa-solid fa-truck-fast fa-2x"></i>
+                    <p class="small">Fast Delivery</p>
+                </div>
+                <div class="feature-item">
+                    <i class="fa-solid fa-seedling fa-2x"></i>
+                    <p class="small">100% Organic</p>
+                </div>
+                <div class="feature-item">
+                    <i class="fa-solid fa-shield-heart fa-2x"></i>
+                    <p class="small">Secure Quality</p>
+                </div>
+            </div>
+
+            <a asp-controller="Home" asp-action="SignIn" class="btn-signin">
+                <i class="fa-solid fa-right-to-bracket me-2"></i> SIGN IN TO EXPLORE
+            </a>
+
+            <div class="mt-4">
+                <p class="small">Don't have an account? <a asp-controller="Home" asp-action="SignUp" class="text-orange fw-bold text-decoration-none">Register here</a></p>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>

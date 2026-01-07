@@ -4,6 +4,17 @@ namespace PackageFoodManagementSystem.Application.Controllers
 {
     public class StoreManagerController : Controller
     {
+    //    [HttpPost]
+    //    public async Task<IActionResult> Create(Product product)
+    //    {
+    //        if (ModelState.IsValid)
+    //        {
+    //            _context.Add(product);
+    //            await _context.SaveChangesAsync();
+    //            return RedirectToAction("Index");
+    //        }
+    //        return View(product);
+    //    }
         public IActionResult Home()
         {
             return View();
