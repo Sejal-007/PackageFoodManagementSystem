@@ -537,3 +537,121 @@ body {
 .nav-link.position-relative {
     display: inline-block;
 }
+
+:root {
+    --brand-orange: #FF6B00;
+}
+
+.text-orange {
+    color: var(--brand-orange) !important;
+}
+
+.btn-orange {
+    background-color: var(--brand-orange);
+    color: white;
+    border: none;
+}
+
+    .btn-orange:hover {
+        background-color: #e66000;
+        color: white;
+    }
+
+.bg-dark {
+    background-color: #1a1a1a !important;
+}
+
+.footer-links li {
+    margin-bottom: 12px;
+}
+
+.footer-links a {
+    color: rgba(255,255,255,0.6);
+    text-decoration: none;
+    transition: 0.3s;
+}
+
+    .footer-links a:hover {
+        color: var(--brand-orange);
+        padding-left: 5px;
+    }
+
+.social-icon-box {
+    width: 38px;
+    height: 38px;
+    background: rgba(255,255,255,0.05);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    text-decoration: none;
+    transition: 0.3s;
+}
+
+    .social-icon-box:hover {
+        background: var(--brand-orange);
+        transform: translateY(-3px);
+        color: white;
+    }
+
+/* User Popup Styling */
+.user-popup {
+    position: fixed;
+    top: 80px;
+    right: 20px;
+    width: 250px;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    z-index: 1000;
+    display: none;
+    overflow: hidden;
+}
+
+.popup-header {
+    padding: 15px;
+    background: #f8f9fa;
+    border-bottom: 1px solid #eee;
+    display: flex;
+    justify-content: space-between;
+    font-weight: bold;
+}
+
+.popup-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+    .popup-list li {
+        padding: 12px 20px;
+        border-bottom: 1px solid #f1f1f1;
+        cursor: pointer;
+        transition: 0.2s;
+    }
+
+        .popup-list li:hover {
+            background: #fff5f0;
+            color: var(--brand-orange);
+        }
+
+        .popup-list li i {
+            margin-right: 10px;
+            width: 20px;
+        }
+
+        .popup-list li.logout {
+            color: #dc3545;
+        }
+
+#popupOverlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.3);
+    display: none;
+    z-index: 999;
+}
