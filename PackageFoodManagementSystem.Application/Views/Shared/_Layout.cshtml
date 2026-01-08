@@ -10,9 +10,8 @@
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
 
     @* --- FIX: This renders the CSS from your individual pages --- *@
-    @* @await RenderSectionAsync("Styles", required: false) *@
+     @await RenderSectionAsync("Styles", required: false) 
 
-    @RenderSection("Styles", required: false)
 </head>
 <body class="d-flex flex-column min-vh-100">
     @* Flexbox ensures sticky footer *@
