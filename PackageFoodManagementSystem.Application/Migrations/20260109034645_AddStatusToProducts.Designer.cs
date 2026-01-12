@@ -12,8 +12,8 @@ using System;
 namespace PackageFoodManagementSystem.Application.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20260107121131_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20260109034645_AddStatusToProducts")]
+    partial class AddStatusToProducts
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -129,6 +129,9 @@ namespace PackageFoodManagementSystem.Application.Migrations
 
                     b.Property<decimal>("Price")
                         .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("Status")
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
