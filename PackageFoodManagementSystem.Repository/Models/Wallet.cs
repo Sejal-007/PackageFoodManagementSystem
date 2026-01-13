@@ -1,4 +1,5 @@
-﻿namespace PackageFoodManagementSystem.Repository.Models
+﻿
+namespace PackageFoodManagementSystem.Repository.Models
 {
     public class Wallet
     {
