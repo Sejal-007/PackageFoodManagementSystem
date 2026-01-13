@@ -2,27 +2,44 @@
     ViewData["Title"] = "Admin Dashboard";
     Layout = "~/Views/Shared/_AdminLayout.cshtml";
 }
-<style>
-    
-</style>
 
-    ViewData["Title"] = "Admin Dashboard";
 
-    Layout = "~/Views/Shared/_AdminLayout.cshtml";
 
-}
 <div class="row mb-4">
     <div class="col-md-4">
         <div class="card card-summary text-center">
             <div class="card-body">
                 <div class="card-head ">
                     <div class="card-title ">TOTAL CUSTOMERS</div>
-                </div>                <div class="card-value">5</div>
+                </div>                <div class="card-value">@ViewBag.TotalCustomers</div>
+
 
             </div>
         </div>
     </div>
     <div class="col-md-4">
+        <div class="card card-summary text-center">
+            <div class="card-body">
+                <div class="card-head">
+                    <div class="card-title">STORE MANAGERS</div>
+                </div>
+                <div class="card-value">@ViewBag.TotalStoreManagers</div>
+
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card card-summary text-center">
+            <div class="card-body">
+                <div class="card-head">
+                    <div class="card-title">ORDERS</div>
+                </div>
+                <div class="card-value">0</div>
+
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4 pt-5">
         <div class="card card-summary text-center">
             <div class="card-body">
                 <div class="card-head">
@@ -33,13 +50,13 @@
             </div>
         </div>
     </div>
-    <div class="col-md-4">
+    <div class="col-md-4 pt-5">
         <div class="card card-summary text-center">
             <div class="card-body">
                 <div class="card-head">
                     <div class="card-title">INACTIVE STORES</div>
                 </div>
-                <div class="card-value">0</div>
+                <div class="card-value">1</div>
 
             </div>
         </div>
@@ -55,16 +72,16 @@
             </div>
         </div>
     </div>
-    <div class="col-md-4 pt-5">
+    @* <div class="col-md-4 pt-5">
         <div class="card card-summary text-center">
             <div class="card-body">
                 <div class="card-head">
-                    <div class="card-title">ORDERS</div>
+                    <div class="card-title">BATCHES</div>
                 </div>
-                <div class="card-value">1</div>
+                <div class="card-value">0</div>
 
             </div>
         </div>
-    </div>
+    </div> *@
 </div>
 
