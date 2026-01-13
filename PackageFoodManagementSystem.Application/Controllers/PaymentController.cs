@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-
+using PackageFoodManagementSystem.Repository.Models;
+using PackageFoodManagementSystem.Services.Interfaces;
 namespace PackagedFoodFrontend.Controllers // Updated namespace to match Solution Explorer
 
 {

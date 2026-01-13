@@ -10,18 +10,21 @@
         <h2>Sign Up</h2>
 
         <!-- When you wire server-side later, add: method="post" asp-controller="Home" asp-action="SignUp" -->
-        <form id="signupForm" novalidate>
+        <form asp-action="SignUp" asp-controller="Home" method="post">
             <!-- Full Name -->
-            <input type="text" id="name" name="FullName" placeholder="Full Name" required />
+            <input type="text" id="name" name="Name" placeholder="Name" required />
             <span class="error" id="nameError"></span>
 
-            <!-- Mobile -->
-            <input type="text" id="mobile" name="Mobile" placeholder="Mobile Number" required />
-            <span class="error" id="mobileError"></span>
 
             <!-- Email -->
             <input type="email" id="email" name="Email" placeholder="Email" required />
             <span class="error" id="emailError"></span>
+
+
+            <!-- Mobile -->
+            <input type="text" id="mobilenumber" name="MobileNumber" placeholder="Mobile Number" required />
+            <span class="error" id="mobileError"></span>
+
 
             <!-- Password (ID must be 'password') -->
             <div class="password-wrapper">
@@ -54,3 +57,13 @@
         </form>
     </div>
 </section>
+@if (TempData["SuccessMessage"] != null)
+{
+    <script>
+        alert('@TempData["SuccessMessage"]');
+    </script>
+}
+@if (TempData["ErrorMessage"] != null)
+{
+    <script> alert('@TempData["ErrorMessage"]'); </script>
+}
