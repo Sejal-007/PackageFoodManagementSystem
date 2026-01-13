@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using PackageFoodManagementSystem.Application.Models;
+using PackageFoodManagementSystem.Repository.Models;
 
 namespace PackagedFoodFrontend.Controllers
 {

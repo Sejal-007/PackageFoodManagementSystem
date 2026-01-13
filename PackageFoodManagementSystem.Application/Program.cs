@@ -1,10 +1,12 @@
-﻿using PackageFoodManagementSystem.Application.Data;
-using PackageFoodManagementSystem.Application.Repositories;
-using PackageFoodManagementSystem.Application.Services;
-using PackageFoodManagementSystem.Repository;
-using PackageFoodManagementSystem.Services;
+﻿using PackageFoodManagementSystem.Repository.Data;
+using PackageFoodManagementSystem.Repository.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using PackageFoodManagementSystem.Repository.Interface;
+using PackageFoodManagementSystem.Services.Implementations;
+using PackageFoodManagementSystem.Services.Interface;
+using PackageFoodManagementSystem.Repository.Implementations;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -38,14 +40,14 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
-// ✅ Global no-cache middleware
-app.Use(async (context, next) =>
-{
-    context.Response.Headers["Cache-Control"] = "no-cache, no-store, must-revalidate";
-    context.Response.Headers["Pragma"] = "no-cache";
-    context.Response.Headers["Expires"] = "0";
-    await next();
-});
+//// ✅ Global no-cache middleware
+//app.Use(async (context, next) =>
+//{
+//    context.Response.Headers["Cache-Control"] = "no-cache, no-store, must-revalidate";
+//    context.Response.Headers["Pragma"] = "no-cache";
+//    context.Response.Headers["Expires"] = "0";
+//    await next();
+//});
 
 app.UseAuthentication();
 app.UseAuthorization();

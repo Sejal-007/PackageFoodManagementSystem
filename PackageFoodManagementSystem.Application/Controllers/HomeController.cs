@@ -1,11 +1,10 @@
-﻿
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using PackageFoodManagementSystem.Application.Helpers;
-using PackageFoodManagementSystem.Application.Models;
-using PackageFoodManagementSystem.Application.Data;
-using PackageFoodManagementSystem.Services;
+using PackageFoodManagementSystem.Services.Helpers;
+using PackageFoodManagementSystem.Repository.Models;
+using PackageFoodManagementSystem.Repository.Data;
 using System.Threading.Tasks;
+using PackageFoodManagementSystem.Services.Interface;
 
 namespace PackagedFoodManagementSystem.Controllers
 {
@@ -13,14 +12,14 @@ namespace PackagedFoodManagementSystem.Controllers
     {
         private readonly IUserService _userService;
         private readonly ApplicationDbContext _db;
+
         public HomeController(IUserService userService, ApplicationDbContext db)
         {
             _userService = userService;
             _db = db;
         }
+
         public IActionResult Index() => View();
-
-
 
         // --- Sign In ---
         [HttpGet]
@@ -43,20 +42,13 @@ namespace PackagedFoodManagementSystem.Controllers
 
             TempData["SuccessMessage"] = "Login Successful";
 
-            // ✅ Role-based redirection
-            switch (user.Role)
+            return user.Role switch
             {
-                case "Admin":
-                    return RedirectToAction("AdminDashboard", "Home");
-                case "StoreManager":
-                    return RedirectToAction("Home", "StoreManager");
-                default:
-                    return RedirectToAction(nameof(Index));
-            }
+                "Admin" => RedirectToAction("AdminDashboard"),
+                "StoreManager" => RedirectToAction("ManagerDashboard"),
+                _ => RedirectToAction(nameof(Index))
+            };
         }
-
-
-
 
         // --- Sign Up ---
         [HttpGet]
@@ -67,21 +59,23 @@ namespace PackagedFoodManagementSystem.Controllers
         public async Task<IActionResult> SignUp(UserAuthentication user)
         {
             if (!ModelState.IsValid) return View(user);
-            var existingUser = await _db.UserAuthentications.FirstOrDefaultAsync(u => u.Email == user.Email);
+
+            var existingUser = await _db.UserAuthentications
+                .FirstOrDefaultAsync(u => u.Email == user.Email);
+
             if (existingUser != null)
-            { // ❌ Email already exists → show error
-              TempData["ErrorMessage"] = "Email already exists. Please use a different email."; 
-              return View(user); // stay on SignUp page
+            {
+                TempData["ErrorMessage"] = "Email already exists. Please use a different email.";
+                return View(user);
             }
 
-                var result = await _userService.CreateUserAsync(
+            await _userService.CreateUserAsync(
                 user.Name,
                 user.MobileNumber,
                 user.Email,
                 user.Password);
 
-            // ✅ SignUp success → set success message
-            TempData["SuccessMessage"] = "SignUp Successful"; 
+            TempData["SuccessMessage"] = "SignUp Successful";
             return RedirectToAction(nameof(SignIn));
         }
 
@@ -89,60 +83,91 @@ namespace PackagedFoodManagementSystem.Controllers
 
         public async Task<IActionResult> AdminDashboard()
         {
-            // Count all users with Role = "User"
-            var totalCustomers = await _db.UserAuthentications
-                .CountAsync(u => u.Role == "User");
-
-            var totalStoreManagers = await _db.UserAuthentications
-                .CountAsync(u => u.Role == "StoreManager");
-
-            // Count active/inactive stores if you have a Stores table
-            //var activeStores = await _db.Stores.CountAsync(s => s.IsActive);
-            //var inactiveStores = await _db.Stores.CountAsync(s => !s.IsActive);
-
-            // Example: orders, batches, etc. if you have those tables
-            var totalOrders = await _db.Orders.CountAsync();
-            //var totalBatches = await _db.Batches.CountAsync();
-
-            // Pass values to the view using ViewBag
-            ViewBag.TotalCustomers = totalCustomers;
-            ViewBag.TotalStoreManagers = totalStoreManagers;
-            //ViewBag.InactiveStores = inactiveStores;
-            ViewBag.TotalOrders = totalOrders;
-            //ViewBag.TotalBatches = totalBatches;
+            ViewBag.TotalCustomers = await _db.UserAuthentications.CountAsync(u => u.Role == "User");
+            ViewBag.TotalStoreManagers = await _db.UserAuthentications.CountAsync(u => u.Role == "StoreManager");
+            ViewBag.TotalOrders = await _db.Orders.CountAsync();
 
             return View();
         }
-
-
 
         public IActionResult ManagerDashboard() => View();
 
-        public IActionResult Users() => View();
+        // --- User Management (CRUD) ---
+        public async Task<IActionResult> Users()
+        {
+            var users = await _db.UserAuthentications.ToListAsync();
+            return View(users); // ✅ pass model to view
+        }
 
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> AddUser(UserAuthentication user)
+        {
+            if (!ModelState.IsValid)
+                return View("Users", await _db.UserAuthentications.ToListAsync());
+
+            user.Password = PasswordHelper.HashPassword(user.Password);
+            _db.UserAuthentications.Add(user);
+            await _db.SaveChangesAsync();
+
+            TempData["SuccessMessage"] = "User added successfully!";
+            return RedirectToAction(nameof(Users));
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> UpdateUser(UserAuthentication user)
+        {
+            if (!ModelState.IsValid)
+            {
+                var users = await _db.UserAuthentications.ToListAsync();
+                return View("Users", users); // show the same page with errors
+            }
+
+            var existingUser = await _db.UserAuthentications.FindAsync(user.Id);
+            if (existingUser == null) return NotFound();
+
+            existingUser.Name = user.Name;
+            existingUser.Email = user.Email;
+            existingUser.MobileNumber = user.MobileNumber;
+            existingUser.Role = user.Role;
+
+            if (!string.IsNullOrEmpty(user.Password))
+                existingUser.Password = PasswordHelper.HashPassword(user.Password);
+
+            await _db.SaveChangesAsync();
+
+            TempData["SuccessMessage"] = "User updated successfully!";
+            return RedirectToAction(nameof(Users));
+        }
+
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteUser(int id)
+        {
+            var user = await _db.UserAuthentications.FindAsync(id);
+            if (user == null) return NotFound();
+
+            _db.UserAuthentications.Remove(user);
+            await _db.SaveChangesAsync();
+
+            TempData["SuccessMessage"] = "User deleted successfully!";
+            return RedirectToAction(nameof(Users));
+        }
+
+        // --- Other Pages ---
         public IActionResult AboutUs() => View();
-
         public IActionResult ContactUs() => View();
+        public IActionResult AdminInventory() => View();
+        public IActionResult Report() => View();
+        public IActionResult Stores() => View();
 
-        public IActionResult AdminInventory()
-        {
-            return View();
-        }
-        public IActionResult Report()
-        {
-            return View();
-        }
-        public IActionResult Stores()
-        {
-            return View();
-        }
         public IActionResult Welcome()
         {
-            // If already logged in, skip the welcome page and go to the store
             if (User.Identity.IsAuthenticated)
-            {
-                return RedirectToAction("Index", "Home");
-            }
+                return RedirectToAction("Index");
             return View();
         }
     }
