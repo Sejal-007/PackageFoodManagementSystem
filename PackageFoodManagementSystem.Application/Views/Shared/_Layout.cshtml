@@ -36,7 +36,7 @@
                 </li>
 
                 <li class="nav-item">
-                    <a class="nav-link" href="javascript:void(0)" onclick="openUserMenu()">
+                    <a class="nav-link" onclick="openUserMenu()">
                         <i class="fa-solid fa-user-circle fa-2x" style="color: #ff6347;"></i>
                     </a>
                 </li>
@@ -69,14 +69,14 @@
 
                 @* @if (User.Identity.IsAuthenticated)
                 {
-                    <a href="/Home/Logout" style="text-decoration: none; color: inherit;">
+                    <a href="/Home/SignIn" style="text-decoration: none; color: inherit;">
                         <i class="fa-solid fa-arrow-right-from-bracket"></i> Logout
                     </a>
                 }
                  else
                 {
                     <a href="/Home/SignIn" style="text-decoration: none; color: inherit;">
-                        <i class="fa-solid fa-right-to-bracket"></i> LogIn
+                        <i class="fa-solid fa-right-to-bracket"></i> Logout
                     </a>
                 }  *@
             

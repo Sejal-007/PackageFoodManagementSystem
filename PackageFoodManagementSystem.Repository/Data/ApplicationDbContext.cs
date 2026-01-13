@@ -1,26 +1,30 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿
+using Microsoft.EntityFrameworkCore;
 
 using PackageFoodManagementSystem.Repository.Models;
 
+namespace PackageFoodManagementSystem.Repository.Data
 namespace PackageFoodManagementSystem.Repository.Data;
 
 public class ApplicationDbContext : DbContext
 
 {
+    public class ApplicationDbContext : DbContext
 
     public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
 
         : base(options)
 
     {
+        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options) { }
 
     }
 
-    public DbSet<Product> Products { get; set; }
+        public DbSet<Product> Products { get; set; }
 
-    public DbSet<Customer> Customers { get; set; }
+        public DbSet<Customer> Customers { get; set; }
 
-    public DbSet<Order> Orders { get; set; }
+        public DbSet<Order> Orders { get; set; }
 
     public DbSet<OrderItem> OrderItem { get; set; }
 
@@ -28,10 +32,12 @@ public class ApplicationDbContext : DbContext
 
     public DbSet<Payment> Payments { get; set; }
 
-    public DbSet<Inventory> Inventory { get; set; }
+        public DbSet<Inventory> Inventory { get; set; }
+        public DbSet<UserAuthentication> UserAuthentications { get; set; }
 
     public DbSet<UserAuthentication> UserAuthentication { get; set; }
 
-    public DbSet<Batch> Batch { get; set; }
+        public DbSet<Batch> Batch { get; set; }
+    }
 
 }

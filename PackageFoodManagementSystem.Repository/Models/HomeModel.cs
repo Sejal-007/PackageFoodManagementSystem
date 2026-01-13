@@ -1,5 +1,4 @@
 ﻿namespace PackageFoodManagementSystem.Repository.Models
-
 {
 
     public class HomeModel
