@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using PackageFoodManagementSystem.Application;
 using PackageFoodManagementSystem.Application.Models;
 
 var builder = WebApplication.CreateBuilder(args);

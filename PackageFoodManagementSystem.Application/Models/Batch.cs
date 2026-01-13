@@ -1,11 +1,41 @@
-﻿namespace PackageFoodManagementSystem.Application.Models
+﻿using System;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+
+namespace PackageFoodManagementSystem.Application.Models
 {
     public class Batch
     {
-        public int Id { get; set; } // EF will automatically pick this as the Primary Key
+        [Key]
+        public int Id { get; set; }
 
-        public string BatchNumber { get; set; }
+        [Required]
+        [StringLength(50)]
+        public required string BatchNumber { get; set; }
+        public DateTime ProductionDate { get; set; }
+
+        [Required]
         public DateTime ExpiryDate { get; set; }
-        // ... other properties
+
+        public string? Description { get; set; }
+        // Module: Quantity Tracking
+        public int InitialQuantity { get; set; }
+        public int RemainingQuantity { get; set; }
+
+        // Module: Status Management (Active, Expired, Recalled)
+        public BatchStatus Status { get; set; } 
+
+        [ForeignKey("ProductId")]
+        public virtual Product Product { get; set; }
+
+    }
+
+    public enum BatchStatus
+    {
+        Active,
+        NearExpiry,
+        Expired,
+        Recalled,
+        OutOfStock
     }
 }

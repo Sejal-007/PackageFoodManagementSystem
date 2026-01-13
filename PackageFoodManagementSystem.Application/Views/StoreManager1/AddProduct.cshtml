@@ -159,7 +159,13 @@
                     <td>01/12/2026</td>
                     <td><span class="badge bg-success">Active</span></td>
                     <td>
-                        <a href="javascript:void(0)" onclick="editProduct(this)" class="text-primary me-2"><i class="fa fa-edit"></i> Edit</a>
+                        <a href="javascript:void(0)"
+                           onclick="editProduct(this)"
+                           data-bs-toggle="modal"
+                           data-bs-target="#addProductModal"
+                           class="text-primary me-2">
+                            <i class="fa fa-edit"></i> Edit
+                        </a>
                         <a href="javascript:void(0)" onclick="deleteProduct(this)" class="text-danger"><i class="fa fa-trash"></i> Delete</a>
                     </td>
                 </tr>
@@ -168,7 +174,7 @@
     </div>
 </div>
 
-<div class="modal fade" id="addProductModal" tabindex="-1" aria-hidden="true">
+<div class="modal fade" id="addProductModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header border-0">
@@ -246,7 +252,13 @@
             <td>${expiry}</td>
             <td><span class="badge ${badgeClass}">${status}</span></td>
             <td>
-                <a href="javascript:void(0)" onclick="editProduct(this)" class="text-primary me-2"><i class="fa fa-edit"></i> Edit</a>
+                <a href="javascript:void(0)"
+                   onclick="editProduct(this)"
+                   data-bs-toggle="modal"
+                   data-bs-target="#addProductModal"
+                   class="text-primary me-2">
+                   <i class="fa fa-edit"></i> Edit
+                </a>
                 <a href="javascript:void(0)" onclick="deleteProduct(this)" class="text-danger"><i class="fa fa-trash"></i> Delete</a>
             </td>
         `;
@@ -260,7 +272,18 @@
             tableBody.appendChild(newRow);
         }
 
-        bootstrap.Modal.getInstance(document.getElementById('addProductModal')).hide();
+        // FORCE CLEANUP: This ensures the modal closes and the dark backdrop is removed
+        const modalElement = document.getElementById('addProductModal');
+        const modalInstance = bootstrap.Modal.getInstance(modalElement);
+        if (modalInstance) {
+            modalInstance.hide();
+        }
+
+        // Extra cleanup to remove stuck backdrops manually if necessary
+        document.querySelectorAll('.modal-backdrop').forEach(el => el.remove());
+        document.body.classList.remove('modal-open');
+        document.body.style.overflow = '';
+        document.body.style.paddingRight = '';
     }
 
     function deleteProduct(btn) {
@@ -273,14 +296,19 @@
         currentRow = btn.closest('tr');
         const cells = currentRow.cells;
 
+        // Fill the form fields
         document.getElementById('prodName').value = cells[1].innerText;
         document.getElementById('prodCategory').value = cells[2].innerText;
         document.getElementById('prodPrice').value = cells[3].innerText;
+
+        // Note: Date formatting logic may be needed here if cells[4] is not YYYY-MM-DD
         document.getElementById('prodExpiry').value = cells[4].innerText;
+
         document.getElementById('prodImg').value = cells[0].querySelector('img').src;
-        document.getElementById('prodStatus').checked = cells[5].innerText.includes("Active");
+        document.getElementById('prodStatus').checked = cells[5].innerText.trim() === "Active";
 
         document.getElementById('modalTitle').innerText = "Edit Product";
-        new bootstrap.Modal(document.getElementById('addProductModal')).show();
+
+        // NO bootstrap.Modal.show() here! HTML data attributes handle it.
     }
 </script>
