@@ -4,7 +4,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace PackageFoodManagementSystem.Services
+namespace PackageFoodManagementSystem.Services.Interface
 {
     public interface IUserService
     {
