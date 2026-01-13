@@ -1,15 +1,36 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using PackageFoodManagementSystem.Application.Models;
+using PackageFoodManagementSystem.Repository.Data;
+using PackageFoodManagementSystem.Repository.Models;
+using PackageFoodManagementSystem.Repository.Interfaces;
+using PackageFoodManagementSystem.Repository.Implementations;
+using PackageFoodManagementSystem.Services.Interfaces;
+using PackageFoodManagementSystem.Services.Implementations;
+
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddDbContext<ApplicationDbContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+builder.Services.AddScoped<IOrderRepository, OrderRepository>();
+
+builder.Services.AddScoped<IBillRepository, BillRepository>();
+
+builder.Services.AddScoped<IPaymentRepository, PaymentRepository>();
+
+builder.Services.AddScoped<IOrderService, OrderService>();
+
+builder.Services.AddScoped<IBillingService, BillingService>();
 
 // --- 1. ADD SERVICES (Before builder.Build()) ---
 
 builder.Services.AddControllersWithViews();
 
+
+
+
 // Move this HERE (above builder.Build)
-builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+
 
 // --- 2. BUILD THE APP ---
 

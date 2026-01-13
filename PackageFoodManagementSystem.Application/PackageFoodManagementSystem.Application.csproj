@@ -20,4 +20,8 @@
     </PackageReference>
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\PackageFoodManagementSystem.Services\PackageFoodManagementSystem.Services.csproj" />
+  </ItemGroup>
+
 </Project>

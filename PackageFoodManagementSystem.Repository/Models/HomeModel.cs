@@ -1,4 +1,4 @@
-﻿namespace PackageFoodManagementSystem.Application.Models
+﻿namespace PackageFoodManagementSystem.Repository.Models
 
 {
 
