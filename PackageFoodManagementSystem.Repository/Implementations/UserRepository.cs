@@ -1,7 +1,7 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
 using PackageFoodManagementSystem.Repository.Data;
-using PackageFoodManagementSystem.Repository.Interface;
+using PackageFoodManagementSystem.Repository.Interfaces;
 
 namespace PackageFoodManagementSystem.Repository.Implementations
 {
