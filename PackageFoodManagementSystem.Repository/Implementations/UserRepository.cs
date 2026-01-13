@@ -1,9 +1,9 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
-using PackageFoodManagementSystem.Application.Data;
-using PackageFoodManagementSystem.Repository;
+using PackageFoodManagementSystem.Repository.Data;
+using PackageFoodManagementSystem.Repository.Interfaces;
 
-namespace PackageFoodManagementSystem.Application.Repositories
+namespace PackageFoodManagementSystem.Repository.Implementations
 {
     public class UserRepository : IUserRepository
     {

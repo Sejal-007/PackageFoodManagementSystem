@@ -1,13 +1,11 @@
-﻿using PackageFoodManagementSystem.Application.Repositories;
-using PackageFoodManagementSystem.Application.Services;
-using PackageFoodManagementSystem.Services;
-using PackageFoodManagementSystem.Application.Helpers;
-using PackageFoodManagementSystem.Application.Models;
-using PackageFoodManagementSystem.Repository;
+﻿using PackageFoodManagementSystem.Services.Helpers;
+using PackageFoodManagementSystem.Repository.Models;
 using System.Threading;
 using System.Threading.Tasks;
+using PackageFoodManagementSystem.Services.Interfaces;
+using PackageFoodManagementSystem.Repository.Interfaces;
 
-namespace PackageFoodManagementSystem.Application.Services
+namespace PackageFoodManagementSystem.Services.Implementations
 {
         public class UserService : IUserService
         {

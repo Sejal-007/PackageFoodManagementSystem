@@ -4,8 +4,9 @@ using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using PackageFoodManagementSystem.Application.Data;
+using PackageFoodManagementSystem.Repository.Data;
 using System;
+using PackageFoodManagementSystem.Repository.Data;
 
 #nullable disable
 

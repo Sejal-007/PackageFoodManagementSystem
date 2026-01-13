@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Security.Cryptography;
 
-namespace PackageFoodManagementSystem.Application.Helpers
+namespace PackageFoodManagementSystem.Services.Helpers
 {
     public static class PasswordHelper
     {
