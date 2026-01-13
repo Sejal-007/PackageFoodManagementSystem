@@ -2,9 +2,9 @@
 using PackageFoodManagementSystem.Repository.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authentication.Cookies;
-using PackageFoodManagementSystem.Repository.Interface;
+using PackageFoodManagementSystem.Repository.Interfaces;
 using PackageFoodManagementSystem.Services.Implementations;
-using PackageFoodManagementSystem.Services.Interface;
+using PackageFoodManagementSystem.Services.Interfaces;
 using PackageFoodManagementSystem.Repository.Implementations;
 using PackageFoodManagementSystem.Repository.Data;
 using PackageFoodManagementSystem.Repository.Models;

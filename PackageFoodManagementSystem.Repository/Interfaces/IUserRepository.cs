@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace PackageFoodManagementSystem.Repository.Interface
+namespace PackageFoodManagementSystem.Repository.Interfaces
 {
     public interface IUserRepository
     {
