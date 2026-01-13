@@ -21,20 +21,25 @@
 
         <div class="row g-4">
 
-            <div class="col-md-4">
-                <div class="product-card shadow-sm border-0 p-3" style="border-radius: 15px;"
-                     data-id="1" data-name="Potato Chips" data-price="50" data-image="/images/chips.png">
-                    <img src="~/images/chips.png" alt="Chips" class="img-fluid rounded mb-3" style="height:110px; object-fit:cover;">
-                    <h6 class="fw-bold">Potato Chips</h6>
-                    <p class="price text-success fw-bold">₹50</p>
-                    <div class="cart-actions d-flex justify-content-center align-items-center bg-light rounded-pill p-2 mx-auto" style="width: fit-content;">
-                        <button class="btn btn-sm btn-success rounded-circle" onclick="changeQty(this, -1)">−</button>
-                        <span class="qty fw-bold mx-3" id="qty-1">0</span>
-                        <button class="btn btn-sm btn-success rounded-circle" onclick="changeQty(this, 1)">+</button>
+            @foreach (var item in Model)
+            {
+                <div class="col-md-4">
+                    <div class="product-card shadow-sm border-0 p-3" style="border-radius: 15px;"
+                         data-id="@item.ProductId" data-name="@item.ProductName" data-price="@item.Price">
+
+                        <img src="~/images/box.png" class="img-fluid rounded mb-3" style="height:110px; object-fit:cover;">
+                        <h6 class="fw-bold">@item.ProductName</h6>
+                        <p class="category text-muted small">@item.Category</p>
+                        <p class="price text-success fw-bold">₹@item.Price</p>
+
+                        <div class="cart-actions d-flex justify-content-center align-items-center bg-light rounded-pill p-2 mx-auto" style="width: fit-content;">
+                            <button class="btn btn-sm btn-success rounded-circle" onclick="changeQty(this, -1)">−</button>
+                            <span class="qty fw-bold mx-3" id="qty-@item.ProductId">0</span>
+                            <button class="btn btn-sm btn-success rounded-circle" onclick="changeQty(this, 1)">+</button>
+                        </div>
                     </div>
                 </div>
-            </div>
-
+            }
             <div class="col-md-4">
                 <div class="product-card shadow-sm border-0 p-3" style="border-radius: 15px;"
                      data-id="2" data-name="Fruit Juice" data-price="80" data-image="/images/juice.png">
