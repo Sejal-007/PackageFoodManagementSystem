@@ -4,7 +4,7 @@ using PackageFoodManagementSystem.Services.Helpers;
 using PackageFoodManagementSystem.Repository.Models;
 using PackageFoodManagementSystem.Repository.Data;
 using System.Threading.Tasks;
-using PackageFoodManagementSystem.Services.Interface;
+using PackageFoodManagementSystem.Services.Interfaces;
 
 namespace PackagedFoodManagementSystem.Controllers
 {

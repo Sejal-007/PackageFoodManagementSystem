@@ -2,8 +2,8 @@
 using PackageFoodManagementSystem.Repository.Models;
 using System.Threading;
 using System.Threading.Tasks;
-using PackageFoodManagementSystem.Services.Interface;
-using PackageFoodManagementSystem.Repository.Interface;
+using PackageFoodManagementSystem.Services.Interfaces;
+using PackageFoodManagementSystem.Repository.Interfaces;
 
 namespace PackageFoodManagementSystem.Services.Implementations
 {
