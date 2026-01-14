@@ -2,7 +2,7 @@
 
 #nullable disable
 
-namespace PackageFoodManagementSystem.Application.Migrations
+namespace PackageFoodManagementSystem.Repository.Migrations
 {
     /// <inheritdoc />
     public partial class Name : Migration

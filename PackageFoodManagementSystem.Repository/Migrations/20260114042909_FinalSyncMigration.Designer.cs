@@ -12,8 +12,8 @@ using PackageFoodManagementSystem.Repository.Data;
 namespace PackageFoodManagementSystem.Repository.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20260113122805_UserAuthentication")]
-    partial class UserAuthentication
+    [Migration("20260114042909_FinalSyncMigration")]
+    partial class FinalSyncMigration
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -297,7 +297,7 @@ namespace PackageFoodManagementSystem.Repository.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("UserAuthentication");
+                    b.ToTable("UserAuthentications");
                 });
 
             modelBuilder.Entity("PackageFoodManagementSystem.Repository.Models.Bill", b =>

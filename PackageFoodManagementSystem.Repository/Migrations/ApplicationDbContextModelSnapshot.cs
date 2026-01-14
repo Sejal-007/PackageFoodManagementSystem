@@ -294,7 +294,7 @@ namespace PackageFoodManagementSystem.Repository.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("UserAuthentication");
+                    b.ToTable("UserAuthentications");
                 });
 
             modelBuilder.Entity("PackageFoodManagementSystem.Repository.Models.Bill", b =>
