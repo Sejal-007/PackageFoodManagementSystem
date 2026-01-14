@@ -9,11 +9,11 @@ using PackageFoodManagementSystem.Repository.Data;
 
 #nullable disable
 
-namespace PackageFoodManagementSystem.Application.Migrations
+namespace PackageFoodManagementSystem.Repository.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20260112094005_UpdateOrdersTable")]
-    partial class UpdateOrdersTable
+    [Migration("20260114042909_FinalSyncMigration")]
+    partial class FinalSyncMigration
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -25,7 +25,7 @@ namespace PackageFoodManagementSystem.Application.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("PackageFoodManagementSystem.Application.Models.Batch", b =>
+            modelBuilder.Entity("PackageFoodManagementSystem.Repository.Models.Batch", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -42,143 +42,10 @@ namespace PackageFoodManagementSystem.Application.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Batch");
+                    b.ToTable("Batches");
                 });
 
-            modelBuilder.Entity("PackageFoodManagementSystem.Application.Models.Customer", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Email")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Customers");
-                });
-
-            modelBuilder.Entity("PackageFoodManagementSystem.Application.Models.Inventory", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("ProductId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("StockQuantity")
-                        .HasColumnType("int");
-
-                    b.Property<string>("WarehouseLocation")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Inventory");
-                });
-
-            modelBuilder.Entity("PackageFoodManagementSystem.Application.Models.Order", b =>
-                {
-                    b.Property<int>("OrderId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("OrderId"));
-
-                    b.Property<int>("CreatedByUserID")
-                        .HasColumnType("int");
-
-                    b.Property<int>("CustomerId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("DeliveryAddress")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("LastUpdateOn")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime>("OrderDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("OrderStatus")
-                        .IsRequired()
-                        .HasMaxLength(30)
-                        .HasColumnType("nvarchar(30)");
-
-                    b.Property<decimal>("TotalAmount")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.HasKey("OrderId");
-
-                    b.ToTable("Orders");
-                });
-
-            modelBuilder.Entity("PackageFoodManagementSystem.Application.Models.Product", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Category")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<decimal>("Price")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<string>("Status")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Products");
-                });
-
-            modelBuilder.Entity("PackageFoodManagementSystem.Application.Models.UserAuthentication", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("PasswordHash")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Role")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Username")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("UserAuthentication");
-                });
-
-            modelBuilder.Entity("PackageFoodManagementSystem.Models.Bill", b =>
+            modelBuilder.Entity("PackageFoodManagementSystem.Repository.Models.Bill", b =>
                 {
                     b.Property<int>("BillID")
                         .ValueGeneratedOnAdd()
@@ -214,10 +81,94 @@ namespace PackageFoodManagementSystem.Application.Migrations
                     b.HasIndex("OrderID")
                         .IsUnique();
 
-                    b.ToTable("Bill");
+                    b.ToTable("Bills");
                 });
 
-            modelBuilder.Entity("PackageFoodManagementSystem.Models.OrderItem", b =>
+            modelBuilder.Entity("PackageFoodManagementSystem.Repository.Models.Customer", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Customers");
+                });
+
+            modelBuilder.Entity("PackageFoodManagementSystem.Repository.Models.Inventory", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("ProductId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("StockQuantity")
+                        .HasColumnType("int");
+
+                    b.Property<string>("WarehouseLocation")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Inventories");
+                });
+
+            modelBuilder.Entity("PackageFoodManagementSystem.Repository.Models.Order", b =>
+                {
+                    b.Property<int>("OrderId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("OrderId"));
+
+                    b.Property<int>("CreatedByUserID")
+                        .HasColumnType("int");
+
+                    b.Property<int>("CustomerId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("DeliveryAddress")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("LastUpdateOn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("OrderDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("OrderID")
+                        .HasColumnType("int");
+
+                    b.Property<string>("OrderStatus")
+                        .IsRequired()
+                        .HasMaxLength(30)
+                        .HasColumnType("nvarchar(30)");
+
+                    b.Property<decimal>("TotalAmount")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.HasKey("OrderId");
+
+                    b.ToTable("Orders");
+                });
+
+            modelBuilder.Entity("PackageFoodManagementSystem.Repository.Models.OrderItem", b =>
                 {
                     b.Property<int>("OrderItemID")
                         .ValueGeneratedOnAdd()
@@ -250,10 +201,10 @@ namespace PackageFoodManagementSystem.Application.Migrations
 
                     b.HasIndex("OrderID");
 
-                    b.ToTable("OrderItem");
+                    b.ToTable("OrderItems");
                 });
 
-            modelBuilder.Entity("PackageFoodManagementSystem.Models.Payment", b =>
+            modelBuilder.Entity("PackageFoodManagementSystem.Repository.Models.Payment", b =>
                 {
                     b.Property<int>("PaymentID")
                         .ValueGeneratedOnAdd()
@@ -286,23 +237,83 @@ namespace PackageFoodManagementSystem.Application.Migrations
                     b.HasIndex("BillID")
                         .IsUnique();
 
-                    b.ToTable("Payment");
+                    b.ToTable("Payments");
                 });
 
-            modelBuilder.Entity("PackageFoodManagementSystem.Models.Bill", b =>
+            modelBuilder.Entity("PackageFoodManagementSystem.Repository.Models.Product", b =>
                 {
-                    b.HasOne("PackageFoodManagementSystem.Application.Models.Order", "Order")
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Category")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<decimal>("Price")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("Status")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Products");
+                });
+
+            modelBuilder.Entity("PackageFoodManagementSystem.Repository.Models.UserAuthentication", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("MobileNumber")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Password")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Role")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("UserAuthentications");
+                });
+
+            modelBuilder.Entity("PackageFoodManagementSystem.Repository.Models.Bill", b =>
+                {
+                    b.HasOne("PackageFoodManagementSystem.Repository.Models.Order", "Order")
                         .WithOne("Bill")
-                        .HasForeignKey("PackageFoodManagementSystem.Models.Bill", "OrderID")
+                        .HasForeignKey("PackageFoodManagementSystem.Repository.Models.Bill", "OrderID")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Order");
                 });
 
-            modelBuilder.Entity("PackageFoodManagementSystem.Models.OrderItem", b =>
+            modelBuilder.Entity("PackageFoodManagementSystem.Repository.Models.OrderItem", b =>
                 {
-                    b.HasOne("PackageFoodManagementSystem.Application.Models.Order", "Order")
+                    b.HasOne("PackageFoodManagementSystem.Repository.Models.Order", "Order")
                         .WithMany("OrderItems")
                         .HasForeignKey("OrderID")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -311,29 +322,28 @@ namespace PackageFoodManagementSystem.Application.Migrations
                     b.Navigation("Order");
                 });
 
-            modelBuilder.Entity("PackageFoodManagementSystem.Models.Payment", b =>
+            modelBuilder.Entity("PackageFoodManagementSystem.Repository.Models.Payment", b =>
                 {
-                    b.HasOne("PackageFoodManagementSystem.Models.Bill", "Bill")
+                    b.HasOne("PackageFoodManagementSystem.Repository.Models.Bill", "Bill")
                         .WithOne("Payment")
-                        .HasForeignKey("PackageFoodManagementSystem.Models.Payment", "BillID")
+                        .HasForeignKey("PackageFoodManagementSystem.Repository.Models.Payment", "BillID")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Bill");
                 });
 
-            modelBuilder.Entity("PackageFoodManagementSystem.Application.Models.Order", b =>
-                {
-                    b.Navigation("Bill")
-                        .IsRequired();
-
-                    b.Navigation("OrderItems");
-                });
-
-            modelBuilder.Entity("PackageFoodManagementSystem.Models.Bill", b =>
+            modelBuilder.Entity("PackageFoodManagementSystem.Repository.Models.Bill", b =>
                 {
                     b.Navigation("Payment")
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("PackageFoodManagementSystem.Repository.Models.Order", b =>
+                {
+                    b.Navigation("Bill");
+
+                    b.Navigation("OrderItems");
                 });
 #pragma warning restore 612, 618
         }

@@ -6,12 +6,6 @@ using PackageFoodManagementSystem.Repository.Interfaces;
 using PackageFoodManagementSystem.Services.Implementations;
 using PackageFoodManagementSystem.Services.Interfaces;
 using PackageFoodManagementSystem.Repository.Implementations;
-using PackageFoodManagementSystem.Repository.Data;
-using PackageFoodManagementSystem.Repository.Models;
-using PackageFoodManagementSystem.Repository.Interfaces;
-using PackageFoodManagementSystem.Repository.Implementations;
-using PackageFoodManagementSystem.Services.Interfaces;
-using PackageFoodManagementSystem.Services.Implementations;
 
 
 
