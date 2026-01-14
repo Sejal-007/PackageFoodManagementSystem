@@ -147,7 +147,7 @@ namespace PackageFoodManagementSystem.Application.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
-                    b.Property<string>("Status")
+                    b.Property<string>("Status");
                     b.Property<string>("ProductName")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
