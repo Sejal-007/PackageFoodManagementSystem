@@ -9,11 +9,11 @@ using PackageFoodManagementSystem.Repository.Data;
 
 #nullable disable
 
-namespace PackageFoodManagementSystem.Application.Migrations
+namespace PackageFoodManagementSystem.Repository.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20260109124709_Name")]
-    partial class Name
+    [Migration("20260109124941_UpdateUserAuthenticationTable")]
+    partial class UpdateUserAuthenticationTable
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

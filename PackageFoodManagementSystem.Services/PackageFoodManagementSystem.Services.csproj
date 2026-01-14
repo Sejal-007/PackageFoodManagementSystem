@@ -19,10 +19,6 @@
     <ProjectReference Include="..\PackageFoodManagementSystem.Repository\PackageFoodManagementSystem.Repository.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\PackageFoodManagementSystem.Repository\PackageFoodManagementSystem.Repository.csproj" />
-  </ItemGroup>
-
 	
 
 </Project>
