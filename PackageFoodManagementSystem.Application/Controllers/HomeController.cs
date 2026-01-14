@@ -63,6 +63,7 @@ namespace PackagedFoodManagementSystem.Controllers
             var existingUser = await _db.UserAuthentications
                 .FirstOrDefaultAsync(u => u.Email == user.Email);
 
+
             if (existingUser != null)
             {
                 TempData["ErrorMessage"] = "Email already exists. Please use a different email.";

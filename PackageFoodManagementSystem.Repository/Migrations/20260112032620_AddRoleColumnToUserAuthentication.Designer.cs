@@ -9,7 +9,7 @@ using PackageFoodManagementSystem.Repository.Data;
 
 #nullable disable
 
-namespace PackageFoodManagementSystem.Application.Migrations
+namespace PackageFoodManagementSystem.Repository.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
     [Migration("20260112032620_AddRoleColumnToUserAuthentication")]
