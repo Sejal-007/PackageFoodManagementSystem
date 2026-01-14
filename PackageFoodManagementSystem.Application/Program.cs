@@ -1,52 +1,40 @@
-﻿using PackageFoodManagementSystem.Repository.Data;
-using PackageFoodManagementSystem.Repository.Models;
+﻿using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.AspNetCore.Authentication.Cookies;
-using PackageFoodManagementSystem.Repository.Interfaces;
-using PackageFoodManagementSystem.Services.Implementations;
-using PackageFoodManagementSystem.Services.Interfaces;
-using PackageFoodManagementSystem.Repository.Implementations;
 using PackageFoodManagementSystem.Repository.Data;
-using PackageFoodManagementSystem.Repository.Models;
-using PackageFoodManagementSystem.Repository.Interfaces;
 using PackageFoodManagementSystem.Repository.Implementations;
-using PackageFoodManagementSystem.Services.Interfaces;
+using PackageFoodManagementSystem.Repository.Interfaces;
+using PackageFoodManagementSystem.Repository.Models;
 using PackageFoodManagementSystem.Services.Implementations;
-
-
+using PackageFoodManagementSystem.Services.Interfaces;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// --- 1. DATABASE CONFIGURATION ---
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
+// --- 2. DEPENDENCY INJECTION (DI) REGISTRATIONS ---
+
+// Batch Management
+builder.Services.AddScoped<IBatchRepository, BatchRepository>();
+builder.Services.AddScoped<IBatchService, BatchService>();
+
+// Order Management
 builder.Services.AddScoped<IOrderRepository, OrderRepository>();
-
-builder.Services.AddScoped<IBillRepository, BillRepository>();
-
-builder.Services.AddScoped<IPaymentRepository, PaymentRepository>();
-
 builder.Services.AddScoped<IOrderService, OrderService>();
 
+// Billing & Payments
+builder.Services.AddScoped<IBillRepository, BillRepository>();
 builder.Services.AddScoped<IBillingService, BillingService>();
+builder.Services.AddScoped<IPaymentRepository, PaymentRepository>();
 
-// --- 1. ADD SERVICES (Before builder.Build()) ---
-
-builder.Services.AddControllersWithViews();
-
-builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
-
-
-
-// Move this HERE (above builder.Build)
-
-
-// DI: map interfaces to EFDB implementations
+// User Management
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IUserService, UserService>();
 
-// ✅ Add authentication if you plan to use cookies
+// --- 3. AUTHENTICATION & UI ---
+builder.Services.AddControllersWithViews();
+
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
     .AddCookie(options =>
     {
@@ -56,6 +44,7 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
 
 var app = builder.Build();
 
+// --- 4. MIDDLEWARE PIPELINE ---
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Error");
@@ -64,17 +53,7 @@ if (!app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
-
 app.UseRouting();
-
-//// ✅ Global no-cache middleware
-//app.Use(async (context, next) =>
-//{
-//    context.Response.Headers["Cache-Control"] = "no-cache, no-store, must-revalidate";
-//    context.Response.Headers["Pragma"] = "no-cache";
-//    context.Response.Headers["Expires"] = "0";
-//    await next();
-//});
 
 app.UseAuthentication();
 app.UseAuthorization();

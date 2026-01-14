@@ -19,5 +19,7 @@ namespace PackageFoodManagementSystem.Repository.Data
         public DbSet<Inventory> Inventories { get; set; }
         public DbSet<UserAuthentication> UserAuthentications { get; set; }
         public DbSet<Batch> Batches { get; set; }
+        // Inside ApplicationDbContext class
+        public DbSet<Batch> Batch { get; set; }
     }
 }

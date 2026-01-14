@@ -1,9 +1,9 @@
-﻿namespace PackageFoodManagementSystem.Repository.Models
+﻿using PackageFoodManagementSystem.Repository.Models;
 using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace PackageFoodManagementSystem.Application.Models
+namespace PackageFoodManagementSystem.Repository.Models
 {
     public class Batch
     {
