@@ -1,4 +1,4 @@
-﻿@{
+﻿@* @{
     ViewData["Title"] = "Email Addresses";
     var userName = User.Identity.IsAuthenticated ? User.Identity.Name : "User";
 }
@@ -112,6 +112,127 @@
         const email = prompt("Enter your alternate email address:");
         if (email) {
             alert("Verification link sent to " + email);
+        }
+    }
+</script> *@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+@model PackageFoodManagementSystem.Repository.Models.UserAuthentication
+@{
+    ViewData["Title"] = "Email Addresses";
+    // Consistently use the name from the session model
+    var displayName = !string.IsNullOrEmpty(Model.Name) ? Model.Name : "User";
+}
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+<div class="container my-5">
+    <div class="row">
+        <div class="col-md-3">
+            <div class="card border-0 shadow-sm p-3" style="border-radius: 15px;">
+                @Html.Partial("_AccountSidebar")
+            </div>
+        </div>
+
+        <div class="col-md-9">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div>
+                    <h2 class="fw-bold mb-0">Email <span class="text-success">Addresses</span></h2>
+                    <p class="text-muted small">Managed communication for <strong>@displayName</strong></p>
+                </div>
+                <button class="btn btn-outline-success rounded-pill px-4 fw-bold shadow-sm" onclick="addNewEmail()">
+                    <i class="fa-solid fa-plus me-2"></i> Add Alternate
+                </button>
+            </div>
+
+            <div class="row g-3">
+                <div class="col-12">
+                    <div class="card border-0 shadow-sm p-3 position-relative email-card"
+                         style="border-radius: 15px; border-left: 5px solid #198754 !important;">
+                        <div class="d-flex align-items-center justify-content-between">
+                            <div class="d-flex align-items-center">
+                                <div class="bg-light p-3 rounded-circle me-3">
+                                    <i class="fa-solid fa-envelope-circle-check text-success fs-4"></i>
+                                </div>
+                                <div>
+                                    <span class="badge bg-success rounded-pill mb-1">Primary</span>
+                                    <h5 class="fw-bold mb-0">@Model.Email</h5>
+                                    <small class="text-muted">Account linked to @Model.MobileNumber</small>
+                                </div>
+                            </div>
+                            <div class="text-success fw-bold small">
+                                <i class="fa-solid fa-circle-check me-1"></i> Verified
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-12">
+                    <div class="card border-0 shadow-sm p-3 email-card" style="border-radius: 15px;">
+                        <div class="d-flex align-items-center justify-content-between">
+                            <div class="d-flex align-items-center">
+                                <div class="bg-light p-3 rounded-circle me-3">
+                                    <i class="fa-solid fa-envelope text-muted fs-4"></i>
+                                </div>
+                                <div>
+                                    <span class="badge bg-light text-dark border rounded-pill mb-1">Backup</span>
+                                    <h5 class="fw-bold mb-0 text-muted">
+                                        @(Model.Name.ToLower().Replace(" ", "."))@("@")outlook.com
+                                    </h5>
+                                    <small class="text-muted">Used for security recovery</small>
+                                </div>
+                            </div>
+                            <div class="text-muted fw-bold small">
+                                <i class="fa-solid fa-circle-minus me-1"></i> Not Linked
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mt-4 p-3 bg-light rounded-3 d-flex align-items-start border">
+                <i class="fa-solid fa-circle-info text-primary mt-1 me-3"></i>
+                <small class="text-muted">
+                    We use these emails to keep <strong>@displayName</strong> updated on fresh arrivals, billing, and order tracking.
+                </small>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .email-card {
+        transition: all 0.3s ease;
+        border: 1px solid transparent;
+    }
+
+        .email-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.08) !important;
+            border-color: #e9ecef;
+        }
+</style>
+
+<script>
+    function addNewEmail() {
+        const email = prompt("Enter your alternate email address:");
+        if (email && email.includes("@("@")")) {
+            alert("Verification link sent to: " + email);
+        } else if (email) {
+            alert("Please enter a valid email address.");
         }
     }
 </script>

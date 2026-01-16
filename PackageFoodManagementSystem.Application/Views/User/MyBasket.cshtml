@@ -1,4 +1,4 @@
-﻿@{
+﻿@* @{
     ViewData["Title"] = "My Basket";
 }
 
@@ -95,5 +95,131 @@
 
         // Update the top badge if you have it in your layout
         if (typeof updateCartBadge === "function") updateCartBadge();
+    }
+</script> *@
+
+
+
+
+
+
+
+
+
+
+@{
+    ViewData["Title"] = "My Basket";
+}
+
+<div class="container my-5">
+    <div id="basket-content" style="display: none;">
+        <h2 class="text-center mb-4">Your <span class="text-warning">Selection</span></h2>
+
+        <div class="row">
+            <div class="col-md-8" id="basketItems"></div>
+
+            <div class="col-md-4">
+                <div class="card p-4 shadow border-0" style="border-radius:15px;">
+                    <h4>🛒 Order Summary</h4>
+                    <div id="summaryItems" class="my-3"></div>
+                    <hr>
+                    <div class="d-flex justify-content-between mb-4">
+                        <span class="h5">Grand Total:</span>
+                        <span class="h4 text-success fw-bold">₹<span id="totalAmount">0</span></span>
+                    </div>
+                    <button class="btn btn-success btn-lg w-100 fw-bold rounded-pill" onclick="prepareCheckout()">Proceed to Checkout</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="empty-basket" class="text-center py-5">
+        <h2 class="mb-3">Let's fill the empty <span class="text-warning">Basket</span></h2>
+        <a href="/Menu/Index" class="btn btn-dark px-4 py-2 rounded-pill">Continue Shopping</a>
+    </div>
+</div>
+
+<script>
+    // Load basket as soon as page opens
+    document.addEventListener("DOMContentLoaded", renderBasket);
+
+    function renderBasket() {
+        // Match the key "myCart" used in your Menu script
+        const cart = JSON.parse(localStorage.getItem("myCart")) || [];
+        const basketContent = document.getElementById("basket-content");
+        const emptyView = document.getElementById("empty-basket");
+        const basketItems = document.getElementById("basketItems");
+        const summaryItems = document.getElementById("summaryItems");
+        const totalAmount = document.getElementById("totalAmount");
+
+        if (cart.length === 0) {
+            basketContent.style.display = "none";
+            emptyView.style.display = "block";
+            return;
+        }
+
+        basketContent.style.display = "block";
+        emptyView.style.display = "none";
+
+        let grandTotal = 0;
+        basketItems.innerHTML = "";
+        summaryItems.innerHTML = "";
+
+        cart.forEach(item => {
+            // Your Menu script stores price as a number, but we ensure it here
+            const itemPrice = parseFloat(item.price);
+            const itemQty = parseInt(item.qty);
+            const itemTotal = itemPrice * itemQty;
+            grandTotal += itemTotal;
+
+            basketItems.innerHTML += `
+                <div class="card mb-3 p-3 shadow-sm border-0" style="border-radius:12px;">
+                    <div class="d-flex align-items-center">
+                        <img src="${item.image}" style="width:80px; height:80px; object-fit:cover; border-radius:8px;" class="me-3">
+                        <div class="flex-grow-1">
+                            <h5 class="mb-0 fw-bold">${item.name}</h5>
+                            <p class="text-muted mb-0">₹${itemPrice} x ${itemQty}</p>
+                        </div>
+                        <div class="text-end">
+                            <h5 class="fw-bold mb-0 text-success">₹${itemTotal.toFixed(2)}</h5>
+                            <button class="btn btn-link text-danger small text-decoration-none p-0" onclick="removeItem('${item.id}')">
+                                <i class="fa-solid fa-trash-can"></i> Remove
+                            </button>
+                        </div>
+                    </div>
+                </div>`;
+
+            summaryItems.innerHTML += `
+                <div class="d-flex justify-content-between mb-2">
+                    <span class="text-muted">${item.name} (x${itemQty})</span>
+                    <span>₹${itemTotal.toFixed(2)}</span>
+                </div>`;
+        });
+
+        totalAmount.innerText = grandTotal.toFixed(2);
+        localStorage.setItem("orderTotal", grandTotal.toFixed(2));
+    }
+
+    function removeItem(id) {
+        let cart = JSON.parse(localStorage.getItem("myCart")) || [];
+        // Convert both to strings to ensure comparison works regardless of data type
+        cart = cart.filter(item => String(item.id) !== String(id));
+
+        localStorage.setItem("myCart", JSON.stringify(cart));
+
+        // Refresh the display
+        renderBasket();
+
+        // Sync with the Navbar badge if it exists
+        if (typeof updateCartBadge === "function") updateCartBadge();
+    }
+
+    function prepareCheckout() {
+        const total = document.getElementById("totalAmount").innerText;
+        if(total === "0" || total === "0.00") {
+            alert("Your basket is empty!");
+            return;
+        }
+        window.location.href = '/Payment/Checkout';
     }
 </script>

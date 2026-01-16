@@ -1,10 +1,24 @@
-﻿namespace PackageFoodManagementSystem.Repository.Models
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace PackageFoodManagementSystem.Repository.Models
 {
     public class Customer
     {
-        public int Id { get; set; } // <--- Add this line
+        [Key]
+        public int CustomerId { get; set; }
+
+        public int UserId { get; set; }// Foreign key to User entity
+
+        [Required]
         public string Name { get; set; }
+
+        [Required, EmailAddress]
         public string Email { get; set; }
-        // ... other properties
+        [Required, Phone]
+        public string Phone { get; set; }
+
+        public string? Status { get; set; }
+
+        public ICollection<CustomerAddress> Addresses { get; set; }
     }
 }
