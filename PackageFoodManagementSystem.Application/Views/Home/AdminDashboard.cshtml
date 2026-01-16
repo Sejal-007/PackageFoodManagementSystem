@@ -2,143 +2,86 @@
     ViewData["Title"] = "Admin Dashboard";
     Layout = "~/Views/Shared/_AdminLayout.cshtml";
 }
-<div class="store-layout">
-    <!-- ==== Sidebar (YOUR PROVIDED LAYOUT) ==== -->
-    @* <aside class="sidebar">
-        <h2>Store</h2>
-        <ul class="sidebar-menu">
-            <li>
-                Home
-                🏠 Dashboard
-                </a>
-            </li>
-            <li>
-                Products
-                📦 Products
-                </a>
-            </li>
-            <li>
-                Orders
-                🛒 Orders
-                </a>
-            </li>
-            <li>
-                Inventory
-                📊 Inventory
-                </a>
-            </li>
-            <li>
-                Compliance
-                ✔ Compliance
-                </a>
-            </li>
-            <li>
-                Reports
-                📑 Reports
-                </a>
-            </li>
-        </ul>
-        <div class="sidebar-footer">
-            Settings⚙ Settings</a>
-            SignIn🚪 Log Out</a>
-            SignIn🚪 Log Out</a>
+
+
+
+<div class="row mb-4">
+    <div class="col-md-4">
+        <div class="card card-summary text-center">
+            <div class="card-body">
+                <div class="card-head ">
+                    <div class="card-title ">TOTAL CUSTOMERS</div>
+                </div>                <div class="card-value">@ViewBag.TotalCustomers</div>
+
+
+            </div>
         </div>
-    </aside> *@
-
-    <!-- ==== Main Content ==== -->
-    <main class="store-content">
-        <!-- Top header bar matching screenshot -->
-        @* <div class="header-bar">
-            <div class="header-left">
-                <button class="toggle-btn" aria-label="Toggle sidebar">
-                    <span class="toggle-icon" aria-hidden="true"></span>
-                </button>
-                <h1>Food Ordering System!!</h1>
-            </div>
-            <div class="header-right">
-                <div class="pill">
-                    <span class="bell" aria-hidden="true"></span>
-                    <span>Log out</span>
-                </div>
-            </div>
-        </div> *@
-
-        <!-- Dashboard cards (responsive grid via your CSS) -->
-        <section class="cards" aria-label="Dashboard metrics">
-            <!-- Row 1 -->
-            <article class="card">
+    </div>
+    <div class="col-md-4">
+        <div class="card card-summary text-center">
+            <div class="card-body">
                 <div class="card-head">
-                    <div class="card-title">TOTAL CUSTOMERS</div>
+                    <div class="card-title">STORE MANAGERS</div>
                 </div>
-                <div class="card-value">4</div>
-                <div class="card-sub">Total order</div>
-            </article>
+                <div class="card-value">@ViewBag.TotalStoreManagers</div>
 
-            <article class="card">
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card card-summary text-center">
+            <div class="card-body">
+                <div class="card-head">
+                    <div class="card-title">ORDERS</div>
+                </div>
+                <div class="card-value">0</div>
+
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4 pt-5">
+        <div class="card card-summary text-center">
+            <div class="card-body">
                 <div class="card-head">
                     <div class="card-title">ACTIVE STORES</div>
                 </div>
                 <div class="card-value">0</div>
-                <div class="card-sub">New Order</div>
-            </article>
 
-            <article class="card">
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4 pt-5">
+        <div class="card card-summary text-center">
+            <div class="card-body">
                 <div class="card-head">
-                    <div class="card-title">R</div>
-                </div>
-                <div class="card-value">0</div>
-                <div class="card-sub">TOTAL ORDERS</div>
-            </article>
-
-            <!-- Row 2 -->
-            <article class="card">
-                <div class="card-head">
-                    <div class="card-title">PENDING ORDERS</div>
-                </div>
-                <div class="card-value">0</div>
-                <div class="card-sub">Food being Prepared</div>
-            </article>
-
-            <article class="card">
-                <div class="card-head">
-                    <div class="card-title">FOOD PICKUP</div>
-                </div>
-                <div class="card-value">0</div>
-                <div class="card-sub">Food Pickup</div>
-            </article>
-
-            @* <article class="card">
-                <div class="card-head">
-                    <div class="card-title">TOTAL FOOD DELIVER</div>
+                    <div class="card-title">INACTIVE STORES</div>
                 </div>
                 <div class="card-value">1</div>
-                <div class="card-sub">Total Food Deliver</div>
-            </article> *@
 
-            <!-- Row 3 -->
-            <article class="card">
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4 pt-5">
+        <div class="card card-summary text-center">
+            <div class="card-body">
                 <div class="card-head">
-                    <div class="card-title">CANCELLED ORDERS</div>
+                    <div class="card-title">BATCHES</div>
                 </div>
-                <div class="card-value">3</div>
-                <div class="card-sub">Cancelled Order</div>
-            </article>
+                <div class="card-value">0</div>
 
-            @* <article class="card">
+            </div>
+        </div>
+    </div>
+    @* <div class="col-md-4 pt-5">
+        <div class="card card-summary text-center">
+            <div class="card-body">
                 <div class="card-head">
-                    <div class="card-title">TOTAL REGD. USER</div>
+                    <div class="card-title">BATCHES</div>
                 </div>
-                <div class="card-value">5</div>
-                <div class="card-sub">Total Regd. User</div> *@
-            </article>
-        </section>
-    </main>
+                <div class="card-value">0</div>
+
+            </div>
+        </div>
+    </div> *@
 </div>
 
-<!-- Optional: JS hook to enable sidebar collapse if defined in your CSS -->
-<script>
-    document.querySelector('.toggle-btn')?.addEventListener('click', () => {
-      // If your CSS supports a collapsed state, toggle a class here:
-      // document.querySelector('.store-layout')?.classList.toggle('collapsed');
-    });
-</script>

@@ -1,129 +1,162 @@
-﻿@{
-    ViewBag.Title = "User Management";
-    Layout = "~/Views/Shared/_AdminLayout.cshtml";  // use your Admin layout
+﻿@model IEnumerable<PackageFoodManagementSystem.Repository.Models.UserAuthentication>
+@{
+    ViewData["Title"] = "Users";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
 }
 
-@* @section Styles {
-    <!-- Page-specific stylesheet -->
-        ~/css/users.css
-} *@
+<div class="card">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <h2>User Management</h2>
+        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addUserModal">
+            <i class="bi bi-plus-circle"></i> Add User
+        </button>
+    </div>
 
-<section class="page-container">
-    <header class="page-header">
-        <h1>User Management</h1>
-        <p class="sub">Client-side only (no backend / database). Data stored in <code>localStorage</code>.</p>
-    </header>
+    <!-- Users Table -->
+    <table id="userTable" class="table table-bordered table-hover mb-0">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Mobile</th>
+                <th>Role</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var user in Model)
+            {
+                <tr>
+                    <td>@user.Id</td>
+                    <td>@user.Name</td>
+                    <td>@user.Email</td>
+                    <td>@user.MobileNumber</td>
+                    <td>@user.Role</td>
+                    <td>
+                        <!-- Edit Button -->
+                        <button class="btn btn-sm btn-warning" data-bs-toggle="modal" data-bs-target="#editUserModal-@user.Id">
+                            Edit
+                        </button>
 
-    <!-- Toolbar: Search + New User -->
-    <div class="toolbar">
-        <input type="text" id="searchBox" class="input" placeholder="Search by name, email, mobile, role..." />
-        <div class="toolbar-actions">
-            <button id="btnAddNew" class="btn btn-primary">+ Add User</button>
-            <button id="btnClearAll" class="btn btn-danger" title="Clear localStorage users">Clear All</button>
+                        <!-- Delete Button -->
+                        <form asp-action="DeleteUser" asp-controller="Home" method="post" style="display:inline;"
+                              onsubmit="return confirm('Are you sure you want to delete this user?');">
+                            <input type="hidden" name="id" value="@user.Id" />
+                            <button type="submit" class="btn btn-sm btn-danger">Delete</button>
+                        </form>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+<!-- Generate Edit Modals outside the table -->
+@foreach (var user in Model)
+{
+    <div class="modal fade" id="editUserModal-@user.Id" tabindex="-1" aria-labelledby="editUserLabel-@user.Id" aria-hidden="true">
+        <div class="modal-dialog">
+            <form asp-action="UpdateUser" asp-controller="Home" method="post" class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editUserLabel-@user.Id">Edit User</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" name="Id" value="@user.Id" />
+                    <div class="mb-3">
+                        <label class="form-label">Full Name</label>
+                        <input type="text" name="Name" value="@user.Name" class="form-control" required />
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Email</label>
+                        <input type="email" name="Email" value="@user.Email" class="form-control" required />
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Mobile Number</label>
+                        <input type="text" name="MobileNumber" value="@user.MobileNumber" class="form-control" required />
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Password</label>
+                        <div class="password-wrapper">
+                            <input type="password" id="editUserPassword-@user.Id" name="Password" placeholder="New Password (optional)" class="form-control" />
+                            <button type="button"
+                                    class="toggle-password"
+                                    data-target="editUserPassword-@user.Id"
+                                    aria-label="Show password"
+                                    aria-pressed="false">
+                                <i class="fa fa-eye" aria-hidden="true"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Role</label>
+                        <select name="Role" class="form-select" required>
+                            <option value="User" selected="@(user.Role == "User")">User</option>
+                            <option value="StoreManager" selected="@(user.Role == "StoreManager")">Manager</option>
+                            <option value="Admin" selected="@(user.Role == "Admin")">Admin</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-success">Update User</button>
+                </div>
+            </form>
         </div>
     </div>
+}
 
-    <!-- Users table -->
-    <div class="table-wrap">
-        <table class="table" id="usersTable" aria-label="Users">
-            <thead>
-                <tr>
-                    <th style="width: 20%">Name</th>
-                    <th style="width: 24%">Email</th>
-                    <th style="width: 16%">Mobile</th>
-                    <th style="width: 14%">Role</th>
-                    <th style="width: 26%">Actions</th>
-                </tr>
-            </thead>
-            <tbody id="usersTbody">
-                <!-- rows injected by JS -->
-            </tbody>
-        </table>
-    </div>
-
-    <!-- Add / Edit User Modal -->
-    <dialog id="userModal" class="modal">
-        <form id="userForm" method="dialog" novalidate>
-            <h3 id="modalTitle">Add User</h3>
-
-            <div class="form-grid">
-                <div class="form-field">
-                    <label for="name">Full Name</label>
-                    <input type="text" id="name" name="name" class="input" required />
-                    <span class="error" id="nameError"></span>
+<!-- Add User Modal -->
+<div class="modal fade" id="addUserModal" tabindex="-1" aria-labelledby="addUserLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <form asp-action="AddUser" asp-controller="Home" method="post" class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addUserLabel">Add User</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="mb-3">
+                    <label class="form-label">Full Name</label>
+                    <input type="text" name="Name" class="form-control" required />
                 </div>
-
-                <div class="form-field">
-                    <label for="email">Email Id</label>
-                    <input type="email" id="email" name="email" class="input" required />
-                    <span class="error" id="emailError"></span>
+                <div class="mb-3">
+                    <label class="form-label">Email</label>
+                    <input type="email" name="Email" class="form-control" required />
                 </div>
-
-                <div class="form-field">
-                    <label for="mobile">Mobile Number</label>
-                    <input type="text" id="mobile" name="mobile" class="input" required />
-                    <span class="error" id="mobileError"></span>
+                <div class="mb-3">
+                    <label class="form-label">Mobile Number</label>
+                    <input type="text" name="MobileNumber" class="form-control" required />
                 </div>
-
-                <div class="form-field">
-                    <label for="password">Password</label>
+                <div class="mb-3">
+                    <label class="form-label">Password</label>
                     <div class="password-wrapper">
-                        <input type="password" id="password" name="password" class="input" required />
+                        <input type="password" id="addUserPassword" name="Password" placeholder="Password" class="form-control" required />
                         <button type="button"
                                 class="toggle-password"
-                                data-target="password"
+                                data-target="addUserPassword"
                                 aria-label="Show password"
                                 aria-pressed="false">
                             <i class="fa fa-eye" aria-hidden="true"></i>
                         </button>
                     </div>
-                    <span class="error" id="passwordError"></span>
                 </div>
-
-                <div class="form-field">
-                    <label for="role">Role</label>
-                    <select id="role" name="role" class="input" required>
-                        <option value="">Select role</option>
-                        <option value="Admin">Admin</option>
-                        <option value="Manager">Manager</option>
+                <div class="mb-3">
+                    <label class="form-label">Role</label>
+                    <select name="Role" class="form-select" required>
                         <option value="User">User</option>
+                        <option value="Manager">Manager</option>
+                        <option value="Admin">Admin</option>
                     </select>
-                    <span class="error" id="roleError"></span>
                 </div>
             </div>
-
-            <div class="modal-actions">
-                <button type="submit" id="btnSave" class="btn btn-primary">Save</button>
-                <button type="button" id="btnCancel" class="btn">Cancel</button>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="submit" class="btn btn-primary">Save User</button>
             </div>
-
-            <!-- Hidden: the ID of the user being edited; empty/-1 means adding -->
-            <input type="hidden" id="editIndex" value="-1" />
         </form>
-    </dialog>
+    </div>
+</div>
 
-    <!-- Delete by any of name/email/mobile -->
-    <details class="panel">
-        <summary>Delete by Name / Email / Mobile</summary>
-        <div class="panel-body">
-            <input type="text" id="deleteQuery" class="input" placeholder="Type part or exact value..." />
-            <button id="btnDeleteByQuery" class="btn btn-danger">Delete</button>
-            <p class="muted">This will delete all users whose name/email/mobile <strong>contains</strong> the query (case-insensitive).</p>
-        </div>
-    </details>
 
-    <!-- Show user details by any part -->
-    <details class="panel">
-        <summary>Show Details by Query</summary>
-        <div class="panel-body">
-            <input type="text" id="showQuery" class="input" placeholder="Type part of name/email/mobile/role..." />
-            <button id="btnShowByQuery" class="btn">Show</button>
-            <div id="showResults" class="cards"></div>
-        </div>
-    </details>
-</section>
 
-@* @section Scripts {
-    <!-- Reuse your common app script (contains localStorage + toggle logic) -->
-        ~/js/script.js</script>
-} *@

@@ -1,5 +1,7 @@
 ﻿@{
+
     var currentAction = ViewContext.RouteData.Values["action"]?.ToString();
+
 }
 
 <div class="store-sidebar">
@@ -7,7 +9,7 @@
     <ul class="sidebar-menu">
         <li>
             <a asp-controller="StoreManager" asp-action="Home"
-            class="@(currentAction == "Home" ? "active" : "")">
+               class="@(currentAction == "Home" ? "active" : "")">
 
                 🏠 Dashboard
             </a>
@@ -42,7 +44,7 @@
             </a>
         </li>
         <li>
-            <a asp-controller="StoreManager" asp-action="Reports"
+            <a asp-controller="StoreManager1" asp-action="Report"
                class="@(currentAction == "Reports" ? "active" : "")">
 
                 📑 Reports
@@ -51,17 +53,19 @@
         <li>
             <a asp-controller="StoreManager" asp-action="Settings"
                class="@(currentAction == "Settings" ? "active" : "")">
+
                 ⚙ Settings
-                </a>
+            </a>
         </li>
         <li>
             <a asp-controller="Home" asp-action="SignIn"
                class="@(currentAction == "SignIn" ? "active" : "")">
+
                 🚪 Log Out
             </a>
         </li>
     </ul>
 
-    
+
 </div>
 

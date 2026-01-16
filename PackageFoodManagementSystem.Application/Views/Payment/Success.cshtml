@@ -1,4 +1,123 @@
-﻿@{
+﻿@* @{
+    ViewData["Title"] = "Order Success";
+}
+
+<div class="container my-5 py-5 text-center">
+    <div class="success-animation mb-4">
+        <svg class="checkmark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52">
+            <circle class="checkmark__circle" cx="26" cy="26" r="25" fill="none" />
+            <path class="checkmark__check" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8" />
+        </svg>
+    </div>
+
+    <h1 class="fw-bold display-5">Order <span class="text-success">Confirmed!</span></h1>
+    <p class="lead text-muted">Hooray! Your fresh treats are being prepared.</p>
+
+    <div class="row justify-content-center mt-5">
+        <div class="col-md-5">
+            <div class="card shadow border-0 p-4" style="border-radius: 20px; background: #fdfdfd;">
+                <div class="d-flex justify-content-between mb-3">
+                    <span class="text-muted">Payment Method:</span>
+                    <span class="badge bg-success rounded-pill px-3">@TempData["PaymentMethod"]</span>
+                </div>
+                <div class="d-flex justify-content-between mb-3">
+                    <span class="text-muted">Status:</span>
+                    <span class="fw-bold text-success">Payment Initiated</span>
+                </div>
+                <hr>
+                <p class="small text-muted mb-4">A confirmation email has been sent to your registered address.</p>
+
+                <div class="d-grid gap-2">
+                    <a href="/Menu/Index" class="btn btn-dark btn-lg rounded-pill fw-bold py-3 shadow-sm">
+                        Keep Shopping <i class="fa-solid fa-basket-shopping ms-2"></i>
+                    </a>
+                    <button class="btn btn-link text-decoration-none text-muted" onclick="window.print()">
+                        <i class="fa-solid fa-print me-1"></i> Print Receipt
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    /* Premium Success Animation CSS */
+    .checkmark__circle {
+        stroke-dasharray: 166;
+        stroke-dashoffset: 166;
+        stroke-width: 2;
+        stroke-miterlimit: 10;
+        stroke: #7ac142;
+        fill: none;
+        animation: stroke 0.6s cubic-bezier(0.65, 0, 0.45, 1) forwards;
+    }
+
+    .checkmark {
+        width: 100px;
+        height: 100px;
+        border-radius: 50%;
+        display: block;
+        stroke-width: 2;
+        stroke: #fff;
+        stroke-miterlimit: 10;
+        margin: 10% auto;
+        box-shadow: inset 0px 0px 0px #7ac142;
+        animation: fill .4s ease-in-out .4s forwards, scale .3s ease-in-out .9s both;
+    }
+
+    .checkmark__check {
+        transform-origin: 50% 50%;
+        stroke-dasharray: 48;
+        stroke-dashoffset: 48;
+        animation: stroke 0.3s cubic-bezier(0.65, 0, 0.45, 1) 0.8s forwards;
+    }
+
+    @@keyframes stroke {
+        100% {
+            stroke-dashoffset: 0;
+        }
+    }
+
+    @@keyframes scale {
+        0%, 100% {
+            transform: none;
+        }
+
+        50% {
+            transform: scale3d(1.1, 1.1, 1);
+        }
+    }
+
+    @@keyframes fill {
+        100% {
+            box-shadow: inset 0px 0px 0px 50px #7ac142;
+        }
+    }
+</style>
+
+<script>
+    // CRITICAL: Clear the cart upon successful order so the user doesn't see old items
+    localStorage.removeItem("myCart");
+
+    // Immediately update the header badge to 0
+    document.addEventListener("DOMContentLoaded", () => {
+        const badge = document.getElementById("cart-count");
+        if (badge) {
+            badge.innerText = "0";
+            badge.style.display = "none";
+        }
+    });
+</script> *@
+
+
+
+
+
+
+
+
+
+@{
     ViewData["Title"] = "Order Success";
 }
 
