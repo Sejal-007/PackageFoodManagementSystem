@@ -104,9 +104,6 @@ namespace PackageFoodManagementSystem.Repository.Migrations
                     b.Property<string>("Status")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("UserId")
-                        .HasColumnType("int");
-
                     b.HasKey("CustomerId");
 
                     b.ToTable("Customers");

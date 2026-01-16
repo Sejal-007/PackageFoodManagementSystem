@@ -7,7 +7,7 @@ namespace PackageFoodManagementSystem.Repository.Interfaces
 {
     public interface ICustomerRepository
     {
-       
+
         Task<IEnumerable<Customer>> GetAllAsync();
         Task<Customer> GetByIdAsync(int id);
         Task AddAsync(Customer customer);

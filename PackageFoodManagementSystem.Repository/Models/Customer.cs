@@ -7,8 +7,6 @@ namespace PackageFoodManagementSystem.Repository.Models
         [Key]
         public int CustomerId { get; set; }
 
-        public int UserId { get; set; }// Foreign key to User entity
-
         [Required]
         public string Name { get; set; }
 

@@ -12,8 +12,8 @@ using PackageFoodManagementSystem.Repository.Data;
 namespace PackageFoodManagementSystem.Repository.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20260116063251_AddUserIdToCustomer")]
-    partial class AddUserIdToCustomer
+    [Migration("20260116115019_AddCustomerAndCustomerAddressTable")]
+    partial class AddCustomerAndCustomerAddressTable
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -106,9 +106,6 @@ namespace PackageFoodManagementSystem.Repository.Migrations
 
                     b.Property<string>("Status")
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("UserId")
-                        .HasColumnType("int");
 
                     b.HasKey("CustomerId");
 
