@@ -10,7 +10,6 @@ namespace PackageFoodManagementSystem.Repository.Models
     {
         [Key]
         public int OrderId { get; set; }
-        public int OrderID { get; internal set; }
         [Required]
         public DateTime OrderDate { get; set; } = DateTime.Now;
 
