@@ -12,6 +12,7 @@
         <!-- When you wire server-side later, add: method="post" asp-controller="Home" asp-action="SignUp" -->
         <form asp-action="SignUp" asp-controller="Home" method="post">
             <!-- Full Name -->
+            @Html.AntiForgeryToken()
             <input type="text" id="name" name="Name" placeholder="Name" required />
             <span class="error" id="nameError"></span>
 
