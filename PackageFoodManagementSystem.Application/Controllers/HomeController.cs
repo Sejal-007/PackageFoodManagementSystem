@@ -157,19 +157,5 @@ namespace PackagedFoodManagementSystem.Controllers
             TempData["SuccessMessage"] = "User deleted successfully!";
             return RedirectToAction(nameof(Users));
         }
-
-        // --- Other Pages ---
-        public IActionResult AboutUs() => View();
-        public IActionResult ContactUs() => View();
-        public IActionResult AdminInventory() => View();
-        public IActionResult Report() => View();
-        public IActionResult Stores() => View();
-
-        public IActionResult Welcome()
-        {
-            if (User.Identity.IsAuthenticated)
-                return RedirectToAction("Index");
-            return View();
-        }
     }
 }
