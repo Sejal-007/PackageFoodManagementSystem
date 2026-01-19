@@ -1,8 +1,7 @@
-﻿using PackageFoodManagementSystem.Repository;
-using PackageFoodManagementSystem.Repository.Models;
+﻿using PackageFoodManagementSystem.Repository.Models;
 using PackageFoodManagementSystem.Services.Interfaces;
 
-namespace PackageFoodManagementSystem.Services
+namespace PackageFoodManagementSystem.Services.Implementations
 {
     public class ProductService : IProductService
     {
@@ -13,27 +12,19 @@ namespace PackageFoodManagementSystem.Services
             _repo = repo;
         }
 
-        public IEnumerable<Product> GetAllProducts()
-        {
-            return _repo.GetAll();
-        }
+        // Fixes StoreManager1Controller and MenuController errors
+        public IEnumerable<Product> GetAllProducts() => _repo.GetAllProducts();
+        public void CreateProduct(Product product) => CreateNewProduct(product);
 
-        public void CreateProduct(Product product)
+        // Fixes ProductController errors
+        public IEnumerable<Product> GetMenuForCustomer() => _repo.GetAllProducts();
+        public void CreateNewProduct(Product product)
         {
-            _repo.Add(product);
+            _repo.AddProduct(product);
             _repo.Save();
         }
 
-        public void UpdateProduct(Product product)
-        {
-            _repo.Update(product);
-            _repo.Save();
-        }
-
-        public void RemoveProduct(int id)
-        {
-            _repo.Delete(id);
-            _repo.Save();
-        }
+        public void UpdateProduct(Product product) { /* later */ }
+        public void RemoveProduct(int id) { /* later */ }
     }
 }

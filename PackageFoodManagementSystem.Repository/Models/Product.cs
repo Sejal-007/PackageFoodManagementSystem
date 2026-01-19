@@ -16,5 +16,6 @@ namespace PackageFoodManagementSystem.Repository.Models
         public int Quantity { get; set; }
         public required string Category { get; set; }
         public bool IsActive { get; set; } = true;
+
     }
 }
