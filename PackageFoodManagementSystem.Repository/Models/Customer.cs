@@ -1,10 +1,31 @@
-﻿namespace PackageFoodManagementSystem.Repository.Models
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+
+namespace PackageFoodManagementSystem.Repository.Models
 {
+    [Table("Customer")]
     public class Customer
     {
-        public int Id { get; set; } // <--- Add this line
+        [Key]
+        public int CustomerId { get; set; }
+
+        //[Required]
+        public int? UserId { get; set; }
+
+        // Navigation property
+        [ForeignKey("UserId")]
+        public virtual UserAuthentication User { get; set; }
+
+        [Required]
         public string Name { get; set; }
+
+        [Required, EmailAddress]
         public string Email { get; set; }
-        // ... other properties
+        [Required, Phone]
+        public string Phone { get; set; }
+
+        public string? Status { get; set; }
+
+        public ICollection<CustomerAddress> Addresses { get; set; }
     }
 }

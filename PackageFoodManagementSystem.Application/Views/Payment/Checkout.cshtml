@@ -1,4 +1,4 @@
-﻿@{
+﻿@* @{
     ViewData["Title"] = "Checkout";
 }
 
@@ -95,4 +95,424 @@
             document.querySelectorAll('.payment-card').forEach(c => c.classList.remove('border-success'));
         });
     });
+</script> *@
+
+
+
+
+
+
+
+
+@* 
+@{
+    ViewData["Title"] = "Checkout";
+}
+
+<div class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow border-0 p-4" style="border-radius: 20px;">
+                <h2 class="fw-bold mb-2 text-center">💳 Secure <span class="text-warning">Checkout</span></h2>
+
+                <div class="bg-light p-3 rounded-3 mb-4 d-flex justify-content-between align-items-center">
+                    <span class="text-muted">Total Payable:</span>
+                    <span class="h4 fw-bold text-success mb-0" id="displayTotal">₹0.00</span>
+                </div>
+
+                <form id="paymentForm" asp-controller="Payment" asp-action="Confirm" method="post" onsubmit="return handlePlaceOrder()">
+                    <input type="hidden" name="amount" id="hiddenAmount">
+
+                    <div class="payment-options d-flex flex-column gap-3 mb-4">
+                        <label class="payment-card p-3 border rounded-3 d-flex align-items-center">
+                            <input type="radio" name="method" value="Card" class="d-none" required>
+                            <div class="icon-box me-3 bg-primary text-white rounded-circle d-flex align-items-center justify-content-center" style="width:50px; height:50px;">
+                                <i class="fa-solid fa-credit-card"></i>
+                            </div>
+                            <div class="flex-grow-1">
+                                <h6 class="mb-0 fw-bold">Pay by Card</h6>
+                                <small class="text-muted">Visa, Mastercard</small>
+                            </div>
+                            <div class="check-mark opacity-0 text-success"><i class="fa-solid fa-circle-check fs-4"></i></div>
+                        </label>
+
+                        <label class="payment-card p-3 border rounded-3 d-flex align-items-center">
+                            <input type="radio" name="method" value="UPI" class="d-none">
+                            <div class="icon-box me-3 bg-success text-white rounded-circle d-flex align-items-center justify-content-center" style="width:50px; height:50px;">
+                                <i class="fa-solid fa-mobile-screen-button"></i>
+                            </div>
+                            <div class="flex-grow-1">
+                                <h6 class="mb-0 fw-bold">Pay by UPI</h6>
+                                <small class="text-muted">Google Pay, PhonePe</small>
+                            </div>
+                            <div class="check-mark opacity-0 text-success"><i class="fa-solid fa-circle-check fs-4"></i></div>
+                        </label>
+
+                        <label class="payment-card p-3 border rounded-3 d-flex align-items-center">
+                            <input type="radio" name="method" value="COD" class="d-none">
+                            <div class="icon-box me-3 bg-warning text-dark rounded-circle d-flex align-items-center justify-content-center" style="width:50px; height:50px;">
+                                <i class="fa-solid fa-hand-holding-dollar"></i>
+                            </div>
+                            <div class="flex-grow-1">
+                                <h6 class="mb-0 fw-bold">Cash on Delivery</h6>
+                                <small class="text-muted">Pay at doorstep</small>
+                            </div>
+                            <div class="check-mark opacity-0 text-success"><i class="fa-solid fa-circle-check fs-4"></i></div>
+                        </label>
+                    </div>
+
+                    <button type="submit" class="btn btn-dark btn-lg w-100 py-3 shadow-sm rounded-pill fw-bold">
+                        Place Order <i class="fa-solid fa-arrow-right ms-2"></i>
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .payment-card {
+        transition: 0.3s;
+        cursor: pointer;
+        border: 2px solid #f1f1f1 !important;
+    }
+
+        .payment-card:hover {
+            background: #f8f9fa;
+            transform: translateY(-2px);
+        }
+
+    label:has(input:checked) {
+        border-color: #198754 !important;
+        background: #f0fff4;
+    }
+
+    input:checked ~ .check-mark {
+        opacity: 1 !important;
+    }
+</style>
+
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        const total = localStorage.getItem("orderTotal");
+        if (total && total !== "0.00") {
+            document.getElementById('displayTotal').innerText = "₹" + total;
+            document.getElementById('hiddenAmount').value = total;
+
+            const btn = document.querySelector('#paymentForm button[type="submit"]');
+            btn.innerHTML = `Place Order (₹${total}) <i class="fa-solid fa-arrow-right ms-2"></i>`;
+        }
+    });
+
+    function handlePlaceOrder() {
+        // 1. Get current cart and total
+        const cart = JSON.parse(localStorage.getItem("myCart")) || [];
+        const total = localStorage.getItem("orderTotal") || "0.00";
+        const method = document.querySelector('input[name="method"]:checked').value;
+
+        if (cart.length === 0) {
+            alert("Basket is empty!");
+            return false;
+        }
+
+        // 2. Create Order Object
+        const newOrder = {
+            orderId: "#ORD" + Math.floor(Math.random() * 900000 + 100000),
+            date: new Date().toLocaleString(),
+            items: cart,
+            amount: total,
+            paymentMethod: method,
+            status: "Placed"
+        };
+
+        // 3. Save to History
+        let pastOrders = JSON.parse(localStorage.getItem("pastOrders")) || [];
+        pastOrders.unshift(newOrder); // Add to start of array
+        localStorage.setItem("pastOrders", JSON.stringify(pastOrders));
+
+        // 4. Clear Cart
+        localStorage.removeItem("myCart");
+        localStorage.removeItem("orderTotal");
+
+        return true; // Allows the form to submit to the Controller
+    }
+</script> *@
+
+
+
+
+
+@{
+    ViewData["Title"] = "Secure Checkout";
+}
+
+<div class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-5 col-md-8">
+            <div id="checkoutBox" class="checkout-container shadow-lg border-0" style="border-radius: 30px; background: #fff; overflow: hidden;">
+                <div class="p-4 text-center border-bottom bg-light">
+                    <h4 class="fw-bold mb-0">Secure <span class="text-primary">Checkout</span></h4>
+                </div>
+
+                <div class="p-4">
+                    <div class="payable-card d-flex justify-content-between align-items-center p-3 mb-4">
+                        <div>
+                            <small class="text-muted d-block fw-bold text-uppercase">Payable Amount</small>
+                            <h2 class="fw-800 mb-0" id="displayTotal">₹0.00</h2>
+                        </div>
+                        <div class="badge bg-success-subtle text-success px-3 py-2 rounded-pill small">
+                            <i class="fa-solid fa-shield-halved me-1"></i> 256-bit SSL
+                        </div>
+                    </div>
+
+                    <form id="paymentForm" onsubmit="return handlePlaceOrder(this)">
+                        <div class="payment-methods d-flex flex-column gap-3">
+                            <div class="method-wrapper border rounded-4 overflow-hidden">
+                                <label class="method-row m-0 p-3 d-flex align-items-center cursor-pointer">
+                                    <input type="radio" name="method" value="Card" class="d-none" onchange="toggleSections('card')">
+                                    <div class="icon-circle bg-primary text-white me-3"><i class="fa-solid fa-credit-card"></i></div>
+                                    <div class="flex-grow-1">
+                                        <h6 class="mb-0 fw-bold">Card Payment</h6>
+                                        <small class="text-muted small">Debit / Credit / RuPay</small>
+                                    </div>
+                                    <div class="radio-dot"></div>
+                                </label>
+                                <div id="cardDetails" class="p-3 bg-light border-top" style="display: none;">
+                                    <input type="text" class="form-control mb-2 rounded-3" placeholder="Card Number" maxlength="19">
+                                    <div class="row g-2">
+                                        <div class="col-7"><input type="text" class="form-control rounded-3" placeholder="MM/YY"></div>
+                                        <div class="col-5"><input type="password" class="form-control rounded-3" placeholder="CVV"></div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="method-wrapper border rounded-4 overflow-hidden">
+                                <label class="method-row m-0 p-3 d-flex align-items-center cursor-pointer">
+                                    <input type="radio" name="method" value="UPI" class="d-none" onchange="toggleSections('upi')">
+                                    <div class="icon-circle bg-success text-white me-3"><i class="fa-solid fa-mobile-screen"></i></div>
+                                    <div class="flex-grow-1">
+                                        <h6 class="mb-0 fw-bold">UPI Payment</h6>
+                                        <small class="text-muted small">PhonePe, GPay, Paytm</small>
+                                    </div>
+                                    <div class="radio-dot"></div>
+                                </label>
+                                <div id="upiDetails" class="p-3 bg-light border-top text-center" style="display: none;">
+                                    <div class="d-flex justify-content-center gap-4 mb-3">
+                                        <label class="upi-app"><input type="radio" name="upi_choice" value="PhonePe" class="d-none"><div class="upi-box"><img src="https://img.icons8.com/color/48/phone-pe.png" width="35"></div></label>
+                                        <label class="upi-app"><input type="radio" name="upi_choice" value="GPay" class="d-none"><div class="upi-box"><img src="https://img.icons8.com/color/48/google-pay.png" width="35"></div></label>
+                                    </div>
+                                    <input type="text" id="upiVpa" class="form-control rounded-pill px-4" placeholder="Enter UPI ID or Number">
+                                </div>
+                            </div>
+
+                            <div class="method-wrapper border rounded-4 overflow-hidden">
+                                <label class="method-row m-0 p-3 d-flex align-items-center cursor-pointer">
+                                    <input type="radio" name="method" value="COD" class="d-none" onchange="toggleSections('none')">
+                                    <div class="icon-circle bg-warning text-dark me-3"><i class="fa-solid fa-hand-holding-dollar"></i></div>
+                                    <div class="flex-grow-1">
+                                        <h6 class="mb-0 fw-bold">Cash on Delivery</h6>
+                                        <small class="text-muted small">Pay at your doorstep</small>
+                                    </div>
+                                    <div class="radio-dot"></div>
+                                </label>
+                            </div>
+                        </div>
+
+                        <button type="submit" id="confirmBtn" class="btn btn-dark w-100 py-3 rounded-pill fw-bold mt-4 shadow-lg">
+                            Confirm & Pay <i class="fa-solid fa-arrow-right ms-2"></i>
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <div id="successScreen" class="text-center" style="display:none;">
+                <div class="success-animation mb-4">
+                    <svg class="checkmark shadow-lg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52">
+                        <circle class="checkmark__circle" cx="26" cy="26" r="25" fill="none" />
+                        <path class="checkmark__check" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8" />
+                    </svg>
+                </div>
+                <h1 class="fw-bold display-6">Order <span class="text-success">Confirmed!</span></h1>
+                <p class="text-muted">Hooray! Your fresh treats are being prepared.</p>
+
+                <div id="receiptContent" class="card border-0 shadow-sm p-4 mt-4 text-start" style="border-radius:25px;">
+                    <div class="d-flex justify-content-between mb-2"><span>Order ID:</span><b id="recOrderId">#ORD000</b></div>
+                    <div class="d-flex justify-content-between mb-2"><span>Payment Method:</span><span class="badge bg-success" id="recMethod">UPI</span></div>
+                    <div class="d-flex justify-content-between mb-3"><span>Status:</span><b class="text-success" id="recStatus">Payment Initiated</b></div>
+                    <hr>
+                    <div id="itemsList" class="small mb-3"></div>
+                    <div class="d-flex justify-content-between h5 fw-bold mb-4"><span>Total Paid:</span><span id="recTotal">₹0.00</span></div>
+
+                    <a href="/User/Dashboard" class="btn btn-dark w-100 py-3 rounded-pill fw-bold mb-2 no-print">Keep Shopping 🛒</a>
+                    <button onclick="window.print()" class="btn btn-outline-secondary w-100 py-2 rounded-pill border-0 small no-print">
+                        <i class="fa-solid fa-print me-2"></i> Print Receipt
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .fw-800 {
+        font-weight: 800;
+    }
+
+    .payable-card {
+        background: #fdfdfd;
+        border: 2px dashed #e2e8f0;
+        border-radius: 20px;
+    }
+
+    .icon-circle {
+        width: 45px;
+        height: 45px;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .radio-dot {
+        width: 20px;
+        height: 20px;
+        border: 2px solid #cbd5e1;
+        border-radius: 50%;
+        transition: 0.3s;
+    }
+
+    input:checked ~ .radio-dot {
+        border-color: #0d6efd;
+        background: #0d6efd;
+        box-shadow: inset 0 0 0 4px #fff;
+    }
+
+    .upi-box {
+        padding: 12px;
+        border: 2px solid #eee;
+        border-radius: 15px;
+        cursor: pointer;
+        transition: 0.3s;
+    }
+
+    .upi-app input:checked + .upi-box {
+        border-color: #0d6efd;
+        background: #fff;
+        transform: translateY(-5px);
+    }
+
+    /* Animated Checkmark CSS */
+    .checkmark__circle {
+        stroke-dasharray: 166;
+        stroke-dashoffset: 166;
+        stroke-width: 2;
+        stroke-miterlimit: 10;
+        stroke: #198754;
+        fill: none;
+        animation: stroke 0.6s cubic-bezier(0.65, 0, 0.45, 1) forwards;
+    }
+
+    .checkmark {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        display: block;
+        stroke-width: 3;
+        stroke: #fff;
+        stroke-miterlimit: 10;
+        margin: 10% auto;
+        box-shadow: inset 0px 0px 0px #198754;
+        animation: fill .4s ease-in-out .4s forwards, scale .3s ease-in-out .9s both;
+    }
+
+    .checkmark__check {
+        transform-origin: 50% 50%;
+        stroke-dasharray: 48;
+        stroke-dashoffset: 48;
+        animation: stroke 0.3s cubic-bezier(0.65, 0, 0.45, 1) 0.8s forwards;
+    }
+
+    @@keyframes stroke {
+        100% {
+            stroke-dashoffset: 0;
+        }
+    }
+
+    @@keyframes scale {
+        0%, 100% {
+            transform: none;
+        }
+
+        50% {
+            transform: scale3d(1.1, 1.1, 1);
+        }
+    }
+
+    @@keyframes fill {
+        100% {
+            box-shadow: inset 0px 0px 0px 40px #198754;
+        }
+    }
+
+    /* Print Logic */
+    @@media print {
+        body * {
+            visibility: hidden;
+        }
+
+        #receiptContent, #receiptContent * {
+            visibility: visible;
+        }
+
+        #receiptContent {
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 100%;
+            border: none !important;
+        }
+
+        .no-print {
+            display: none !important;
+        }
+    }
+</style>
+
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        document.getElementById('displayTotal').innerText = "₹" + (localStorage.getItem("orderTotal") || "0.00");
+    });
+
+    function toggleSections(type) {
+        document.getElementById('cardDetails').style.display = (type === 'card') ? 'block' : 'none';
+        document.getElementById('upiDetails').style.display = (type === 'upi') ? 'block' : 'none';
+    }
+
+    function handlePlaceOrder(form) {
+        const method = document.querySelector('input[name="method"]:checked');
+        if (!method) { alert("Please select a payment method."); return false; }
+        if (method.value === "UPI" && !document.querySelector('input[name="upi_choice"]:checked')) {
+            alert("Select PhonePe or GPay first!"); return false;
+        }
+
+        const cart = JSON.parse(localStorage.getItem("myCart")) || [];
+        const total = localStorage.getItem("orderTotal") || "0.00";
+        const orderId = "#ORD" + Math.floor(Math.random() * 900000 + 100000);
+
+        // UI Setup for Success Screen
+        document.getElementById('checkoutBox').style.display = 'none';
+        document.getElementById('successScreen').style.display = 'block';
+        document.getElementById('recOrderId').innerText = orderId;
+        document.getElementById('recMethod').innerText = method.value;
+        document.getElementById('recTotal').innerText = "₹" + total;
+        document.getElementById('recStatus').innerText = method.value === "COD" ? "Order Placed" : "Payment Initiated";
+        document.getElementById('itemsList').innerHTML = cart.map(i => `<div class="d-flex justify-content-between mb-1"><span>${i.name} (x${i.quantity})</span><span>₹${i.price}</span></div>`).join('');
+
+        // Logic (Store Past Order)
+        let past = JSON.parse(localStorage.getItem("pastOrders")) || [];
+        past.unshift({ orderId, items: cart, amount: total, paymentMethod: method.value, status: "Placed", date: new Date().toLocaleString() });
+        localStorage.setItem("pastOrders", JSON.stringify(past));
+        localStorage.removeItem("myCart");
+        return false;
+    }
 </script>
