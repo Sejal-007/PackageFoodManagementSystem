@@ -20,5 +20,17 @@ namespace PackageFoodManagementSystem.Repository.Data
         public DbSet<Inventory> Inventories { get; set; }
         public DbSet<UserAuthentication> UserAuthentications { get; set; }
         public DbSet<Batch> Batches { get; set; }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            base.OnModelCreating(modelBuilder);
+
+            // Force EF to use the singular name 'Customer' to match your SQL Server
+            modelBuilder.Entity<Customer>().ToTable("Customer");
+
+            // Optional: If 'UserAuthentications' also gives an error, 
+            // you can force its name here too:
+            // modelBuilder.Entity<UserAuthentication>().ToTable("UserAuthentications");
+        }
     }
 }

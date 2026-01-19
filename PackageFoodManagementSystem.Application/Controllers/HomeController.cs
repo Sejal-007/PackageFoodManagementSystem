@@ -234,6 +234,35 @@ namespace PackagedFoodManagementSystem.Controllers
         }
 
         // --- Sign Up ---
+        //[HttpGet]
+        //public IActionResult SignUp() => View();
+
+        //[HttpPost]
+        //[ValidateAntiForgeryToken]
+        //public async Task<IActionResult> SignUp(UserAuthentication user)
+        //{
+        //    if (!ModelState.IsValid) return View(user);
+
+        //    var existingUser = await _db.UserAuthentications
+        //        .FirstOrDefaultAsync(u => u.Email == user.Email);
+
+
+        //    if (existingUser != null)
+        //    {
+        //        TempData["ErrorMessage"] = "Email already exists. Please use a different email.";
+        //        return View(user);
+        //    }
+
+        //    await _userService.CreateUserAsync(
+        //        user.Name,
+        //        user.MobileNumber,
+        //        user.Email,
+        //        user.Password);
+
+        //    TempData["SuccessMessage"] = "SignUp Successful";
+        //    return RedirectToAction(nameof(SignIn));
+        //}
+
         [HttpGet]
         public IActionResult SignUp() => View();
 
@@ -243,26 +272,40 @@ namespace PackagedFoodManagementSystem.Controllers
         {
             if (!ModelState.IsValid) return View(user);
 
-            var existingUser = await _db.UserAuthentications
-                .FirstOrDefaultAsync(u => u.Email == user.Email);
-
-
-            if (existingUser != null)
+            using var transaction = await _db.Database.BeginTransactionAsync();
+            try
             {
-                TempData["ErrorMessage"] = "Email already exists. Please use a different email.";
+                // 1. Create User
+                user.Password = PasswordHelper.HashPassword(user.Password);
+                user.Role = "User";
+                _db.UserAuthentications.Add(user);
+                await _db.SaveChangesAsync();
+
+                // 2. Create Customer (The Sync)
+                var customer = new Customer
+                {
+                    UserId = user.Id,
+                    Name = user.Name,
+                    Email = user.Email, // Matches input name="Email"
+                    Phone = user.MobileNumber, // Matches input name="MobileNumber"
+                    Status = "Active",
+                    Addresses = new List<CustomerAddress>()
+                };
+
+                _db.Customers.Add(customer);
+                await _db.SaveChangesAsync();
+
+                await transaction.CommitAsync();
+                return RedirectToAction(nameof(SignIn));
+            }
+            catch (Exception ex)
+            {
+                await transaction.RollbackAsync();
+                // This will tell you exactly why the sync failed (e.g., a missing field)
+                TempData["ErrorMessage"] = $"Sync Error: {ex.InnerException?.Message ?? ex.Message}";
                 return View(user);
             }
-
-            await _userService.CreateUserAsync(
-                user.Name,
-                user.MobileNumber,
-                user.Email,
-                user.Password);
-
-            TempData["SuccessMessage"] = "SignUp Successful";
-            return RedirectToAction(nameof(SignIn));
         }
-
         public IActionResult Dashboard() => View();
 
         public async Task<IActionResult> AdminDashboard()
