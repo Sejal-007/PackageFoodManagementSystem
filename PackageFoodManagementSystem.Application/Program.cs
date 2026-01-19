@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 ﻿//using PackageFoodManagementSystem.Repository.Data;
 //using PackageFoodManagementSystem.Repository.Models;
 //using Microsoft.EntityFrameworkCore;
@@ -102,10 +103,23 @@ using Microsoft.EntityFrameworkCore;
 using PackageFoodManagementSystem.Repository.Data;
 using PackageFoodManagementSystem.Repository.Implementations;
 using PackageFoodManagementSystem.Repository.Implementations.PackageFoodManagementSystem.Repository.Implementations;
+=======
+﻿using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.EntityFrameworkCore;
+using PackageFoodManagementSystem.Repository.Data;
+using PackageFoodManagementSystem.Repository.Implementations;
+>>>>>>> cea734f18942ffda35f30bb5396d6b26c0f611c6
 using PackageFoodManagementSystem.Repository.Interfaces;
+using PackageFoodManagementSystem.Repository.Models;
+using PackageFoodManagementSystem.Services;
 using PackageFoodManagementSystem.Services.Implementations;
 using PackageFoodManagementSystem.Services.Interfaces;
+<<<<<<< HEAD
 // ... (Your existing usings)
+=======
+
+
+>>>>>>> cea734f18942ffda35f30bb5396d6b26c0f611c6
 
 var builder = WebApplication.CreateBuilder(args);
 
