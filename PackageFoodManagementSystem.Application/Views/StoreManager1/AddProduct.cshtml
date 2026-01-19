@@ -133,7 +133,7 @@
         </div>
     </div>
 
-    <button class="btn-add-product" data-bs-toggle="modal" data-bs-target="#addProductModal" onclick="clearForm()">
+    <button class="btn-add-product" onclick="clearForm()" data-bs-toggle="modal" data-bs-target="#addProductModal">
         Add Product
     </button>
 
@@ -159,14 +159,12 @@
                     <td>01/12/2026</td>
                     <td><span class="badge bg-success">Active</span></td>
                     <td>
-                        <a href="javascript:void(0)"
-                           onclick="editProduct(this)"
-                           data-bs-toggle="modal"
-                           data-bs-target="#addProductModal"
-                           class="text-primary me-2">
+                        <a href="javascript:void(0)" onclick="editProduct(this)" class="text-primary me-2">
                             <i class="fa fa-edit"></i> Edit
                         </a>
-                        <a href="javascript:void(0)" onclick="deleteProduct(this)" class="text-danger"><i class="fa fa-trash"></i> Delete</a>
+                        <a href="javascript:void(0)" onclick="deleteProduct(this)" class="text-danger">
+                            <i class="fa fa-trash"></i> Delete
+                        </a>
                     </td>
                 </tr>
             </tbody>
@@ -179,7 +177,7 @@
         <div class="modal-content">
             <div class="modal-header border-0">
                 <h5 class="modal-title" id="modalTitle">Add New Product</h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" onclick="forceCleanup()"></button>
             </div>
             <div class="modal-body">
                 <form id="productForm">
@@ -217,7 +215,7 @@
                 </form>
             </div>
             <div class="modal-footer border-0">
-                <button type="button" class="btn btn-cancel px-4" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-cancel px-4" data-bs-dismiss="modal" onclick="forceCleanup()">Cancel</button>
                 <button type="button" class="btn btn-save px-4" onclick="saveProduct()">Save Product</button>
             </div>
         </div>
@@ -227,10 +225,47 @@
 <script>
     let currentRow = null;
 
+    // Failsafe to remove any stuck grey overlays
+    function forceCleanup() {
+        document.querySelectorAll('.modal-backdrop').forEach(el => el.remove());
+        document.body.classList.remove('modal-open');
+        document.body.style.overflow = '';
+        document.body.style.paddingRight = '';
+    }
+
     function clearForm() {
+        forceCleanup();
         document.getElementById('productForm').reset();
         document.getElementById('modalTitle').innerText = "Add New Product";
         currentRow = null;
+    }
+
+    function editProduct(btn) {
+        forceCleanup(); // Clean before opening to prevent double-backdrop
+
+        currentRow = btn.closest('tr');
+        const cells = currentRow.cells;
+
+        // Fill the form fields
+        document.getElementById('prodName').value = cells[1].innerText;
+        document.getElementById('prodCategory').value = cells[2].innerText;
+        document.getElementById('prodPrice').value = cells[3].innerText;
+
+        // Fix date format (DD/MM/YYYY to YYYY-MM-DD)
+        let dateParts = cells[4].innerText.trim().split('/');
+        if(dateParts.length === 3) {
+            document.getElementById('prodExpiry').value = `${dateParts[2]}-${dateParts[1]}-${dateParts[0]}`;
+        } else {
+            document.getElementById('prodExpiry').value = cells[4].innerText;
+        }
+
+        document.getElementById('prodImg').value = cells[0].querySelector('img').src;
+        document.getElementById('prodStatus').checked = cells[5].innerText.trim() === "Active";
+        document.getElementById('modalTitle').innerText = "Edit Product";
+
+        // Manually trigger modal
+        var myModal = new bootstrap.Modal(document.getElementById('addProductModal'));
+        myModal.show();
     }
 
     function saveProduct() {
@@ -244,20 +279,23 @@
 
         if (!name || !price) { alert("Please enter a name and price."); return; }
 
+        // Formatting date back to DD/MM/YYYY for the table display
+        let displayDate = expiry;
+        if(expiry.includes('-')) {
+            let parts = expiry.split('-');
+            displayDate = `${parts[2]}/${parts[1]}/${parts[0]}`;
+        }
+
         const rowContent = `
             <td class="img-cell"><img src="${imgUrl}" /></td>
             <td>${name}</td>
             <td>${category}</td>
             <td>${price}</td>
-            <td>${expiry}</td>
+            <td>${displayDate}</td>
             <td><span class="badge ${badgeClass}">${status}</span></td>
             <td>
-                <a href="javascript:void(0)"
-                   onclick="editProduct(this)"
-                   data-bs-toggle="modal"
-                   data-bs-target="#addProductModal"
-                   class="text-primary me-2">
-                   <i class="fa fa-edit"></i> Edit
+                <a href="javascript:void(0)" onclick="editProduct(this)" class="text-primary me-2">
+                    <i class="fa fa-edit"></i> Edit
                 </a>
                 <a href="javascript:void(0)" onclick="deleteProduct(this)" class="text-danger"><i class="fa fa-trash"></i> Delete</a>
             </td>
@@ -272,43 +310,21 @@
             tableBody.appendChild(newRow);
         }
 
-        // FORCE CLEANUP: This ensures the modal closes and the dark backdrop is removed
+        // Close Modal
         const modalElement = document.getElementById('addProductModal');
         const modalInstance = bootstrap.Modal.getInstance(modalElement);
         if (modalInstance) {
             modalInstance.hide();
         }
 
-        // Extra cleanup to remove stuck backdrops manually if necessary
-        document.querySelectorAll('.modal-backdrop').forEach(el => el.remove());
-        document.body.classList.remove('modal-open');
-        document.body.style.overflow = '';
-        document.body.style.paddingRight = '';
+        // Timeout to ensure Bootstrap animation finishes before force cleanup
+        setTimeout(forceCleanup, 300);
     }
 
     function deleteProduct(btn) {
         if (confirm("Delete this product?")) {
             btn.closest('tr').remove();
+            forceCleanup();
         }
     }
-
-    function editProduct(btn) {
-        currentRow = btn.closest('tr');
-        const cells = currentRow.cells;
-
-        // Fill the form fields
-        document.getElementById('prodName').value = cells[1].innerText;
-        document.getElementById('prodCategory').value = cells[2].innerText;
-        document.getElementById('prodPrice').value = cells[3].innerText;
-
-        // Note: Date formatting logic may be needed here if cells[4] is not YYYY-MM-DD
-        document.getElementById('prodExpiry').value = cells[4].innerText;
-
-        document.getElementById('prodImg').value = cells[0].querySelector('img').src;
-        document.getElementById('prodStatus').checked = cells[5].innerText.trim() === "Active";
-
-        document.getElementById('modalTitle').innerText = "Edit Product";
-
-        // NO bootstrap.Modal.show() here! HTML data attributes handle it.
-    }
-</script>
+</script> e

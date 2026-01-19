@@ -164,11 +164,20 @@ namespace PackagedFoodManagementSystem.Controllers
         public IActionResult Report() => View();
         public IActionResult Stores() => View();
 
-        public IActionResult Welcome()
-        {
-            if (User.Identity.IsAuthenticated)
-                return RedirectToAction("Index");
-            return View();
+        //public IActionResult Welcome()
+        //{
+        //    if (User.Identity.IsAuthenticated)
+        //        return RedirectToAction("Index");
+        //    return View();
+        //}
+
+   
+            // This is the action that matches your Welcome.cshtml
+            public IActionResult Welcome()
+            {
+                return View();
+            }
         }
     }
-}
+
+

@@ -54,5 +54,10 @@ namespace PackageFoodManagementSystem.Repository.Implementations
                 await _context.SaveChangesAsync();
             }
         }
+
+        public Task SaveChangesAsync()
+        {
+            throw new NotImplementedException();
+        }
     }
 }

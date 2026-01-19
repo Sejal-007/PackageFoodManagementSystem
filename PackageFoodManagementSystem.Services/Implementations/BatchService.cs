@@ -16,9 +16,24 @@ namespace PackageFoodManagementSystem.Services.Implementations
             _batchRepository = batchRepository;
         }
 
+        public Task AddBatchAsync(Batch batch)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task DeleteBatchAsync(int id)
+        {
+            throw new NotImplementedException();
+        }
+
         public async Task<IEnumerable<Batch>> GetAllBatchesAsync()
         {
             return await _batchRepository.GetAllBatchesAsync();
+        }
+
+        public Task UpdateBatchAsync(Batch batch)
+        {
+            throw new NotImplementedException();
         }
 
         public async Task UpdateRemainingQuantity(int batchId, int quantitySold)

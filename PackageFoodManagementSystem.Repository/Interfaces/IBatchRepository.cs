@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 
 namespace PackageFoodManagementSystem.Repository.Interfaces
 {
-    public interface IBatchRepository // Changed from internal class to public interface
+    public interface IBatchRepository
     {
         Task<IEnumerable<Batch>> GetAllBatchesAsync();
         Task<Batch?> GetBatchByIdAsync(int id);
@@ -12,5 +12,8 @@ namespace PackageFoodManagementSystem.Repository.Interfaces
         Task AddBatchAsync(Batch batch);
         Task UpdateBatchAsync(Batch batch);
         Task DeleteBatchAsync(int id);
+
+        // This satisfies the BatchRepository error from earlier
+        Task SaveChangesAsync();
     }
 }
