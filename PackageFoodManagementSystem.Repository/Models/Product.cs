@@ -24,6 +24,9 @@ namespace PackageFoodManagementSystem.Repository.Models
         public int Quantity { get; set; }
         public required string Category { get; set; }
         public bool IsActive { get; set; } = true;
+<<<<<<< HEAD
+>>>>>>> 3a07ba1 (addedbackendto prd model)
+=======
 >>>>>>> 3a07ba1 (addedbackendto prd model)
 
     }
