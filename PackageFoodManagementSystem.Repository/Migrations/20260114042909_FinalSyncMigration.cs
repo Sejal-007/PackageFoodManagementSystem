@@ -30,27 +30,27 @@ namespace PackageFoodManagementSystem.Repository.Migrations
                 name: "PK_Orders",
                 table: "Orders");
 
-            migrationBuilder.RenameColumn(
-                name: "OrderId",
-                table: "Orders",
-                newName: "OrderID");
+            //migrationBuilder.RenameColumn(
+            //    name: "OrderId",
+            //    table: "Orders",
+            //    newName: "OrderID");
 
-            migrationBuilder.AlterColumn<int>(
-                name: "OrderID",
-                table: "Orders",
-                type: "int",
-                nullable: false,
-                oldClrType: typeof(int),
-                oldType: "int")
-                .OldAnnotation("SqlServer:Identity", "1, 1");
+            //migrationBuilder.AlterColumn<int>(
+            //    name: "OrderID",
+            //    table: "Orders",
+            //    type: "int",
+            //    nullable: false,
+            //    oldClrType: typeof(int),
+            //    oldType: "int")
+            //    .OldAnnotation("SqlServer:Identity", "1, 1");
 
-            migrationBuilder.AddColumn<int>(
-                name: "OrderId",
-                table: "Orders",
-                type: "int",
-                nullable: false,
-                defaultValue: 0)
-                .Annotation("SqlServer:Identity", "1, 1");
+            //migrationBuilder.AddColumn<int>(
+            //    name: "OrderId",
+            //    table: "Orders",
+            //    type: "int",
+            //    nullable: false,
+            //    defaultValue: 0)
+            //    .Annotation("SqlServer:Identity", "1, 1");
 
             migrationBuilder.AddPrimaryKey(
                 name: "PK_Orders",

@@ -9,6 +9,60 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
 
+    <style>
+        :root {
+            --brand-orange: #FF6B00;
+        }
+
+        .bg-dark {
+            background-color: #1a1a1a !important;
+        }
+
+        .text-orange {
+            color: var(--brand-orange) !important;
+        }
+
+        .btn-orange {
+            background-color: var(--brand-orange);
+            border: none;
+            color: white;
+        }
+
+        .footer-links li {
+            margin-bottom: 12px;
+        }
+
+        .footer-links a {
+            color: rgba(255,255,255,0.6);
+            text-decoration: none;
+            transition: 0.3s;
+        }
+
+            .footer-links a:hover {
+                color: var(--brand-orange);
+                padding-left: 5px;
+            }
+
+        .social-icon-box {
+            width: 38px;
+            height: 38px;
+            background: rgba(255,255,255,0.05);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            text-decoration: none;
+            transition: 0.3s;
+        }
+
+            .social-icon-box:hover {
+                background: var(--brand-orange);
+                color: white;
+                transform: translateY(-3px);
+            }
+    </style>
+
     @* --- FIX: This renders the CSS from your individual pages --- *@
     @await RenderSectionAsync("Styles", required: false)
 
@@ -134,6 +188,7 @@
 
             <div class="row align-items-center pt-3">
                 <div class="col-md-6 text-center text-md-start">
+                    <p class="small text-white-50 mb-0">&copy; @DateTime.Now.Year Alwayzzz Fresh. All rights reserved.</p>
                     <p class="small text-white-50 mb-0">&copy; 2025 Alwayzzz Fresh. All rights reserved.</p>
                 </div>
                 <div class="col-md-6 text-center text-md-end">

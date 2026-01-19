@@ -9,8 +9,8 @@ namespace PackageFoodManagementSystem.Repository.Models
     public class Order
     {
         [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int OrderId { get; set; }
-        public int OrderID { get; internal set; }
         [Required]
         public DateTime OrderDate { get; set; } = DateTime.Now;
 
