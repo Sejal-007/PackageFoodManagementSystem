@@ -60,6 +60,15 @@
 //app.UseStaticFiles();
 
 //app.UseRouting();
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.EntityFrameworkCore;
+using PackageFoodManagementSystem.Repository.Data;
+using PackageFoodManagementSystem.Repository.Implementations;
+using PackageFoodManagementSystem.Repository.Interfaces;
+using PackageFoodManagementSystem.Repository.Models;
+using PackageFoodManagementSystem.Services;
+using PackageFoodManagementSystem.Services.Implementations;
+using PackageFoodManagementSystem.Services.Interfaces;
 
 ////// ✅ Global no-cache middleware
 ////app.Use(async (context, next) =>
@@ -126,7 +135,13 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
         options.LoginPath = "/Home/SignIn";
         options.LogoutPath = "/Home/Logout";
     });
+// Register the Repository
+// Register the Service 
+// (Make sure the names match your files exactly, e.g., IProductService or ProductService)
+builder.Services.AddScoped<IProductRepository, ProductRepository>();
 
+// Register the Service (Mapping Interface to Implementation)
+builder.Services.AddScoped<IProductService, ProductService>(); 
 var app = builder.Build();
 
 if (!app.Environment.IsDevelopment())
@@ -145,4 +160,12 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllerRoute(name: "default", pattern: "{controller=Home}/{action=Welcome}/{id?}");
+app.Run();
+app.MapControllerRoute(
+    name: "default",
+    pattern: "{controller=Home}/{action=Index}/{id?}")
+    .WithStaticAssets();
+
+    pattern: "{controller=Home}/{action=Welcome}/{id?}");
+
 app.Run();

@@ -64,9 +64,8 @@
     </style>
 
     @* --- FIX: This renders the CSS from your individual pages --- *@
-    @* @await RenderSectionAsync("Styles", required: false) *@
+    @await RenderSectionAsync("Styles", required: false)
 
-    @RenderSection("Styles", required: false)
 </head>
 <body class="d-flex flex-column min-vh-100">
     @* Flexbox ensures sticky footer *@
@@ -94,11 +93,6 @@
                         <i class="fa-solid fa-user-circle fa-2x" style="color: #ff6347;"></i>
                     </a>
                 </li>
-                @* <li class="nav-item">
-                    <a class="nav-link" href='/Home/SignIn' onclick="openUserMenu()">
-                        <i class="fa fa-sign-in" style="color: #ff6347;"> <h style="font-family:Algerian;color:i">Sign In</h></i>
-                    </a>
-                </li> *@
             </ul>
         </nav>
     </header>
@@ -114,26 +108,25 @@
             <li onclick="location.href='/User/MyBasket'"><i class="fa-solid fa-cart-shopping"></i> My Basket</li>
             <li onclick="location.href='/User/MyOrders'"><i class="fa-solid fa-shopping-bag"></i> My Orders</li>
             <li onclick="location.href='/User/ContactUs'"><i class="fa-solid fa-headset"></i> Contact Us</li>
-            <li onclick="location.href='/Home/Welcome'"><i class="fa-solid fa-right-to-bracket"></i> Sign Out</li>
-
-            @* <a href="/Home/SignIn" style="text-decoration: none; color: inherit;">
-                <i class="fa-solid fa-right-to-bracket"></i> LogIn
-            </a> *@
-           @* // <li class="logout"> *@
-
-                @* @if (User.Identity.IsAuthenticated)
+            <li class="logout">
+                @if (User.Identity.IsAuthenticated)
                 {
                     <a href="/Home/SignIn" style="text-decoration: none; color: inherit;">
                         <i class="fa-solid fa-arrow-right-from-bracket"></i> Logout
                     </a>
                 }
-                 else
+                else
                 {
                     <a href="/Home/SignIn" style="text-decoration: none; color: inherit;">
                         <i class="fa-solid fa-right-to-bracket"></i> Logout
                     </a>
-                }  *@
-            
+                }
+            </li>
+            <li onclick="redirectTo('/User/Dashboard')"><i class="fa-solid fa-user-circle"></i> My Profile</li>
+            <li onclick="redirectTo('/User/MyBasket')"><i class="fa-solid fa-cart-shopping"></i> My Basket</li>
+            <li onclick="redirectTo('/User/MyOrders')"><i class="fa-solid fa-shopping-bag"></i> My Orders</li>
+            <li onclick="redirectTo('/User/ContactUs')"><i class="fa-solid fa-headset"></i> Contact Us</li>
+            <li class="logout" onclick="redirectTo('/Home/SignIn')"><i class="fa-solid fa-arrow-right-from-bracket"></i> Logout</li>
         </ul>
     </div>
     <div id="popupOverlay" onclick="closeUserMenu()"></div>

@@ -1,40 +1,21 @@
-﻿//using Microsoft.AspNetCore.Mvc;
-
-//namespace PackageFoodManagementSystem.Application.Controllers
-//{
-//    public class MenuController : Controller
-//    {
-//        public IActionResult Index()
-//        {
-//            return View();
-//        }
-//    }
-//    //public async Task<IActionResult> Index()
-//    //    {
-//    //        var activeProducts = await _context.Products
-//    //                                    .Where(p => p.Status == "ACTIVE")
-//    //                                    .ToListAsync();
-//    //        return View(activeProducts);
-//    //    }
-//    //}
-//}
-
-
-
-
-
-
-
+﻿
 
 using Microsoft.AspNetCore.Mvc;
+using PackageFoodManagementSystem.Services.Interfaces;
 
-public class MenuController : Controller
+namespace PackageFoodManagementSystem.Application.Controllers
 {
-    public IActionResult Index() => View();
-
-    // Add this action
-    public IActionResult MyBasket()
+    public class MenuController : Controller
     {
-        return View();
+        private readonly IProductService _service;
+
+        public MenuController(IProductService service) => _service = service;
+
+        public IActionResult Index()
+        {
+            // This pulls the same data the manager just saved
+            var products = _service.GetAllProducts();
+            return View(products);
+        }
     }
 }
