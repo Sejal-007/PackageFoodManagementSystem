@@ -1,8 +1,33 @@
-﻿@{
+﻿@model IEnumerable<PackageFoodManagementSystem.Repository.Models.Product>
+@{
 
     ViewData["Title"] = "Menu";
 
 }
+<div class="container mt-5">
+    <h1 class="text-center mb-4">Customer Menu</h1>
+    <div class="row">
+        @foreach (var item in Model)
+        {
+            @if (item.IsActive)
+            {
+                <div class="col-md-4 mb-4">
+                    <div class="card h-100 shadow-sm">
+                        <div class="card-body">
+                            <span class="badge bg-info text-dark mb-2">@item.Category</span>
+                            <h5 class="card-title">@item.ProductName</h5>
+                            <p class="card-text text-muted">Stock Available: @item.Quantity</p>
+                        </div>
+                        <div class="card-footer bg-white border-top-0 d-flex justify-content-between align-items-center">
+                            <span class="h5 mb-0 text-primary">$@item.Price</span>
+                            <button class="btn btn-outline-success btn-sm">Add to Cart</button>
+                        </div>
+                    </div>
+                </div>
+            }
+        }
+    </div>
+</div>
 
 <!DOCTYPE html>
 <html>
