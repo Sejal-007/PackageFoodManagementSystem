@@ -1,0 +1,69 @@
+﻿@model IEnumerable<PackageFoodManagementSystem.Repository.Models.Product>
+@{
+    Layout = "~/Views/Shared/_StoreManagerlayout.cshtml";
+}
+
+<div class="container-fluid p-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="fw-bold text-dark">Inventory Management</h2>
+        <a asp-action="AddProduct" class="btn btn-lg shadow-sm" style="background: linear-gradient(135deg, #d122e3 0%, #8b129a 100%); color: white; border-radius: 10px;">
+            <i class="fa fa-plus-circle me-2"></i> Add New Product
+        </a>
+    </div>
+
+    <div class="card border-0 shadow-sm rounded-4">
+        <div class="card-body p-0">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="bg-light text-secondary">
+                    <tr>
+                        <th class="ps-4 py-3">Product Details</th>
+                        <th>Category</th>
+                        <th>Price</th>
+                        <th>Current Stock</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td class="ps-4">
+                                <div class="d-flex align-items-center">
+                                    <img src="@item.ImageData" class="rounded-3 me-3" style="width: 50px; height: 50px; object-fit: cover; border: 1px solid #eee;" />
+                                    <div>
+                                        <div class="fw-bold text-dark">@item.ProductName</div>
+                                        <small class="text-muted">ID: #@item.ProductId</small>
+                                    </div>
+                                </div>
+                            </td>
+                            <td><span class="badge bg-light text-dark border">@item.Category</span></td>
+                            <td class="fw-bold">₹@item.Price</td>
+                            <td>
+                                @if (item.Quantity < 10)
+                                {
+                                    <span class="badge bg-danger-subtle text-danger">Low: @item.Quantity</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-success-subtle text-success">In Stock: @item.Quantity</span>
+                                }
+                            </td>
+                            <td>
+                                <div class="btn-group">
+                                    <a asp-action="Edit" asp-route-id="@item.ProductId" class="btn btn-sm btn-outline-secondary">
+                                        <i class="fa fa-edit text-primary"></i>
+                                    </a>
+                                    <form asp-action="Delete" asp-route-id="@item.ProductId" method="post" style="display:inline;" onsubmit="return confirm('Delete this product permanently?');">
+                                        <button type="submit" class="btn btn-sm btn-outline-secondary">
+                                            <i class="fa fa-trash text-danger"></i>
+                                        </button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
