@@ -377,11 +377,30 @@ namespace PackagedFoodManagementSystem.Controllers
             var user = await _db.UserAuthentications.FindAsync(id);
             if (user == null) return NotFound();
 
+            // Remove related customers first
+            var customers = _db.Customers.Where(c => c.UserId == id);
+            _db.Customers.RemoveRange(customers);
+
             _db.UserAuthentications.Remove(user);
             await _db.SaveChangesAsync();
 
             TempData["SuccessMessage"] = "User deleted successfully!";
             return RedirectToAction(nameof(Users));
+        }
+
+
+        // --- Other Pages ---
+        public IActionResult AboutUs() => View();
+        public IActionResult ContactUs() => View();
+        public IActionResult AdminInventory() => View();
+        public IActionResult Report() => View();
+        public IActionResult Stores() => View();
+
+        public IActionResult Welcome()
+        {
+            if (User.Identity.IsAuthenticated)
+                return RedirectToAction("Index");
+            return View();
         }
     }
 }
