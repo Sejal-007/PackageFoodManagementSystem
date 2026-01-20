@@ -9,11 +9,11 @@ using PackageFoodManagementSystem.Repository.Data;
 
 #nullable disable
 
-namespace PackageFoodManagementSystem.Application.Migrations
+namespace PackageFoodManagementSystem.Repository.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20260112032620_AddRoleColumnToUserAuthentication")]
-    partial class AddRoleColumnToUserAuthentication
+    [Migration("20260109124709_Name")]
+    partial class Name
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -159,10 +159,6 @@ namespace PackageFoodManagementSystem.Application.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Password")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Role")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 

@@ -1,23 +1,35 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-
 namespace PackageFoodManagementSystem.Repository.Models
+
 {
     public class Product
+
     {
         [Key]
-        public int Id { get; set; } // Primary Key
+
+        public int ProductId { get; set; }
 
         [Required]
-        public string Name { get; set; } = string.Empty;
 
-        [Column (TypeName = "decimal(18,2)")]
+        public required string ProductName { get; set; }
+
+        [Required]
+
+        [Column(TypeName = "decimal(18,2)")]
+
         public decimal Price { get; set; }
 
-        [Required]
-        public string Category { get; set; } = string.Empty;
+        // <-- Add this line right here
 
-        public string? Status { get; set; }
+        public int Quantity { get; set; }
+
+        public required string Category { get; set; }
+
+        public bool IsActive { get; set; } = true;
+
+        public string? ImageData { get; set; }
 
     }
+
 }

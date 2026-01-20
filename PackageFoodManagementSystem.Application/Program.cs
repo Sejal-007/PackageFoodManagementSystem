@@ -2,39 +2,27 @@
 using Microsoft.EntityFrameworkCore;
 using PackageFoodManagementSystem.Repository.Data;
 using PackageFoodManagementSystem.Repository.Implementations;
+using PackageFoodManagementSystem.Repository.Implementations.PackageFoodManagementSystem.Repository.Implementations;
 using PackageFoodManagementSystem.Repository.Interfaces;
-using PackageFoodManagementSystem.Repository.Models;
 using PackageFoodManagementSystem.Services.Implementations;
 using PackageFoodManagementSystem.Services.Interfaces;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// --- 1. DATABASE CONFIGURATION ---
+// 1. Database Connection
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-// --- 2. DEPENDENCY INJECTION (DI) REGISTRATIONS ---
+// 2. Session Configuration
+builder.Services.AddDistributedMemoryCache();
+builder.Services.AddSession(options =>
+{
+    options.IdleTimeout = TimeSpan.FromMinutes(30);
+    options.Cookie.HttpOnly = true;
+    options.Cookie.IsEssential = true;
+});
 
-// Batch Management
-builder.Services.AddScoped<IBatchRepository, BatchRepository>();
-builder.Services.AddScoped<IBatchService, BatchService>();
-
-// Order Management
-builder.Services.AddScoped<IOrderRepository, OrderRepository>();
-builder.Services.AddScoped<IOrderService, OrderService>();
-
-// Billing & Payments
-builder.Services.AddScoped<IBillRepository, BillRepository>();
-builder.Services.AddScoped<IBillingService, BillingService>();
-builder.Services.AddScoped<IPaymentRepository, PaymentRepository>();
-
-// User Management
-builder.Services.AddScoped<IUserRepository, UserRepository>();
-builder.Services.AddScoped<IUserService, UserService>();
-
-// --- 3. AUTHENTICATION & UI ---
-builder.Services.AddControllersWithViews();
-
+// 3. Authentication Configuration
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
     .AddCookie(options =>
     {
@@ -42,9 +30,31 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
         options.LogoutPath = "/Home/Logout";
     });
 
+// 4. Dependency Injection (DI) Registrations - Merged from both versions
+// User & Customer
+builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<ICustomerRepository, CustomerRepository>();
+builder.Services.AddScoped<ICustomerService, CustomerService>();
+
+// Orders & Billing
+builder.Services.AddScoped<IOrderRepository, OrderRepository>();
+builder.Services.AddScoped<IOrderService, OrderService>();
+builder.Services.AddScoped<IBillRepository, BillRepository>();
+builder.Services.AddScoped<IBillingService, BillingService>();
+builder.Services.AddScoped<IPaymentRepository, PaymentRepository>();
+
+// Payments & Products
+builder.Services.AddScoped<IPaymentRepository, PaymentRepository>();
+builder.Services.AddScoped<IProductRepository, ProductRepository>();
+builder.Services.AddScoped<IProductService, ProductService>();
+
+// MVC Services
+builder.Services.AddControllersWithViews();
+
 var app = builder.Build();
 
-// --- 4. MIDDLEWARE PIPELINE ---
+// 5. Configure the HTTP request pipeline
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Error");
@@ -55,11 +65,12 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseRouting();
 
+// ✅ CRITICAL ORDER: Session must come before Authentication
+app.UseSession();
 app.UseAuthentication();
 app.UseAuthorization();
 
-//app.MapControllerRoute(name: "default", pattern: "{controller=Home}/{action=Welcome}/{id?}");
-
+// 6. Routing
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Welcome}/{id?}");

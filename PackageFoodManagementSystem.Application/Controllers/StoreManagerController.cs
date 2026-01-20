@@ -15,6 +15,7 @@ namespace PackageFoodManagementSystem.Application.Controllers
     //        }
     //        return View(product);
     //    }
+
         public IActionResult Home()
         {
             return View();

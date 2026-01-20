@@ -1,5 +1,7 @@
 ﻿@{
+
     ViewData["Title"] = "Alwayzzz Fresh | Home";
+
 }
 
 <div class="hero-container position-relative overflow-hidden" style="background: linear-gradient(135deg, #FF6B00 0%, #FF8533 100%); padding-top: 80px; min-height: 75vh;">
@@ -11,16 +13,20 @@
                 </div>
 
                 <h1 class="display-3 fw-800 mb-4 animate__animated animate__fadeInLeft text-white">
+
                     Stay <span>Fresh</span>,<br>
+
                     Shop <span class="opacity-75">Smarter</span>.
                 </h1>
 
                 <p class="lead mb-5 animate__animated animate__fadeInLeft animate__delay-1s text-white opacity-90">
+
                     Your daily essentials delivered within minutes. From storage to serving, we keep your food fresh effortlessly.
                 </p>
 
                 <div class="d-flex gap-3 animate__animated animate__fadeInUp animate__delay-2s">
                     <a asp-controller="Menu" asp-action="Index" class="btn btn-white btn-lg rounded-pill px-5 shadow-lg fw-bold">
+
                         Explore Now <i class="fa-solid fa-compass ms-2"></i>
                     </a>
                 </div>
@@ -32,9 +38,11 @@
                      class="splash-bg"
                      alt="Splash Background"
                      style="position: absolute;
+
                 z-index: 1;
 
                 max-width: none;
+
                 transform: scale(1.2); /* Increases overall size */
 
                 pointer-events: none;">
@@ -186,13 +194,17 @@
     </div>
 </div>
 @if (TempData["SuccessMessage"] != null)
+
 {
     <script>
+
         alert('@TempData["SuccessMessage"]');
     </script>
+
 }
 
 <style>
+
     :root {
         --brand-orange: #FF6B00;
         --brand-yellow: #FFA500;
@@ -211,6 +223,7 @@
     }
 
     /* ⚪ BUTTON STYLES */
+
     .btn-white {
         background: white;
         color: var(--brand-orange) !important;
@@ -224,6 +237,7 @@
         }
 
     /* 🟠 DECORATIONS */
+
     .white-glow-bg {
         position: absolute;
         top: 50%;
@@ -301,6 +315,7 @@
     }
 
     @@keyframes float {
+
         0%, 100% {
             transform: translateY(0);
         }
@@ -311,6 +326,7 @@
     }
 
     /* Category Colors */
+
     .bg-blue-light {
         background: #e7f1ff;
     }
@@ -339,3 +355,4 @@
         background: #fce4ec;
     }
 </style>
+
