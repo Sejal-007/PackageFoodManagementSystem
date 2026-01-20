@@ -1,18 +1,25 @@
 ﻿using Microsoft.EntityFrameworkCore;
+
 using PackageFoodManagementSystem.Repository.Models;
 
 namespace PackageFoodManagementSystem.Repository.Data
 {
     public class ApplicationDbContext : DbContext
+
     {
+
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
+
             : base(options)
+
         {
+
         }
 
         public DbSet<Product> Products { get; set; }
         public DbSet<Customer> Customers { get; set; }
         public DbSet<CustomerAddress> CustomerAddresses { get; set; }
+
         public DbSet<Order> Orders { get; set; }
         public DbSet<OrderItem> OrderItems { get; set; }
         public DbSet<Bill> Bills { get; set; }
@@ -33,5 +40,13 @@ namespace PackageFoodManagementSystem.Repository.Data
             // you can force its name here too:
             // modelBuilder.Entity<UserAuthentication>().ToTable("UserAuthentications");
         }
+
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            // This tells EF to ignore the "Pending Changes" warning and just run the update
+            optionsBuilder.ConfigureWarnings(w => w.Ignore(Microsoft.EntityFrameworkCore.Diagnostics.RelationalEventId.PendingModelChangesWarning));
+        }
+
     }
+
 }

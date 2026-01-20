@@ -156,6 +156,9 @@
             }
     </style>
 
+    @* --- FIX: This renders the CSS from your individual pages --- *@
+    @await RenderSectionAsync("Styles", required: false)
+
     @RenderSection("Styles", required: false)
 </head>
 <body class="d-flex flex-column min-vh-100">
@@ -177,6 +180,23 @@
                     </div>
                 </div>
 
+            <ul class="navbar-nav ms-auto align-items-center">
+                <li class="nav-item me-3"><a class="nav-link fw-semibold" asp-controller="Home" asp-action="Index">Home</a></li>
+                <li class="nav-item me-3"><a class="nav-link fw-semibold" asp-controller="Menu" asp-action="Index">Explore</a></li>
+
+                <li class="nav-item me-4">
+                    <a class="nav-link position-relative" asp-controller="User" asp-action="MyBasket">
+                        <i class="fa-solid fa-cart-shopping fa-lg" style="color: #ff6347;"></i>
+                        <span id="cart-count" class="badge bg-danger rounded-circle position-absolute top-0 start-100 translate-middle" style="display: none; font-size: 0.7rem;">0</span>
+                    </a>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link" onclick="openUserMenu()">
+                        <i class="fa-solid fa-user-circle fa-2x" style="color: #ff6347;"></i>
+                    </a>
+                </li>
+            </ul>
                 <ul class="navbar-nav align-items-center">
                     <li class="nav-item me-3"><a class="nav-link fw-semibold" asp-controller="Home" asp-action="Index">Home</a></li>
                     <li class="nav-item me-3"><a class="nav-link fw-semibold" asp-controller="Menu" asp-action="Index">Explore</a></li>
@@ -228,6 +248,29 @@
     <div id="userPopup">
         <div class="p-3 border-bottom fw-bold">User Menu</div>
         <ul class="popup-list">
+            <li onclick="location.href='/User/Dashboard'"><i class="fa-solid fa-user-circle"></i> My Profile</li>
+            <li onclick="location.href='/User/MyBasket'"><i class="fa-solid fa-cart-shopping"></i> My Basket</li>
+            <li onclick="location.href='/User/MyOrders'"><i class="fa-solid fa-shopping-bag"></i> My Orders</li>
+            <li onclick="location.href='/User/ContactUs'"><i class="fa-solid fa-headset"></i> Contact Us</li>
+            <li class="logout">
+                @if (User.Identity.IsAuthenticated)
+                {
+                    <a href="/Home/SignIn" style="text-decoration: none; color: inherit;">
+                        <i class="fa-solid fa-arrow-right-from-bracket"></i> Logout
+                    </a>
+                }
+                else
+                {
+                    <a href="/Home/SignIn" style="text-decoration: none; color: inherit;">
+                        <i class="fa-solid fa-right-to-bracket"></i> Logout
+                    </a>
+                }
+            </li>
+            <li onclick="redirectTo('/User/Dashboard')"><i class="fa-solid fa-user-circle"></i> My Profile</li>
+            <li onclick="redirectTo('/User/MyBasket')"><i class="fa-solid fa-cart-shopping"></i> My Basket</li>
+            <li onclick="redirectTo('/User/MyOrders')"><i class="fa-solid fa-shopping-bag"></i> My Orders</li>
+            <li onclick="redirectTo('/User/ContactUs')"><i class="fa-solid fa-headset"></i> Contact Us</li>
+            <li class="logout" onclick="redirectTo('/Home/SignIn')"><i class="fa-solid fa-arrow-right-from-bracket"></i> Logout</li>
             <li onclick="location.href='/User/Dashboard'"><i class="fa-solid fa-user-circle me-2"></i> My Profile</li>
             <li onclick="location.href='/User/MyBasket'"><i class="fa-solid fa-cart-shopping me-2"></i> My Basket</li>
             <li onclick="location.href='/User/MyOrders'"><i class="fa-solid fa-shopping-bag me-2"></i> My Orders</li>

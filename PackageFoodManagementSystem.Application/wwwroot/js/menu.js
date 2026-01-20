@@ -7,6 +7,7 @@
 
     updateCartCount(1);
 
+    // OPTIONAL: send to backend
     sendToCart(card);
 }
 
