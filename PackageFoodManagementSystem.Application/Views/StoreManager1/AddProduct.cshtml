@@ -55,7 +55,6 @@
             color: white;
         }
 </style>
-
 <div class="container">
     <div class="form-container">
         <div class="form-header">
@@ -63,7 +62,8 @@
             <p>Enter the details below to add a product to the customer menu.</p>
         </div>
 
-        <form asp-controller="StoreManager1" asp-action="Create" method="post">
+        <form asp-controller="StoreManager1" asp-action="Create" method="post" enctype="multipart/form-data">
+
             <div class="mb-3">
                 <label class="form-label">Product Name</label>
                 <div class="input-group">
@@ -81,6 +81,15 @@
                     <option value="Dairy">Dairy</option>
                     <option value="Bakery">Bakery</option>
                 </select>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Product Image</label>
+                <div class="input-group">
+                    <span class="input-group-text"><i class="fa fa-image"></i></span>
+                    <input type="file" name="imageFile" class="form-control" accept="image/*" required />
+                </div>
+                <small class="text-muted">Recommended size: 500x500px (JPG, PNG)</small>
             </div>
 
             <div class="row">
