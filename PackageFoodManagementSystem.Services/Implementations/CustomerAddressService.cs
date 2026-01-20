@@ -17,5 +17,10 @@ namespace PackageFoodManagementSystem.Services.Implementations
         public Task AddAsync(CustomerAddress address) => _repository.AddAsync(address);
         public Task UpdateAsync(CustomerAddress address) => _repository.UpdateAsync(address);
         public Task DeleteAsync(int id) => _repository.DeleteAsync(id);
+
+        public Task<dynamic> GetAddressesByUserIdAsync(int value)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

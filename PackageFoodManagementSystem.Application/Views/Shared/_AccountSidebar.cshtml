@@ -1,27 +1,33 @@
-﻿<div class="account-sidebar-nav">
+﻿@{
+    // Get the current URL path to compare with the link hrefs
+    var currentPath = Context.Request.Path.ToString();
+}
+
+<div class="account-sidebar-nav">
     <div class="section-group mb-4">
         <h6 class="text-uppercase text-muted fw-bold small mb-3">Personal Details</h6>
         <ul class="list-unstyled">
-            <li><a href="/User/EditProfile" class="nav-link "><i class="fa-solid fa-user-pen me-2"></i> Edit Profile</a></li>
-            <li><a href="/User/DeliveryAddress" class="nav-link"><i class="fa-solid fa-map-location-dot me-2"></i> Delivery Addresses</a></li>
-            <li><a href="/User/EmailAddress" class="nav-link"><i class="fa-solid fa-envelope me-2"></i> Email Addresses</a></li>
+            @* Use a helper condition to check if the current path matches the link *@
+            <li><a href="/User/EditProfile" class="nav-link @(currentPath == "/User/EditProfile" ? "active" : "")"><i class="fa-solid fa-user-pen me-2"></i> Edit Profile</a></li>
+            <li><a href="/User/DeliveryAddress" class="nav-link @(currentPath == "/User/DeliveryAddress" ? "active" : "")"><i class="fa-solid fa-map-location-dot me-2"></i> Delivery Addresses</a></li>
+            <li><a href="/User/EmailAddress" class="nav-link @(currentPath == "/User/EmailAddress" ? "active" : "")"><i class="fa-solid fa-envelope me-2"></i> Email Addresses</a></li>
         </ul>
     </div>
 
     <div class="section-group mb-4">
         <h6 class="text-uppercase text-muted fw-bold small mb-3">Shop From</h6>
         <ul class="list-unstyled">
-            <li><a href="/User/SmartBasket" class="nav-link"><i class="fa-solid fa-basket-shopping me-2"></i> Smart Basket</a></li>
-            <li><a href="/User/PastOrders" class="nav-link"><i class="fa-solid fa-history me-2"></i> Past Orders</a></li>
+            <li><a href="/User/SmartBasket" class="nav-link @(currentPath == "/User/SmartBasket" ? "active" : "")"><i class="fa-solid fa-basket-shopping me-2"></i> Smart Basket</a></li>
+            <li><a href="/User/PastOrders" class="nav-link @(currentPath == "/User/PastOrders" ? "active" : "")"><i class="fa-solid fa-history me-2"></i> Past Orders</a></li>
         </ul>
     </div>
 
     <div class="section-group">
         <h6 class="text-uppercase text-muted fw-bold small mb-3">My Account</h6>
         <ul class="list-unstyled">
-            <li><a href="/User/MyOrders" class="nav-link"><i class="fa-solid fa-box me-2"></i> My Orders</a></li>
-            <li><a href="/User/MyWallet" class="nav-link"><i class="fa-solid fa-wallet me-2"></i> My Wallet</a></li>
-            <li><a href="/User/GiftCards" class="nav-link"><i class="fa-solid fa-gift me-2"></i> My Gift Cards</a></li>
+            <li><a href="/User/MyOrders" class="nav-link @(currentPath == "/User/MyOrders" ? "active" : "")"><i class="fa-solid fa-box me-2"></i> My Orders</a></li>
+            <li><a href="/User/MyWallet" class="nav-link @(currentPath == "/User/MyWallet" ? "active" : "")"><i class="fa-solid fa-wallet me-2"></i> My Wallet</a></li>
+            <li><a href="/User/GiftCards" class="nav-link @(currentPath == "/User/GiftCards" ? "active" : "")"><i class="fa-solid fa-gift me-2"></i> My Gift Cards</a></li>
         </ul>
     </div>
 </div>
@@ -43,7 +49,8 @@
         }
 
         .nav-link.active {
-            background-color: #198754;
+            /* Matches the green highlight seen in Delivery Addresses */
+            background-color: #198754 !important;
             color: white !important;
         }
 </style>

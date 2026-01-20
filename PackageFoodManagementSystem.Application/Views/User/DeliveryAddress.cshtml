@@ -1,67 +1,142 @@
-﻿@{
-    ViewData["Title"] = "Delivery Addresses";
-    var userName = User.Identity.IsAuthenticated ? User.Identity.Name : "User";
-}
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+﻿
+
+@model IEnumerable<PackageFoodManagementSystem.Repository.Models.CustomerAddress>
 
 <div class="container my-5">
     <div class="row">
         <div class="col-md-3">
-            <div class="card border-0 shadow-sm p-3" style="border-radius: 15px;">
-                @Html.Partial("_AccountSidebar")
+            <div class="card border-0 shadow-sm p-4" style="border-radius: 20px;">
+                <div class="account-sidebar-nav">
+                    <div class="section-group mb-4">
+                        <h6 class="text-uppercase text-muted fw-bold small mb-3">Personal Details</h6>
+                        <ul class="list-unstyled">
+                            <li><a href="/User/EditProfile" class="nav-link"><i class="fa-solid fa-user-pen me-2"></i> Edit Profile</a></li>
+                            <li><a href="/User/DeliveryAddress" class="nav-link active"><i class="fa-solid fa-map-location-dot me-2"></i> Delivery Addresses</a></li>
+                            <li><a href="/User/EmailAddress" class="nav-link"><i class="fa-solid fa-envelope me-2"></i> Email Addresses</a></li>
+                        </ul>
+                    </div>
+
+                    <div class="section-group mb-4">
+                        <h6 class="text-uppercase text-muted fw-bold small mb-3">Shop From</h6>
+                        <ul class="list-unstyled">
+                            <li><a href="/User/SmartBasket" class="nav-link"><i class="fa-solid fa-basket-shopping me-2"></i> Smart Basket</a></li>
+                            <li><a href="/User/PastOrders" class="nav-link"><i class="fa-solid fa-history me-2"></i> Past Orders</a></li>
+                        </ul>
+                    </div>
+
+                    <div class="section-group">
+                        <h6 class="text-uppercase text-muted fw-bold small mb-3">My Account</h6>
+                        <ul class="list-unstyled">
+                            <li><a href="/User/MyOrders" class="nav-link"><i class="fa-solid fa-box me-2"></i> My Orders</a></li>
+                            <li><a href="/User/MyWallet" class="nav-link"><i class="fa-solid fa-wallet me-2"></i> My Wallet</a></li>
+                            <li><a href="/User/GiftCards" class="nav-link"><i class="fa-solid fa-gift me-2"></i> My Gift Cards</a></li>
+                        </ul>
+                    </div>
+                </div>
             </div>
         </div>
 
-        <div class="col-md-9">
-            <div class="d-flex justify-content-between align-items-center mb-4">
+        <div class="col-md-9 px-md-4">
+            <div class="d-flex justify-content-between align-items-center mb-5">
                 <div>
                     <h2 class="fw-bold mb-0">Delivery <span class="text-success">Addresses</span></h2>
-                    <p class="text-muted small">Locations saved for @userName</p>
+                    <p class="text-muted small">Locations saved for User</p>
                 </div>
-                <div class="d-flex gap-2">
-                    <a href="/User/EditAddress?id=1" class="btn btn-sm btn-outline-dark rounded-pill px-3">Edit</a>
-                    <button class="btn btn-sm btn-outline-danger rounded-pill px-3" onclick="confirmDelete(this)">Remove</button>
-                </div>
+                <button class="btn btn-dark rounded-pill px-4 py-2 fw-bold shadow-sm" data-bs-toggle="modal" data-bs-target="#addressMapModal">
+                    + Add New Address
+                </button>
             </div>
 
-            @if (TempData["Message"] != null)
-            {
-                <div class="alert alert-success border-0 shadow-sm rounded-3">
-                    <i class="fa-solid fa-circle-check me-2"></i> @TempData["Message"]
-                </div>
-            }
-
             <div class="row g-3">
-                <div class="col-md-6 address-item">
-                    <div class="card h-100 border-0 shadow-sm p-3 position-relative" style="border-radius: 15px;">
-                        <span class="badge bg-success position-absolute top-0 end-0 m-3 rounded-pill">Default</span>
-                        <div class="d-flex align-items-center mb-2">
-                            <div class="bg-light p-2 rounded-circle me-3">
-                                <i class="fa-solid fa-house text-success fs-5"></i>
-                            </div>
-                            <h6 class="fw-bold mb-0">Home</h6>
-                        </div>
-                        <p class="text-muted small mb-3">Old Madras Road, Chennai,<br>PIN 600130</p>
-                        <div class="d-flex gap-2">
-                            <button class="btn btn-sm btn-outline-dark rounded-pill px-3">Edit</button>
-                            <button class="btn btn-sm btn-outline-danger rounded-pill px-3" onclick="confirmDelete(this)">Remove</button>
-                        </div>
-                    </div>
-                </div>
+                @if (Model != null && Model.Any())
+                {
+                    @foreach (var addr in Model)
+                    {
+                        <div class="col-md-6 mb-3">
+                            <div class="card p-3 shadow-sm border-0 h-100" style="border-radius: 15px; border-left: 5px solid #198754 !important;">
+                                <div class="d-flex justify-content-between align-items-start">
+                                    <span class="badge bg-light text-dark rounded-pill px-3 py-2 mb-2 border">
+                                        @if (addr.AddressType == "Home")
+                                        {
+                                            <span>🏠 Home</span>
+                                        }
+                                        else if (addr.AddressType == "Work")
+                                        {
 
-                <div class="col-md-6 address-item">
-                    <div class="card h-100 border-0 shadow-sm p-3" style="border-radius: 15px;">
-                        <div class="d-flex align-items-center mb-2">
-                            <div class="bg-light p-2 rounded-circle me-3">
-                                <i class="fa-solid fa-briefcase text-primary fs-5"></i>
+                                            <span>🏢 Work</span>
+                                        }
+                                        else
+                                        {
+
+                                            <span>📍 @addr.AddressType</span>
+                                        }
+                                    </span>
+                                </div>
+                                <h6 class="fw-bold mb-1">@addr.StreetAddress</h6>
+                                <p class="small text-muted mb-1"><i class="fa-solid fa-location-crosshairs me-1"></i> @addr.Landmark</p>
+                                <p class="small text-muted mb-0">@addr.City - @addr.PostalCode</p>
                             </div>
-                            <h6 class="fw-bold mb-0">Office</h6>
                         </div>
-                        <p class="text-muted small mb-3">Tidel Park, Sholinganallur,<br>PIN 600119</p>
-                        <div class="d-flex gap-2">
-                            <button class="btn btn-sm btn-outline-dark rounded-pill px-3">Edit</button>
-                            <button class="btn btn-sm btn-outline-danger rounded-pill px-3" onclick="confirmDelete(this)">Remove</button>
+                    }
+                }
+                else
+                {
+                    <div class="text-center py-5 w-100">
+                        <p class="text-muted">No saved addresses found. Click "+ Add New Address" to begin.</p>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="addressMapModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-centered">
+        <div class="modal-content border-0 shadow-lg" style="border-radius: 24px; overflow: hidden;">
+            <div class="modal-body p-0">
+                <div class="row g-0">
+                    <div class="col-lg-6 position-relative" style="min-height: 550px; background: #eee;">
+                        <div id="googleMap" style="height: 100%; width: 100%;"></div>
+                        <div class="position-absolute top-0 start-0 w-100 p-3">
+                            <div class="input-group shadow-sm rounded-pill overflow-hidden bg-white">
+                                <span class="input-group-text border-0 bg-white ps-3"><i class="fa-solid fa-magnifying-glass text-success"></i></span>
+                                <input type="text" id="mapSearchInput" class="form-control border-0 py-2" placeholder="Search for area, street name..">
+                            </div>
                         </div>
+                        <button class="btn btn-white position-absolute bottom-0 start-0 m-3 shadow-sm rounded-pill border fw-bold btn-sm px-3" onclick="detectMyLoc()">
+                            <i class="fa-solid fa-location-crosshairs text-success me-2"></i> Detect my location
+                        </button>
+                    </div>
+
+                    <div class="col-lg-6 p-4 p-lg-5 bg-white">
+                        <div class="d-flex justify-content-between align-items-center mb-4">
+                            <h5 class="fw-bold mb-0">Enter complete address</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                        </div>
+                        <form asp-controller="User" asp-action="SaveAddress" method="post">
+                            <label class="form-label text-muted small mb-2">Save address as *</label>
+                            <div class="d-flex gap-2 mb-4">
+                                <input type="radio" class="btn-check" name="AddressType" id="h" value="Home" checked>
+                                <label class="btn btn-outline-secondary btn-sm rounded-pill px-3" for="h">🏠 Home</label>
+                                <input type="radio" class="btn-check" name="AddressType" id="w" value="Work">
+                                <label class="btn btn-outline-secondary btn-sm rounded-pill px-3" for="w">🏢 Work</label>
+                            </div>
+                            <div class="mb-3">
+                                <input type="text" name="StreetAddress" id="f_address" class="form-control rounded-3" placeholder="Flat / House no / Building name *" required>
+                            </div>
+                            <div class="mb-3">
+                                <input type="text" name="Landmark" class="form-control rounded-3" placeholder="Nearby landmark (optional)">
+                            </div>
+                            <div class="row g-2 mb-4">
+                                <div class="col-8">
+                                    <input type="text" name="City" id="f_city" class="form-control rounded-3" placeholder="City *" required>
+                                </div>
+                                <div class="col-4">
+                                    <input type="text" name="PostalCode" id="f_pin" class="form-control rounded-3" placeholder="PIN Code *" required>
+                                </div>
+                            </div>
+                            <button type="submit" class="btn btn-success w-100 py-3 rounded-pill fw-bold fs-5 shadow-sm">Save Address</button>
+                        </form>
                     </div>
                 </div>
             </div>
@@ -69,28 +144,79 @@
     </div>
 </div>
 
+<script src="https://maps.googleapis.com/maps/api/js?key=YOUR_ACTUAL_API_KEY&libraries=places"></script>
 <script>
-    function confirmDelete(btn) {
-        if(confirm("Are you sure you want to remove this address?")) {
-            const card = btn.closest('.address-item');
-            card.style.transition = "all 0.4s ease";
-            card.style.opacity = "0";
-            card.style.transform = "scale(0.8)";
+    let map, marker, geocoder;
+    function initMap() {
+        const initialPos = { lat: 12.9716, lng: 77.5946 };
+        map = new google.maps.Map(document.getElementById("googleMap"), {
+            zoom: 15, center: initialPos, disableDefaultUI: true, zoomControl: true
+        });
+        marker = new google.maps.Marker({ position: initialPos, map: map, draggable: true });
+        geocoder = new google.maps.Geocoder();
+        const autocomplete = new google.maps.places.Autocomplete(document.getElementById("mapSearchInput"));
+        autocomplete.addListener("place_changed", () => {
+            const place = autocomplete.getPlace();
+            if (place.geometry) {
+                map.setCenter(place.geometry.location);
+                map.setZoom(17);
+                marker.setPosition(place.geometry.location);
+                updateForm(place);
+            }
+        });
+        marker.addListener("dragend", () => {
+            geocoder.geocode({ location: marker.getPosition() }, (res, status) => {
+                if (status === "OK" && res[0]) updateForm(res[0]);
+            });
+        });
+    }
 
-            setTimeout(() => {
-                card.remove();
-                // Optionally call an API here to delete from DB
-            }, 400);
+    function updateForm(place) {
+        if (!place) return;
+        document.getElementById("f_address").value = place.formatted_address || place.name || "";
+        document.getElementById("f_city").value = "";
+        document.getElementById("f_pin").value = "";
+        const components = place.address_components || [];
+        for (const c of components) {
+            if (c.types.includes("locality")) document.getElementById("f_city").value = c.long_name;
+            if (c.types.includes("postal_code")) document.getElementById("f_pin").value = c.long_name;
         }
     }
+
+    function detectMyLoc() {
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(p => {
+                const loc = { lat: p.coords.latitude, lng: p.coords.longitude };
+                map.setCenter(loc); map.setZoom(17); marker.setPosition(loc);
+                geocoder.geocode({ location: loc }, res => updateForm(res[0]));
+            });
+        }
+    }
+
+    document.getElementById('addressMapModal').addEventListener('shown.bs.modal', function () {
+        if (!map) initMap();
+        else { google.maps.event.trigger(map, "resize"); map.setCenter(marker.getPosition()); }
+    });
 </script>
 
 <style>
-    .card {
-        transition: transform 0.2s;
+    .nav-link {
+        padding: 10px 15px;
+        border-radius: 8px;
+        color: #333;
+        transition: all 0.3s;
+        display: block;
+        text-decoration: none;
     }
 
-        .card:hover {
-            transform: translateY(-5px);
+        .nav-link:hover {
+            background-color: #f0fff4;
+            color: #198754;
+            transform: translateX(5px);
+        }
+
+        .nav-link.active {
+            background-color: #198754;
+            color: white !important;
         }
 </style>

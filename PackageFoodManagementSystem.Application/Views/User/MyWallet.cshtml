@@ -1,156 +1,4 @@
-﻿@* @model PackageFoodManagementSystem.Repository.Models.Wallet
-
-@{
-    ViewData["Title"] = "My Wallet";
-}
-
-<h1>My Wallet</h1>
-<p>Current Balance: @Model.Balance</p>
-@{
-    ViewData["Title"] = "My Wallet";
-    var userName = User.Identity.IsAuthenticated ? User.Identity.Name : "User";
-}
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-
-<div class="container my-5">
-    <div class="row">
-        <div class="col-md-3">
-            <div class="card border-0 shadow-sm p-3" style="border-radius: 15px;">
-                @Html.Partial("_AccountSidebar")
-            </div>
-        </div>
-
-        <div class="col-md-9 ps-md-5">
-            <h2 class="fw-bold mb-4">Account <span class="text-warning">Wallet</span></h2>
-
-            <div class="wallet-gradient-card p-4 text-white mb-5 shadow-lg position-relative"
-                 style="background: linear-gradient(135deg, #f39c12, #e67e22); border-radius: 20px; overflow: hidden;">
-                <div class="d-flex justify-content-between align-items-start position-relative" style="z-index: 2;">
-                    <div>
-                        <p class="small opacity-75 mb-0 text-uppercase">Total Balance</p>
-                        <h1 class="display-4 fw-bold mb-0">₹@Model.Balance</h1>
-                    </div>
-                    <i class="fa-solid fa-wallet display-4 opacity-50"></i>
-                </div>
-
-                <div class="mt-4 position-relative" style="z-index: 2;">
-                    <h6 class="text-uppercase tracking-wider mb-1">@userName</h6>
-                    <p class="small opacity-75 mb-0">Alwayzzz Fresh Credits</p>
-                </div>
-
-                <div class="position-absolute" style="top: -20px; right: -20px; width: 150px; height: 150px; background: rgba(255,255,255,0.1); border-radius: 50%;"></div>
-            </div>
-
-            <div class="row g-3 mb-5 text-center">
-                <div class="col-4">
-                    <div class="p-2">
-                        <i class="fa-solid fa-bolt text-warning mb-2"></i>
-                        <p class="small fw-bold mb-0">1-Click Pay</p>
-                    </div>
-                </div>
-                <div class="col-4 border-start border-end">
-                    <div class="p-2">
-                        <i class="fa-solid fa-shield-halved text-success mb-2"></i>
-                        <p class="small fw-bold mb-0">100% Secure</p>
-                    </div>
-                </div>
-                <div class="col-4">
-                    <div class="p-2">
-                        <i class="fa-solid fa-rotate-left text-primary mb-2"></i>
-                        <p class="small fw-bold mb-0">Instant Refund</p>
-                    </div>
-                </div>
-            </div>
-
-            <div class="card border-0 shadow-sm p-4" style="border-radius: 15px; background: #fffcf5;">
-                <h5 class="fw-bold mb-3"><i class="fa-solid fa-circle-plus me-2 text-warning"></i> Quick Recharge</h5>
-                <p class="text-muted small mb-4">Select an amount to instantly top up your wallet.</p>
-
-                <form method="post" asp-action="AddMoney" asp-controller="User" id="rechargeForm">
-                    <div class="d-flex flex-wrap gap-3">
-                        <button type="submit" name="amount" value="100" class="btn btn-recharge">₹100</button>
-                        <button type="submit" name="amount" value="500" class="btn btn-recharge">₹500</button>
-                        <button type="submit" name="amount" value="1000" class="btn btn-recharge active">₹1000</button>
-                        <button type="submit" name="amount" value="2000" class="btn btn-recharge">₹2000</button>
-                    </div>
-
-                    <div class="mt-4 pt-3 border-top">
-                        <div class="input-group" style="max-width: 300px;">
-                            <span class="input-group-text bg-white border-end-0">₹</span>
-                            <input type="number" class="form-control border-start-0 shadow-none" placeholder="Enter custom amount">
-                            <button class="btn btn-dark px-4 rounded-end-pill" type="button">Add</button>
-                        </div>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-</div>
-
-<style>
-    .wallet-gradient-card {
-        transition: transform 0.3s;
-        cursor: default;
-    }
-
-        .wallet-gradient-card:hover {
-            transform: scale(1.02);
-        }
-
-    .btn-recharge {
-        border: 2px solid #f39c12;
-        background: transparent;
-        color: #e67e22;
-        font-weight: bold;
-        padding: 10px 25px;
-        border-radius: 12px;
-        transition: all 0.2s;
-    }
-
-        .btn-recharge:hover {
-            background: #f39c12;
-            color: white;
-            transform: translateY(-3px);
-        }
-
-        .btn-recharge.active {
-            background: #f39c12;
-            color: white;
-            box-shadow: 0 4px 10px rgba(243, 156, 18, 0.3);
-        }
-
-    .tracking-wider {
-        letter-spacing: 1.5px;
-    }
-</style>
-
-<script>
-    // Visual Feedback on Recharge
-    document.getElementById('rechargeForm').addEventListener('submit', function(e) {
-        const amount = e.submitter.value;
-        const btn = e.submitter;
-
-        btn.innerHTML = `<span class="spinner-border spinner-border-sm"></span>`;
-        // In a real app, the form submits here.
-        // We let it submit normally, the controller will refresh the page with new balance.
-    });
-</script> *@
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+﻿
 @model PackageFoodManagementSystem.Repository.Models.Wallet
 
 @{
@@ -219,20 +67,18 @@
                 <h5 class="fw-bold mb-3"><i class="fa-solid fa-circle-plus me-2 text-warning"></i> Quick Recharge</h5>
                 <p class="text-muted small mb-4">Select an amount to instantly top up your wallet.</p>
 
-                <form method="post" asp-action="AddMoney" asp-controller="User" id="rechargeForm">
-                    <div class="d-flex flex-wrap gap-3">
-                        <button type="submit" name="amount" value="100" class="btn btn-recharge">₹100</button>
-                        <button type="submit" name="amount" value="500" class="btn btn-recharge">₹500</button>
-                        <button type="submit" name="amount" value="1000" class="btn btn-recharge active">₹1000</button>
-                        <button type="submit" name="amount" value="2000" class="btn btn-recharge">₹2000</button>
-                    </div>
+                @* Ensure the asp-action matches the method name above *@
+                <form method="post" asp-action="AddMoney" asp-controller="User">
 
-                    <div class="mt-4 pt-3 border-top">
-                        <div class="input-group" style="max-width: 300px;">
-                            <span class="input-group-text bg-white border-end-0">₹</span>
-                            <input type="number" class="form-control border-start-0 shadow-none" placeholder="Enter custom amount">
-                            <button class="btn btn-dark px-4 rounded-end-pill" type="button">Add</button>
-                        </div>
+                    @* Quick recharge buttons *@
+                    <button type="submit" name="amount" value="100" class="btn btn-recharge">₹100</button>
+                    <button type="submit" name="amount" value="500" class="btn btn-recharge">₹500</button>
+
+                    @* Custom amount input *@
+                    <div class="input-group mt-3" style="max-width: 300px;">
+                        <span class="input-group-text">₹</span>
+                        <input type="number" name="amount" class="form-control" placeholder="Enter amount">
+                        <button class="btn btn-dark" type="submit">Add</button>
                     </div>
                 </form>
             </div>
