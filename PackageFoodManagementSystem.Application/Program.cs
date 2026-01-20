@@ -2,61 +2,58 @@
 using Microsoft.EntityFrameworkCore;
 using PackageFoodManagementSystem.Repository.Data;
 using PackageFoodManagementSystem.Repository.Implementations;
+using PackageFoodManagementSystem.Repository.Implementations.PackageFoodManagementSystem.Repository.Implementations;
 using PackageFoodManagementSystem.Repository.Interfaces;
-using PackageFoodManagementSystem.Repository.Models;
-using PackageFoodManagementSystem.Services;
 using PackageFoodManagementSystem.Services.Implementations;
 using PackageFoodManagementSystem.Services.Interfaces;
 
-
-
 var builder = WebApplication.CreateBuilder(args);
 
+// 1. Database Connection
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-builder.Services.AddScoped<IOrderRepository, OrderRepository>();
+// 2. Session Configuration
+builder.Services.AddDistributedMemoryCache();
+builder.Services.AddSession(options =>
+{
+    options.IdleTimeout = TimeSpan.FromMinutes(30);
+    options.Cookie.HttpOnly = true;
+    options.Cookie.IsEssential = true;
+});
 
-builder.Services.AddScoped<IBillRepository, BillRepository>();
-
-builder.Services.AddScoped<IPaymentRepository, PaymentRepository>();
-
-builder.Services.AddScoped<IOrderService, OrderService>();
-
-builder.Services.AddScoped<IBillingService, BillingService>();
-
-// --- 1. ADD SERVICES (Before builder.Build()) ---
-
-builder.Services.AddControllersWithViews();
-
-builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
-
-
-
-// Move this HERE (above builder.Build)
-
-
-// DI: map interfaces to EFDB implementations
-builder.Services.AddScoped<IUserRepository, UserRepository>();
-builder.Services.AddScoped<IUserService, UserService>();
-
-// ✅ Add authentication if you plan to use cookies
+// 3. Authentication Configuration
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
     .AddCookie(options =>
     {
         options.LoginPath = "/Home/SignIn";
         options.LogoutPath = "/Home/Logout";
     });
-// Register the Repository
-// Register the Service 
-// (Make sure the names match your files exactly, e.g., IProductService or ProductService)
-builder.Services.AddScoped<IProductRepository, ProductRepository>();
 
-// Register the Service (Mapping Interface to Implementation)
-builder.Services.AddScoped<IProductService, ProductService>(); 
+// 4. Dependency Injection (DI) Registrations - Merged from both versions
+// User & Customer
+builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<ICustomerRepository, CustomerRepository>();
+builder.Services.AddScoped<ICustomerService, CustomerService>();
+
+// Orders & Billing
+builder.Services.AddScoped<IOrderRepository, OrderRepository>();
+builder.Services.AddScoped<IOrderService, OrderService>();
+builder.Services.AddScoped<IBillRepository, BillRepository>();
+builder.Services.AddScoped<IBillingService, BillingService>();
+
+// Payments & Products
+builder.Services.AddScoped<IPaymentRepository, PaymentRepository>();
+builder.Services.AddScoped<IProductRepository, ProductRepository>();
+builder.Services.AddScoped<IProductService, ProductService>();
+
+// MVC Services
+builder.Services.AddControllersWithViews();
+
 var app = builder.Build();
 
+// 5. Configure the HTTP request pipeline
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Error");
@@ -68,18 +65,12 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
-//// ✅ Global no-cache middleware
-//app.Use(async (context, next) =>
-//{
-//    context.Response.Headers["Cache-Control"] = "no-cache, no-store, must-revalidate";
-//    context.Response.Headers["Pragma"] = "no-cache";
-//    context.Response.Headers["Expires"] = "0";
-//    await next();
-//});
-
+// ✅ CRITICAL ORDER: Session must come before Authentication
+app.UseSession();
 app.UseAuthentication();
 app.UseAuthorization();
 
+// 6. Routing
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Welcome}/{id?}");

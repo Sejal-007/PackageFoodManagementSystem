@@ -5,7 +5,7 @@
 namespace PackageFoodManagementSystem.Repository.Migrations
 {
     /// <inheritdoc />
-    public partial class FinalSync : Migration
+    public partial class AddCustomerAndCustomerAddressTable : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)

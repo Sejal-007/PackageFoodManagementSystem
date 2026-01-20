@@ -1,4 +1,4 @@
-﻿@{
+﻿@* @{
     ViewData["Title"] = "My Account";
 }
 
@@ -77,6 +77,107 @@
 
 <script>
     // Interaction: Loading effect on button click
+    document.getElementById('btnUpdate').addEventListener('click', function() {
+        const btn = this;
+        const originalText = btn.innerHTML;
+
+        btn.disabled = true;
+        btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span> Updating...';
+
+        setTimeout(() => {
+            btn.innerHTML = '<i class="fa-solid fa-circle-check"></i> Updated Successfully!';
+            btn.className = "btn btn-primary px-4 rounded-pill fw-bold";
+
+            setTimeout(() => {
+                btn.innerHTML = originalText;
+                btn.className = "btn btn-success px-4 rounded-pill fw-bold";
+                btn.disabled = false;
+            }, 2000);
+        }, 1500);
+    });
+</script> *@
+
+
+
+
+
+
+
+
+@model PackageFoodManagementSystem.Repository.Models.UserAuthentication
+@{
+    ViewData["Title"] = "My Account";
+}
+
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-3 border-end">
+            @Html.Partial("_AccountSidebar")
+        </div>
+
+        <div class="col-md-9 ps-md-5">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2 class="fw-bold mb-0">Profile Details <span class="text-success"></span></h2>
+
+            </div>
+
+            <div class="card border-0 shadow-sm p-4" style="border-radius: 15px;">
+                <form id="profileForm">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label small fw-bold text-muted">FULL NAME</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-white"><i class="fa-regular fa-user text-success"></i></span>
+                                <input type="text" class="form-control border-start-0" value="@Model.Name">
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label small fw-bold text-muted">PHONE NUMBER</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-white text-muted">+91</span>
+                                <input type="text" class="form-control border-start-0" value="@Model.MobileNumber">
+                            </div>
+                        </div>
+
+                        <div class="col-12 mt-4">
+                            <label class="form-label small fw-bold text-muted">EMAIL ADDRESS</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-white"><i class="fa-regular fa-envelope text-success"></i></span>
+                                <input type="email" class="form-control border-start-0" value="@Model.Email" readonly>
+                            </div>
+                        </div>
+                    </div>
+
+
+                </form>
+            </div>
+
+            <div class="row mt-4 g-3 text-center">
+                <div class="col-md-4">
+                    <div class="p-3 bg-white border rounded-3 shadow-sm">
+                        <h4 class="fw-bold mb-0">12</h4>
+                        <small class="text-muted">Total Orders</small>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="p-3 bg-white border rounded-3 shadow-sm">
+                        <h4 class="fw-bold mb-0 text-success">₹@ViewBag.WalletBalance</h4>
+                        <small class="text-muted">Wallet Balance</small>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="p-3 bg-white border rounded-3 shadow-sm">
+                        <h4 class="fw-bold mb-0 text-warning">5</h4>
+                        <small class="text-muted">Smart Items</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
     document.getElementById('btnUpdate').addEventListener('click', function() {
         const btn = this;
         const originalText = btn.innerHTML;

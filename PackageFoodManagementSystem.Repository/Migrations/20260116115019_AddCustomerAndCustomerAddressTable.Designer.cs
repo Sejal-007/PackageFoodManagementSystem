@@ -12,8 +12,8 @@ using PackageFoodManagementSystem.Repository.Data;
 namespace PackageFoodManagementSystem.Repository.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20260119175319_FinalSync")]
-    partial class FinalSync
+    [Migration("20260116115019_AddCustomerAndCustomerAddressTable")]
+    partial class AddCustomerAndCustomerAddressTable
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -86,11 +86,11 @@ namespace PackageFoodManagementSystem.Repository.Migrations
 
             modelBuilder.Entity("PackageFoodManagementSystem.Repository.Models.Customer", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<int>("CustomerId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("CustomerId"));
 
                     b.Property<string>("Email")
                         .IsRequired()
@@ -100,9 +100,46 @@ namespace PackageFoodManagementSystem.Repository.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.HasKey("Id");
+                    b.Property<string>("Phone")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Status")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("CustomerId");
 
                     b.ToTable("Customers");
+                });
+
+            modelBuilder.Entity("PackageFoodManagementSystem.Repository.Models.CustomerAddress", b =>
+                {
+                    b.Property<int>("AddressId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("AddressId"));
+
+                    b.Property<string>("City")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("CustomerId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("PostalCode")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("StreetAddress")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("AddressId");
+
+                    b.HasIndex("CustomerId");
+
+                    b.ToTable("CustomerAddresses");
                 });
 
             modelBuilder.Entity("PackageFoodManagementSystem.Repository.Models.Inventory", b =>
@@ -112,6 +149,9 @@ namespace PackageFoodManagementSystem.Repository.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int?>("BillID")
+                        .HasColumnType("int");
 
                     b.Property<int>("ProductId")
                         .HasColumnType("int");
@@ -242,33 +282,27 @@ namespace PackageFoodManagementSystem.Repository.Migrations
 
             modelBuilder.Entity("PackageFoodManagementSystem.Repository.Models.Product", b =>
                 {
-                    b.Property<int>("ProductId")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ProductId"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Category")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("ImageData")
+                    b.Property<string>("Name")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("IsActive")
-                        .HasColumnType("bit");
 
                     b.Property<decimal>("Price")
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<string>("ProductName")
-                        .IsRequired()
+                    b.Property<string>("Status")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("Quantity")
-                        .HasColumnType("int");
-
-                    b.HasKey("ProductId");
+                    b.HasKey("Id");
 
                     b.ToTable("Products");
                 });
@@ -317,6 +351,17 @@ namespace PackageFoodManagementSystem.Repository.Migrations
                     b.Navigation("Order");
                 });
 
+            modelBuilder.Entity("PackageFoodManagementSystem.Repository.Models.CustomerAddress", b =>
+                {
+                    b.HasOne("PackageFoodManagementSystem.Repository.Models.Customer", "Customer")
+                        .WithMany("Addresses")
+                        .HasForeignKey("CustomerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Customer");
+                });
+
             modelBuilder.Entity("PackageFoodManagementSystem.Repository.Models.OrderItem", b =>
                 {
                     b.HasOne("PackageFoodManagementSystem.Repository.Models.Order", "Order")
@@ -343,6 +388,11 @@ namespace PackageFoodManagementSystem.Repository.Migrations
                 {
                     b.Navigation("Payment")
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("PackageFoodManagementSystem.Repository.Models.Customer", b =>
+                {
+                    b.Navigation("Addresses");
                 });
 
             modelBuilder.Entity("PackageFoodManagementSystem.Repository.Models.Order", b =>
