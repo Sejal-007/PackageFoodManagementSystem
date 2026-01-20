@@ -1,15 +1,5 @@
-<<<<<<< HEAD
-﻿using Microsoft.AspNetCore.Mvc;
-=======
-﻿
-
 using Microsoft.AspNetCore.Mvc;
 using PackageFoodManagementSystem.Services.Interfaces;
-<<<<<<< HEAD
->>>>>>> 3a07ba1 (addedbackendto prd model)
-=======
->>>>>>> 3a07ba1 (addedbackendto prd model)
-
 namespace PackageFoodManagementSystem.Application.Controllers
 {
     public class MenuController : Controller
