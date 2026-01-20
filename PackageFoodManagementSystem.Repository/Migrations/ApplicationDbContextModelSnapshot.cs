@@ -104,9 +104,14 @@ namespace PackageFoodManagementSystem.Repository.Migrations
                     b.Property<string>("Status")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int?>("UserId")
+                        .HasColumnType("int");
+
                     b.HasKey("CustomerId");
 
-                    b.ToTable("Customers");
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Customer", (string)null);
                 });
 
             modelBuilder.Entity("PackageFoodManagementSystem.Repository.Models.CustomerAddress", b =>
@@ -167,11 +172,11 @@ namespace PackageFoodManagementSystem.Repository.Migrations
 
             modelBuilder.Entity("PackageFoodManagementSystem.Repository.Models.Order", b =>
                 {
-                    b.Property<int>("OrderID")
+                    b.Property<int>("OrderId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("OrderID"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("OrderId"));
 
                     b.Property<int>("CreatedByUserID")
                         .HasColumnType("int");
@@ -197,7 +202,7 @@ namespace PackageFoodManagementSystem.Repository.Migrations
                     b.Property<decimal>("TotalAmount")
                         .HasColumnType("decimal(18,2)");
 
-                    b.HasKey("OrderID");
+                    b.HasKey("OrderId");
 
                     b.ToTable("Orders");
                 });
@@ -349,6 +354,15 @@ namespace PackageFoodManagementSystem.Repository.Migrations
                         .IsRequired();
 
                     b.Navigation("Order");
+                });
+
+            modelBuilder.Entity("PackageFoodManagementSystem.Repository.Models.Customer", b =>
+                {
+                    b.HasOne("PackageFoodManagementSystem.Repository.Models.UserAuthentication", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("PackageFoodManagementSystem.Repository.Models.CustomerAddress", b =>

@@ -39,6 +39,13 @@ namespace PackageFoodManagementSystem.Repository.Data
             // you can force its name here too:
             // modelBuilder.Entity<UserAuthentication>().ToTable("UserAuthentications");
         }
+
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            // This tells EF to ignore the "Pending Changes" warning and just run the update
+            optionsBuilder.ConfigureWarnings(w => w.Ignore(Microsoft.EntityFrameworkCore.Diagnostics.RelationalEventId.PendingModelChangesWarning));
+        }
+
     }
 
 }

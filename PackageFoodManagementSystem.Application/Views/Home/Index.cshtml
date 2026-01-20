@@ -1,74 +1,210 @@
 ﻿@{
-    ViewData["Title"] = "Customer Home";
+
+    ViewData["Title"] = "Alwayzzz Fresh | Home";
+
 }
 
-@section Styles {
-    <link href="~/css/customer-home.css" rel="stylesheet" asp-append-version="true" />
-}
+<div class="hero-container position-relative overflow-hidden" style="background: linear-gradient(135deg, #FF6B00 0%, #FF8533 100%); padding-top: 80px; min-height: 75vh;">
+    <div class="container">
+        <div class="row align-items-center py-5">
+            <div class="col-lg-6 mb-5 mb-lg-0 text-white">
+                <div class="badge rounded-pill bg-white text-orange px-3 py-2 mb-4 animate__animated animate__fadeInDown">
+                    <i class="fa-solid fa-truck-fast me-2"></i> Fast 30-Min Delivery
+                </div>
 
-@section Scripts {
-    <script src="~/js/customer-home.js" asp-append-version="true"></script>
-}
+                <h1 class="display-3 fw-800 mb-4 animate__animated animate__fadeInLeft text-white">
 
-<section class="hero">
-    <div class="row align-items-center g-0">
-        <div class="col-lg-6 text-start ps-5">
-            <p class="hero-text text-start">
-                From storage to serving,<br>
-                to keep your food fresh!!<br>
-                We make it effortless
-            </p>
-            <a class="btn custom-btn btn-lg mt-3 px-4" asp-controller="Menu" asp-action="Index">
-                Explore Menu
-            </a>
-        </div>
+                    Stay <span>Fresh</span>,<br>
 
-        <div class="col-lg-6 text-end">
-            <div class="hero-image-wrapper">
-                <img src="~/images/splash-white.png" class="splash-bg" alt="Splash">
-                <img src="~/images/homeimg.png" class="img-fluid hero-image" alt="Food">
+                    Shop <span class="opacity-75">Smarter</span>.
+                </h1>
+
+                <p class="lead mb-5 animate__animated animate__fadeInLeft animate__delay-1s text-white opacity-90">
+
+                    Your daily essentials delivered within minutes. From storage to serving, we keep your food fresh effortlessly.
+                </p>
+
+                <div class="d-flex gap-3 animate__animated animate__fadeInUp animate__delay-2s">
+                    <a asp-controller="Menu" asp-action="Index" class="btn btn-white btn-lg rounded-pill px-5 shadow-lg fw-bold">
+
+                        Explore Now <i class="fa-solid fa-compass ms-2"></i>
+                    </a>
+                </div>
+            </div>
+
+            <div class="col-lg-6 position-relative text-center animate__animated animate__zoomIn">
+                <div class="white-glow-bg"></div>
+                <img src="~/images/splash-white.png"
+                     class="splash-bg"
+                     alt="Splash Background"
+                     style="position: absolute;
+
+                z-index: 1;
+
+                max-width: none;
+
+                transform: scale(1.2); /* Increases overall size */
+
+                pointer-events: none;">
+
+                <img src="~/images/homeimg.png"
+                     class="img-fluid floating-img"
+                     alt="Fresh Produce"
+                     style="position: relative; z-index: 2; max-height: 520px; filter: drop-shadow(0 20px 40px rgba(0,0,0,0.2));">
             </div>
         </div>
     </div>
-</section>
 
-<div class="container mt-5 mb-5">
-    <h2 class="mb-4">Explore Our Menu</h2>
-    <div class="row g-4" id="menuGrid">
-        <div class="col-md-3">
-            <div class="card menu-card text-center p-4">
-                <h5>🥨 Snacks</h5>
-                <p>Crispy &amp; delicious</p>
+    <div class="wave-bottom">
+        <svg viewBox="0 0 1440 120"><path fill="#ffffff" fill-opacity="1" d="M0,64L80,69.3C160,75,320,85,480,80C640,75,800,53,960,48C1120,43,1280,53,1360,58.7L1440,64L1440,120L1360,120C1280,120,1120,120,960,120C800,120,640,120,480,120C320,120,160,120,80,120L0,120Z"></path></svg>
+    </div>
+</div>
+
+<div class="container my-5 pt-5">
+    <div class="text-center mb-5">
+        <h2 class="fw-bold">What's <span class="text-orange">Fresh</span> Today?</h2>
+        <p class="text-muted">Hand-picked essentials for your kitchen</p>
+    </div>
+
+    <div class="row g-4 text-center mb-4">
+        <div class="col-6 col-md-3">
+            <div class="category-card p-4 rounded-4 shadow-sm h-100 border-0">
+                <div class="icon-circle mb-3 mx-auto bg-orange-light"><i class="fa-solid fa-leaf text-orange fs-2"></i></div>
+                <h6 class="fw-bold">Vegetables</h6>
             </div>
         </div>
-        <div class="col-md-3">
-            <div class="card menu-card text-center p-4">
-                <h5>🥤 Beverages</h5>
-                <p>Cool &amp; refreshing</p>
+        <div class="col-6 col-md-3">
+            <div class="category-card p-4 rounded-4 shadow-sm h-100 border-0">
+                <div class="icon-circle mb-3 mx-auto bg-blue-light"><i class="fa-solid fa-cow text-primary fs-2"></i></div>
+                <h6 class="fw-bold">Dairy & Eggs</h6>
             </div>
         </div>
-        <div class="col-md-3">
-            <div class="card menu-card text-center p-4">
-                <h5>🍱 Ready Meals</h5>
-                <p>Instant &amp; tasty</p>
+        <div class="col-6 col-md-3">
+            <div class="category-card p-4 rounded-4 shadow-sm h-100 border-0">
+                <div class="icon-circle mb-3 mx-auto bg-purple-light"><i class="fa-solid fa-bottle-water text-purple fs-2"></i></div>
+                <h6 class="fw-bold">Beverages</h6>
             </div>
         </div>
-        <div class="col-md-3">
-            <div class="card menu-card text-center p-4">
-                <h5>🍫 Sweets</h5>
-                <p>Sweet happiness</p>
+        <div class="col-6 col-md-3">
+            <div class="category-card p-4 rounded-4 shadow-sm h-100 border-0">
+                <div class="icon-circle mb-3 mx-auto bg-green-light"><i class="fa-solid fa-apple-whole text-success fs-2"></i></div>
+                <h6 class="fw-bold">Fruits</h6>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-4 text-center">
+        <div class="col-6 col-md-3">
+            <div class="category-card p-4 rounded-4 shadow-sm h-100 border-0">
+                <div class="icon-circle mb-3 mx-auto bg-yellow-light"><i class="fa-solid fa-cookie text-warning fs-2"></i></div>
+                <h6 class="fw-bold">Snacks</h6>
+            </div>
+        </div>
+        <div class="col-6 col-md-3">
+            <div class="category-card p-4 rounded-4 shadow-sm h-100 border-0">
+                <div class="icon-circle mb-3 mx-auto bg-red-light"><i class="fa-solid fa-bread-slice text-danger fs-2"></i></div>
+                <h6 class="fw-bold">Bakery</h6>
+            </div>
+        </div>
+        <div class="col-6 col-md-3">
+            <div class="category-card p-4 rounded-4 shadow-sm h-100 border-0">
+                <div class="icon-circle mb-3 mx-auto bg-meat-light"><i class="fa-solid fa-drumstick-bite text-brown fs-2"></i></div>
+                <h6 class="fw-bold">Meat & Fish</h6>
+            </div>
+        </div>
+        <div class="col-6 col-md-3">
+            <div class="category-card p-4 rounded-4 shadow-sm h-100 border-0">
+                <div class="icon-circle mb-3 mx-auto bg-pink-light"><i class="fa-solid fa-ice-cream text-pink fs-2"></i></div>
+                <h6 class="fw-bold">Sweets</h6>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container py-5 my-5">
+    <div class="text-center mb-5">
+        <h2 class="fw-bold">Experience <span class="text-orange">Freshness</span> in 3 Steps</h2>
+    </div>
+    <div class="row g-5 text-center">
+        <div class="col-md-4">
+            <div class="step-card">
+                <div class="step-number">1</div>
+                <div class="icon-box-large shadow-sm mb-4">
+                    <i class="fa-solid fa-mobile-screen-button text-orange"></i>
+                </div>
+                <h5 class="fw-bold">Pick Essentials</h5>
+                <p class="text-muted">Browse your favorites easily.</p>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="step-card">
+                <div class="step-number">2</div>
+                <div class="icon-box-large shadow-sm mb-4">
+                    <i class="fa-solid fa-credit-card text-orange"></i>
+                </div>
+                <h5 class="fw-bold">Secure Checkout</h5>
+                <p class="text-muted">Safe payments via UPI, Card, or Cash.</p>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="step-card">
+                <div class="step-number">3</div>
+                <div class="icon-box-large shadow-sm mb-4">
+                    <i class="fa-solid fa-person-biking text-orange"></i>
+                </div>
+                <h5 class="fw-bold">Flash Delivery</h5>
+                <p class="text-muted">30-minute delivery straight to your door.</p>
+            </div>
+        </div>
+    </div>
+    <br />
+    <div class="bg-light py-5">
+        <div class="container py-4">
+            <div class="row g-4 text-center">
+                <div class="col-md-3">
+                    <div class="trust-card p-3">
+                        <i class="fa-solid fa-clock-rotate-left text-orange fs-1 mb-3"></i>
+                        <h6 class="fw-bold">On-Time Delivery</h6>
+                        <p class="small text-muted mb-0">30-minute delivery or we make it right.</p>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="trust-card p-3">
+                        <i class="fa-solid fa-shield-heart text-orange fs-1 mb-3"></i>
+                        <h6 class="fw-bold">Quality Assured</h6>
+                        <p class="small text-muted mb-0">Directly from farms to your kitchen.</p>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="trust-card p-3">
+                        <i class="fa-solid fa-hand-holding-dollar text-orange fs-1 mb-3"></i>
+                        <h6 class="fw-bold">Best Prices</h6>
+                        <p class="small text-muted mb-0">Daily deals and smart savings every day.</p>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="trust-card p-3">
+                        <i class="fa-solid fa-headset text-orange fs-1 mb-3"></i>
+                        <h6 class="fw-bold">24/7 Support</h6>
+                        <p class="small text-muted mb-0">We're here to help whenever you need us.</p>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 </div>
 @if (TempData["SuccessMessage"] != null)
+
 {
     <script>
+
         alert('@TempData["SuccessMessage"]');
     </script>
+
 }
 
 <style>
+
     :root {
         --brand-orange: #FF6B00;
         --brand-yellow: #FFA500;
@@ -87,6 +223,7 @@
     }
 
     /* ⚪ BUTTON STYLES */
+
     .btn-white {
         background: white;
         color: var(--brand-orange) !important;
@@ -100,6 +237,7 @@
         }
 
     /* 🟠 DECORATIONS */
+
     .white-glow-bg {
         position: absolute;
         top: 50%;
@@ -177,6 +315,7 @@
     }
 
     @@keyframes float {
+
         0%, 100% {
             transform: translateY(0);
         }
@@ -187,6 +326,7 @@
     }
 
     /* Category Colors */
+
     .bg-blue-light {
         background: #e7f1ff;
     }
@@ -215,4 +355,4 @@
         background: #fce4ec;
     }
 </style>
-</div>
+
