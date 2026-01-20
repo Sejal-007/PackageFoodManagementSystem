@@ -55,6 +55,93 @@
             color: white;
         }
 </style>
+<div class="container">
+    <div class="form-container">
+        <div class="form-header">
+            <h2>Add New Product</h2>
+            <p>Enter the details below to add a product to the customer menu.</p>
+        </div>
+
+        <form asp-controller="StoreManager1" asp-action="Create" method="post" enctype="multipart/form-data">
+
+            <div class="mb-3">
+                <label class="form-label">Product Name</label>
+                <div class="input-group">
+                    <span class="input-group-text"><i class="fa fa-tag"></i></span>
+                    <input type="text" name="ProductName" class="form-control" placeholder="e.g. Chocolate Cookies" required />
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Category</label>
+                <select name="Category" class="form-select" required>
+                    <option value="" disabled selected>Select Category</option>
+                    <option value="Snacks">Snacks</option>
+                    <option value="Beverages">Beverages</option>
+                    <option value="Dairy">Dairy</option>
+                    <option value="Bakery">Bakery</option>
+                </select>
+            </div>
+    .form-label {
+        font-weight: 600;
+        color: #555;
+    }
+
+            <div class="mb-3">
+                <label class="form-label">Product Image</label>
+                <div class="input-group">
+                    <span class="input-group-text"><i class="fa fa-image"></i></span>
+                    <input type="file" name="imageFile" class="form-control" accept="image/*" required />
+                </div>
+                <small class="text-muted">Recommended size: 500x500px (JPG, PNG)</small>
+            </div>
+    .form-control:focus {
+        border-color: #d122e3;
+        box-shadow: 0 0 0 0.2rem rgba(209, 34, 227, 0.25);
+    }
+
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">Price ($)</label>
+                    <input type="number" step="0.01" name="Price" class="form-control" placeholder="0.00" required />
+                </div>
+
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">Stock Quantity</label>
+                    <input type="number" name="Quantity" class="form-control" placeholder="0" required />
+                </div>
+            </div>
+
+            <div class="mb-4">
+                <div class="form-check form-switch">
+                    <input class="form-check-input" type="checkbox" name="IsActive" value="true" id="activeSwitch" checked>
+                    <label class="form-check-label" for="activeSwitch">Available for Customers</label>
+                </div>
+            </div>
+    .btn-save {
+        background: linear-gradient(135deg, #d122e3 0%, #8b129a 100%);
+        color: white;
+        border: none;
+        padding: 12px;
+        font-weight: bold;
+        border-radius: 8px;
+        transition: all 0.3s;
+    }
+
+            <div class="d-grid">
+                <button type="submit" class="btn btn-save">
+                    <i class="fa fa-plus-circle me-2"></i> Save Product
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+        .btn-save:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(209, 34, 227, 0.4);
+            color: white;
+        }
+</style>
 
 <div class="container">
     <div class="form-container">
@@ -62,6 +149,22 @@
             <h2>Add New Product</h2>
             <p>Enter the details below to add a product to the customer menu.</p>
         </div>
+
+
+@* <div class="container">
+    <div class="form-container">
+        <div class="form-header">
+            <h2>Add New Product</h2>
+            <p>Enter the details below to add a product to the customer menu.</p>
+        </div>
+        <form asp-controller="StoreManager1" asp-action="Create" method="post">
+            <div class="mb-3">
+                <label class="form-label">Product Name</label>
+                <div class="input-group">
+                    <span class="input-group-text"><i class="fa fa-tag"></i></span>
+                    <input type="text" name="ProductName" class="form-control" placeholder="e.g. Chocolate Cookies" required />
+                </div>
+            </div>
 
         <form asp-controller="StoreManager1" asp-action="Create" method="post">
             <div class="mb-3">
@@ -72,6 +175,44 @@
                 </div>
             </div>
 
+            <div class="mb-3">
+                <label class="form-label">Category</label>
+                <select name="Category" class="form-select" required>
+                    <option value="" disabled selected>Select Category</option>
+                    <option value="Snacks">Snacks</option>
+                    <option value="Beverages">Beverages</option>
+                    <option value="Dairy">Dairy</option>
+                    <option value="Bakery">Bakery</option>
+                </select>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">Price ($)</label>
+                    <input type="number" step="0.01" name="Price" class="form-control" placeholder="0.00" required />
+                </div>
+
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">Stock Quantity</label>
+                    <input type="number" name="Quantity" class="form-control" placeholder="0" required />
+                </div>
+            </div>
+
+            <div class="mb-4">
+                <div class="form-check form-switch">
+                    <input class="form-check-input" type="checkbox" name="IsActive" value="true" id="activeSwitch" checked>
+                    <label class="form-check-label" for="activeSwitch">Available for Customers</label>
+                </div>
+            </div>
+
+            <div class="d-grid">
+                <button type="submit" class="btn btn-save">
+                    <i class="fa fa-plus-circle me-2"></i> Save Product
+                </button>
+            </div>
+        </form>
+    </div>
+</div> *@
             <div class="mb-3">
                 <label class="form-label">Category</label>
                 <select name="Category" class="form-select" required>
