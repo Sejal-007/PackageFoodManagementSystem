@@ -183,6 +183,9 @@ using PackageFoodManagementSystem.Repository.Models;
 using PackageFoodManagementSystem.Repository.Data;
 using System.Threading.Tasks;
 using PackageFoodManagementSystem.Services.Interfaces;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using System.Security.Claims;
 
 namespace PackagedFoodManagementSystem.Controllers
 {
@@ -218,12 +221,26 @@ namespace PackagedFoodManagementSystem.Controllers
                 return View(loginUser);
             }
 
-            HttpContext.Session.SetString("UserName", user.Name);
-            HttpContext.Session.SetString("UserEmail", user.Email);
-            HttpContext.Session.SetString("UserMobile", user.MobileNumber);
-            HttpContext.Session.SetString("UserRole", user.Role);
+            var claims = new List<Claim>
+            {
+                new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
+                new Claim(ClaimTypes.Name, user.Name),
+                new Claim(ClaimTypes.Email, user.Email),
+                new Claim(ClaimTypes.Role, user.Role)
+            };
 
-            TempData["SuccessMessage"] = $"Welcome, {user.Name}!";
+            var identity = new ClaimsIdentity(
+                claims,
+                CookieAuthenticationDefaults.AuthenticationScheme
+                );
+
+            var principal = new ClaimsPrincipal(identity);
+
+            await HttpContext.SignInAsync(
+                CookieAuthenticationDefaults.AuthenticationScheme,
+                principal
+                );
+
 
             return user.Role switch
             {
