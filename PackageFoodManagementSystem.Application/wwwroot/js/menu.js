@@ -1,50 +1,43 @@
 ﻿function increase(btn) {
-    const card = btn.closest(".product-card");
-    const qtySpan = card.querySelector(".qty");
+    const card = btn.closest('.card');
+    const productId = parseInt(card.dataset.id);
 
-    let qty = parseInt(qtySpan.innerText);
-    qtySpan.innerText = qty + 1;
-
-    updateCartCount(1);
-
-    // OPTIONAL: send to backend
-    sendToCart(card);
+    fetch('/Cart/Add', {
+        method: 'POST',
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ productId })
+    })
+        .then(res => {
+            if (!res.ok) throw "Add failed";
+            refreshQty(card);
+        });
 }
 
 function decrease(btn) {
-    const card = btn.closest(".product-card");
-    const qtySpan = card.querySelector(".qty");
+    const card = btn.closest('.card');
+    const productId = parseInt(card.dataset.id);
 
-    let qty = parseInt(qtySpan.innerText);
-    if (qty > 0) {
-        qtySpan.innerText = qty - 1;
-        updateCartCount(-1);
-    }
-}
-
-function updateCartCount(change) {
-    const badge = document.getElementById("cart-count");
-    let count = parseInt(badge.innerText) || 0;
-
-    count += change;
-    if (count < 0) count = 0;
-
-    badge.innerText = count;
-
-    // small animation
-    badge.style.transform = "scale(1.3)";
-    setTimeout(() => badge.style.transform = "scale(1)", 150);
-}
-
-function sendToCart(card) {
-    const id = card.dataset.id;
-    const name = card.dataset.name;
-    const price = card.dataset.price;
-    const quantity = card.dataset.quantity;
-
-    fetch('/Cart/AddToCart', {
+    fetch('/Cart/Decrease', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-        body: `id=${id}&name=${encodeURIComponent(name)}&quantity=${quantity}&price=${price}`
-    });
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ productId })
+    })
+        .then(res => {
+            if (!res.ok) throw "Decrease failed";
+            refreshQty(card);
+        });
+}
+
+function refreshQty(card) {
+    const productId = parseInt(card.dataset.id);
+
+    fetch('/Cart/GetItemQty?productId=' + productId, {
+        credentials: 'include',
+    })
+        .then(res => res.json())
+        .then(qty => {
+            card.querySelector('.qty').innerText = qty;
+        });
 }

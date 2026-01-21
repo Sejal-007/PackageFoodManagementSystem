@@ -27,6 +27,9 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
     .AddCookie(options =>
     {
         options.LoginPath = "/Home/SignIn";
+        options.AccessDeniedPath = "/Home/SignIn";
+        options.Cookie.SameSite = SameSiteMode.Lax;
+        options.Cookie.HttpOnly = true;
         options.LogoutPath = "/Home/Logout";
     });
 
@@ -47,6 +50,8 @@ builder.Services.AddScoped<IBillingService, BillingService>();
 builder.Services.AddScoped<IPaymentRepository, PaymentRepository>();
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
 builder.Services.AddScoped<IProductService, ProductService>();
+
+builder.Services.AddScoped<ICartService, CartService>();
 
 // MVC Services
 builder.Services.AddControllersWithViews();
