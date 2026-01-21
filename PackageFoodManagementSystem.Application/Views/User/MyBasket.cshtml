@@ -345,6 +345,7 @@
         if (cart.length === 0) {
             content.style.display = "none";
             empty.style.display = "block";
+            updateCartBadge(); // Ensure badge hides if cart emptied
             return;
         }
 
@@ -388,20 +389,7 @@
         const threshold = 100;
         const progress = Math.min((subtotal / threshold) * 100, 100);
         document.getElementById("deliveryProgress").style.width = progress + "%";
-
         const deliveryFee = subtotal >= threshold ? 0 : 40;
-        const deliveryText = document.getElementById("deliveryText");
-        const feeLabel = document.getElementById("deliveryFeeLabel");
-
-        if (subtotal >= threshold) {
-            deliveryText.innerHTML = `🎉 You've unlocked <span class="text-success">FREE DELIVERY!</span>`;
-            feeLabel.innerText = "FREE";
-            feeLabel.className = "fw-bold text-success";
-        } else {
-            deliveryText.innerHTML = `Add <strong>₹${(threshold - subtotal).toFixed(2)}</strong> more for <span class="text-success">FREE DELIVERY</span>`;
-            feeLabel.innerText = "₹40.00";
-            feeLabel.className = "fw-bold text-dark";
-        }
 
         document.getElementById("subtotalAmount").innerText = subtotal.toFixed(2);
         const grandTotal = subtotal + deliveryFee;
@@ -409,6 +397,9 @@
         document.getElementById("itemCount").innerText = cart.length + " Items";
 
         localStorage.setItem("orderTotal", grandTotal.toFixed(2));
+
+        // Sync the Header Badge immediately
+        updateCartBadge();
     }
 
     function updateQty(id, change) {

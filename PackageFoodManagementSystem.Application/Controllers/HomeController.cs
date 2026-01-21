@@ -228,7 +228,7 @@ namespace PackagedFoodManagementSystem.Controllers
             return user.Role switch
             {
                 "Admin" => RedirectToAction("AdminDashboard"),
-                "StoreManager" => RedirectToAction("ManagerDashboard"),
+                "StoreManager" => RedirectToAction("Home","StoreManager"),
                 _ => RedirectToAction("Index", "Home") // Redirect to User Dashboard
             };
         }

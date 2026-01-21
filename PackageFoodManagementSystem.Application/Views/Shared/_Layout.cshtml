@@ -27,7 +27,6 @@
             cursor: pointer;
         }
 
-        /* Navbar & Location Styling */
         .location-box {
             border-left: 1px solid #eee;
             padding: 5px 15px;
@@ -41,46 +40,6 @@
                 border-radius: 8px;
             }
 
-        /* Modal UI */
-        .modal-content {
-            border-radius: 20px;
-            border: none;
-            overflow: hidden;
-        }
-
-        .btn-detect {
-            background-color: var(--blinkit-green);
-            color: white;
-            border: none;
-            border-radius: 8px;
-            padding: 10px 18px;
-            font-weight: bold;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        /* Search Results Styling */
-        #locResultsList {
-            max-height: 400px;
-            overflow-y: auto;
-        }
-
-        .loc-item {
-            border-bottom: 1px solid #f1f1f1;
-            transition: 0.2s;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            padding: 15px;
-        }
-
-            .loc-item:hover {
-                background-color: #fff9f5;
-            }
-
-        /* User Popup Styling */
         #userPopup {
             position: fixed;
             top: 75px;
@@ -122,11 +81,6 @@
                     color: var(--brand-orange);
                 }
 
-        /* Footer Styling */
-        .footer-links li {
-            margin-bottom: 12px;
-        }
-
         .footer-links a {
             color: rgba(255,255,255,0.6);
             text-decoration: none;
@@ -154,12 +108,15 @@
                 background: var(--brand-orange);
                 transform: translateY(-3px);
             }
+
+        .loc-search-input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+        }
     </style>
-
-    @* --- FIX: This renders the CSS from your individual pages --- *@
     @await RenderSectionAsync("Styles", required: false)
-
-    @RenderSection("Styles", required: false)
 </head>
 <body class="d-flex flex-column min-vh-100">
 
@@ -173,39 +130,20 @@
 
                 <div class="location-box d-flex align-items-center cursor-pointer me-auto" data-bs-toggle="modal" data-bs-target="#locationModal">
                     <div>
-                        <div class="fw-bold lh-1 mb-1" style="font-size: 0.8rem; color: #000;">Delivery in 15 minutes</div>
+                        <div class="fw-bold lh-1 mb-1" style="font-size: 0.8rem;">Delivery in 15 minutes</div>
                         <div class="small text-muted text-truncate" style="max-width: 180px;">
                             <span id="displayLocation">Select Location</span> <i class="fa-solid fa-caret-down ms-1"></i>
                         </div>
                     </div>
                 </div>
 
-            <ul class="navbar-nav ms-auto align-items-center">
-                <li class="nav-item me-3"><a class="nav-link fw-semibold" asp-controller="Home" asp-action="Index">Home</a></li>
-                <li class="nav-item me-3"><a class="nav-link fw-semibold" asp-controller="Menu" asp-action="Index">Explore</a></li>
-
-                <li class="nav-item me-4">
-                    <a class="nav-link position-relative" asp-controller="User" asp-action="MyBasket">
-                        <i class="fa-solid fa-cart-shopping fa-lg" style="color: #ff6347;"></i>
-                        <span id="cart-count" class="badge bg-danger rounded-circle position-absolute top-0 start-100 translate-middle" style="display: none; font-size: 0.7rem;">0</span>
-                    </a>
-                </li>
-
-                <li class="nav-item">
-                    <a class="nav-link" onclick="openUserMenu()">
-                        <i class="fa-solid fa-user-circle fa-2x" style="color: #ff6347;"></i>
-                    </a>
-                </li>
-            </ul>
-                <ul class="navbar-nav align-items-center">
+                <ul class="navbar-nav ms-auto align-items-center">
                     <li class="nav-item me-3"><a class="nav-link fw-semibold" asp-controller="Home" asp-action="Index">Home</a></li>
                     <li class="nav-item me-3"><a class="nav-link fw-semibold" asp-controller="Menu" asp-action="Index">Explore</a></li>
                     <li class="nav-item me-4">
-                        <a class="nav-link position-relative" href="/User/MyBasket">
-                            <i class="fa-solid fa-cart-shopping fs-4 text-dark"></i>
-                            <span id="cart-count" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
-                                0
-                            </span>
+                        <a class="nav-link position-relative" asp-controller="User" asp-action="MyBasket">
+                            <i class="fa-solid fa-cart-shopping fa-lg text-orange"></i>
+                            <span id="cart-count" class="badge bg-danger rounded-circle position-absolute top-0 start-100 translate-middle" style="display: none; font-size: 0.7rem;">0</span>
                         </a>
                     </li>
                     <li class="nav-item">
@@ -220,24 +158,20 @@
 
     <div class="modal fade" id="locationModal" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered modal-lg">
-            <div class="modal-content">
+            <div class="modal-content" style="border-radius: 20px;">
                 <div class="modal-header border-0 p-4 pb-0">
                     <h5 class="modal-title fw-bold">Change Location</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body p-4">
                     <div class="d-flex align-items-center gap-3 mb-4">
-                        <button class="btn btn-detect" onclick="detectLocation()">
-                            <i class="fa-solid fa-location-crosshairs"></i> Detect my location
+                        <button class="btn btn-success fw-bold" onclick="detectLocation()">
+                            <i class="fa-solid fa-location-crosshairs"></i> Detect location
                         </button>
-                        <div style="flex-grow: 2;">
-                            <input type="text" class="loc-search-input" id="locSearch" placeholder="Search state or city..." onkeyup="searchPlaces()">
-                        </div>
+                        <input type="text" class="loc-search-input" id="locSearch" placeholder="Search state or city..." onkeyup="searchPlaces()">
                     </div>
-                    <div id="locResultsList" class="border rounded-4 overflow-hidden">
-                        <div class="text-center p-5 text-muted">
-                            <p>Search for your State or City to start your order</p>
-                        </div>
+                    <div id="locResultsList" class="border rounded-4 overflow-hidden" style="max-height: 400px; overflow-y: auto;">
+                        <div class="text-center p-5 text-muted">Search for your State or City</div>
                     </div>
                 </div>
             </div>
@@ -246,36 +180,20 @@
 
     <div id="popupOverlay" onclick="closeUserMenu()"></div>
     <div id="userPopup">
-        <div class="p-3 border-bottom fw-bold">User Menu</div>
+        <div class="p-3 border-bottom fw-bold text-orange">User Account</div>
         <ul class="popup-list">
-            <li onclick="location.href='/User/Dashboard'"><i class="fa-solid fa-user-circle"></i> My Profile</li>
-            <li onclick="location.href='/User/MyBasket'"><i class="fa-solid fa-cart-shopping"></i> My Basket</li>
-            <li onclick="location.href='/User/MyOrders'"><i class="fa-solid fa-shopping-bag"></i> My Orders</li>
-            <li onclick="location.href='/User/ContactUs'"><i class="fa-solid fa-headset"></i> Contact Us</li>
-            <li class="logout">
-                @if (User.Identity.IsAuthenticated)
-                {
-                    <a href="/Home/SignIn" style="text-decoration: none; color: inherit;">
-                        <i class="fa-solid fa-arrow-right-from-bracket"></i> Logout
-                    </a>
-                }
-                else
-                {
-                    <a href="/Home/SignIn" style="text-decoration: none; color: inherit;">
-                        <i class="fa-solid fa-right-to-bracket"></i> Logout
-                    </a>
-                }
-            </li>
-            <li onclick="redirectTo('/User/Dashboard')"><i class="fa-solid fa-user-circle"></i> My Profile</li>
-            <li onclick="redirectTo('/User/MyBasket')"><i class="fa-solid fa-cart-shopping"></i> My Basket</li>
-            <li onclick="redirectTo('/User/MyOrders')"><i class="fa-solid fa-shopping-bag"></i> My Orders</li>
-            <li onclick="redirectTo('/User/ContactUs')"><i class="fa-solid fa-headset"></i> Contact Us</li>
-            <li class="logout" onclick="redirectTo('/Home/SignIn')"><i class="fa-solid fa-arrow-right-from-bracket"></i> Logout</li>
             <li onclick="location.href='/User/Dashboard'"><i class="fa-solid fa-user-circle me-2"></i> My Profile</li>
-            <li onclick="location.href='/User/MyBasket'"><i class="fa-solid fa-cart-shopping me-2"></i> My Basket</li>
             <li onclick="location.href='/User/MyOrders'"><i class="fa-solid fa-shopping-bag me-2"></i> My Orders</li>
             <li onclick="location.href='/User/ContactUs'"><i class="fa-solid fa-headset me-2"></i> Contact Us</li>
-            <li onclick="location.href='/Home/Welcome'" class="text-danger"><i class="fa-solid fa-right-from-bracket me-2"></i> Sign Out</li>
+            <hr class="my-1">
+            @if (User.Identity.IsAuthenticated)
+            {
+                <li onclick="location.href='/Home/Logout'" class="text-danger"><i class="fa-solid fa-right-from-bracket me-2"></i> Logout</li>
+            }
+            else
+            {
+                <li onclick="location.href='/Home/SignIn'"><i class="fa-solid fa-right-to-bracket me-2"></i> Sign In</li>
+            }
         </ul>
     </div>
 
@@ -283,94 +201,138 @@
         @RenderBody()
     </main>
 
-    <footer class="footer-section bg-dark text-white pt-5 pb-3 mt-5">
+    <footer class="bg-dark text-white pt-5 pb-3 mt-5">
         <div class="container">
             <div class="row gy-4 mb-5">
                 <div class="col-lg-4">
                     <h4 class="fw-bold text-orange mb-4">ALWAYZZZ FRESH</h4>
-                    <p class="text-white-50 pe-lg-5">High-quality farm-fresh produce delivered in just 15 minutes.</p>
-                    <div class="d-flex gap-3 mt-4">
-                        <a href="#" class="social-icon-box"><i class="fa-brands fa-facebook-f"></i></a>
-                        <a href="#" class="social-icon-box"><i class="fa-brands fa-instagram"></i></a>
-                        <a href="#" class="social-icon-box"><i class="fa-brands fa-twitter"></i></a>
-                    </div>
+                    <p class="text-white-50">High-quality farm-fresh produce delivered in just 15 minutes.</p>
                 </div>
-                <div class="col-lg-2 col-6">
-                    <h6 class="fw-bold text-white mb-4">Quick Links</h6>
+                <div class="col-lg-4">
+                    <h6 class="fw-bold mb-4">Quick Links</h6>
                     <ul class="list-unstyled footer-links">
                         <li><a asp-controller="Home" asp-action="Index">Home</a></li>
                         <li><a asp-controller="Menu" asp-action="Index">Explore Menu</a></li>
                         <li><a asp-controller="User" asp-action="ContactUs">Contact Us</a></li>
                     </ul>
                 </div>
-                <div class="col-lg-3 col-6">
-                    <h6 class="fw-bold text-white mb-4">Stay Fresh</h6>
-                    <div class="input-group mb-3">
-                        <input type="text" class="form-control bg-transparent border-secondary text-white small" placeholder="Email">
-                        <button class="btn btn-orange btn-sm" type="button">Join</button>
+                <div class="col-lg-4">
+                    <h6 class="fw-bold mb-4">Follow Us</h6>
+                    <div class="d-flex gap-3">
+                        <a href="#" class="social-icon-box"><i class="fa-brands fa-facebook-f"></i></a>
+                        <a href="#" class="social-icon-box"><i class="fa-brands fa-instagram"></i></a>
                     </div>
                 </div>
             </div>
             <hr class="border-secondary opacity-25">
-            <div class="text-center">
-                <p class="small text-white-50 mb-0">&copy; @DateTime.Now.Year Alwayzzz Fresh. All rights reserved.</p>
-            </div>
+            <p class="text-center small text-white-50">&copy; @DateTime.Now.Year Alwayzzz Fresh. All rights reserved.</p>
         </div>
     </footer>
 
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-
     <script>
-        const indiaLocations = [
-            { name: "Andhra Pradesh", sub: "State" }, { name: "Bihar", sub: "State" },
-            { name: "Delhi", sub: "NCR" }, { name: "Goa", sub: "State" },
-            { name: "Gujarat", sub: "State" }, { name: "Karnataka", sub: "State" },
-            { name: "Kerala", sub: "State" }, { name: "Maharashtra", sub: "State" },
-            { name: "Punjab", sub: "State" }, { name: "Rajasthan", sub: "State" },
-            { name: "Tamil Nadu", sub: "State" }, { name: "Uttar Pradesh", sub: "State" },
-            { name: "West Bengal", sub: "State" }
-            /* ... Add all other states from previous list here ... */
-        ];
+        // GLOBAL CART LOGIC
+        function updateCartBadge() {
+            const cart = JSON.parse(localStorage.getItem("myCart")) || [];
+            const totalItems = cart.reduce((sum, item) => sum + parseInt(item.qty || 0), 0);
+            const badge = document.getElementById("cart-count");
+            if (badge) {
+                if (totalItems > 0) {
+                    badge.innerText = totalItems;
+                    badge.style.display = "block";
+                } else {
+                    badge.style.display = "none";
+                }
+            }
+        }
 
+        // SEARCH ALL INDIA CITIES/STATES (API DRIVEN)
+        let searchTimeout;
         function searchPlaces() {
-            const query = document.getElementById('locSearch').value.toLowerCase();
+            const query = document.getElementById('locSearch').value;
             const resultsBox = document.getElementById('locResultsList');
-            if (!query) { resultsBox.innerHTML = '<div class="p-5 text-center text-muted">Search for your location</div>'; return; }
-            const filtered = indiaLocations.filter(loc => loc.name.toLowerCase().includes(query));
-            resultsBox.innerHTML = filtered.length > 0 ? filtered.map(loc => `
-                <div class="loc-item" onclick="confirmLocation('${loc.name}')">
-                    <i class="fa-solid fa-location-dot text-muted"></i>
-                    <div><div class="fw-bold">${loc.name}</div><div class="small text-muted">${loc.sub}, India</div></div>
-                </div>`).join('') : '<div class="p-4 text-center">No results found</div>';
+
+            if (query.length < 3) {
+                resultsBox.innerHTML = '<div class="p-5 text-center text-muted">Type at least 3 letters to search...</div>';
+                return;
+            }
+
+            // Debounce to prevent too many API calls
+            clearTimeout(searchTimeout);
+            searchTimeout = setTimeout(async () => {
+                resultsBox.innerHTML = '<div class="p-5 text-center"><div class="spinner-border text-success"></div></div>';
+
+                try {
+                    // Fetching from OpenStreetMap (Free, No API Key needed)
+                    const response = await fetch(`https://nominatim.openstreetmap.org/search?format=json&countrycodes=in&q=${query}`);
+                    const data = await response.json();
+
+                    if (data.length > 0) {
+                        resultsBox.innerHTML = data.map(loc => {
+                            const displayName = loc.display_name.split(',').slice(0, 3).join(',');
+                            return `
+                            <div class="p-3 border-bottom cursor-pointer" onclick="confirmLocation('${loc.name || displayName}')">
+                                <div class="fw-bold text-dark">${loc.name || 'Location'}</div>
+                                <div class="small text-muted text-truncate">${loc.display_name}</div>
+                            </div>`;
+                        }).join('');
+                    } else {
+                        resultsBox.innerHTML = '<div class="p-4 text-center">No location found in India</div>';
+                    }
+                } catch (error) {
+                    resultsBox.innerHTML = '<div class="p-4 text-center text-danger">Search failed. Try again.</div>';
+                }
+            }, 500);
         }
 
         async function detectLocation() {
-            document.getElementById('displayLocation').innerText = "Finding you...";
+            const display = document.getElementById('displayLocation');
+            const originalText = display.innerText;
+            display.innerText = "Detecting...";
+
             if (navigator.geolocation) {
                 navigator.geolocation.getCurrentPosition(async (pos) => {
                     try {
                         const res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${pos.coords.latitude}&lon=${pos.coords.longitude}`);
                         const data = await res.json();
-                        confirmLocation(data.address.city || data.address.state || "India");
-                    } catch { confirmLocation("Detected Location"); }
+                        const city = data.address.city || data.address.town || data.address.village || data.address.state || "India";
+                        confirmLocation(city);
+                    } catch { confirmLocation("India"); }
+                }, () => {
+                    alert("Please enable location permissions");
+                    display.innerText = originalText;
                 });
             }
         }
 
         function confirmLocation(name) {
-            document.getElementById('displayLocation').innerText = name;
-            localStorage.setItem("user_loc", name);
-            bootstrap.Modal.getInstance(document.getElementById('locationModal')).hide();
+            // Clean name (remove coordinates or extra data)
+            const cleanName = name.split(',')[0];
+            document.getElementById('displayLocation').innerText = cleanName;
+            localStorage.setItem("user_loc", cleanName);
+
+            const modalEl = document.getElementById('locationModal');
+            const modalInstance = bootstrap.Modal.getInstance(modalEl);
+            if (modalInstance) modalInstance.hide();
         }
 
-        function openUserMenu() { document.getElementById('userPopup').style.display = 'block'; document.getElementById('popupOverlay').style.display = 'block'; }
-        function closeUserMenu() { document.getElementById('userPopup').style.display = 'none'; document.getElementById('popupOverlay').style.display = 'none'; }
+        function openUserMenu() {
+            document.getElementById('userPopup').style.display = 'block';
+            document.getElementById('popupOverlay').style.display = 'block';
+        }
+
+        function closeUserMenu() {
+            document.getElementById('userPopup').style.display = 'none';
+            document.getElementById('popupOverlay').style.display = 'none';
+        }
 
         document.addEventListener("DOMContentLoaded", () => {
+            updateCartBadge();
             const saved = localStorage.getItem("user_loc");
             if (saved) document.getElementById('displayLocation').innerText = saved;
         });
     </script>
+    @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>
