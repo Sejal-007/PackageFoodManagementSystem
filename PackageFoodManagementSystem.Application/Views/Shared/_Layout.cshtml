@@ -137,6 +137,23 @@
                     </div>
                 </div>
 
+            <ul class="navbar-nav ms-auto align-items-center">
+                <li class="nav-item me-3"><a class="nav-link fw-semibold" asp-controller="Home" asp-action="Index">Home</a></li>
+                <li class="nav-item me-3"><a class="nav-link fw-semibold" asp-controller="Menu" asp-action="Index">Explore</a></li>
+
+                <li class="nav-item me-4">
+                    <a class="nav-link position-relative" asp-controller="Cart" asp-action="MyBasket">
+                        <i class="fa-solid fa-cart-shopping fa-lg" style="color: #ff6347;"></i>
+                        <span id="cart-count" class="badge bg-danger rounded-circle position-absolute top-0 start-100 translate-middle" style="display: none; font-size: 0.7rem;">0</span>
+                    </a>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link" onclick="openUserMenu()">
+                        <i class="fa-solid fa-user-circle fa-2x" style="color: #ff6347;"></i>
+                    </a>
+                </li>
+            </ul>
                 <ul class="navbar-nav ms-auto align-items-center">
                     <li class="nav-item me-3"><a class="nav-link fw-semibold" asp-controller="Home" asp-action="Index">Home</a></li>
                     <li class="nav-item me-3"><a class="nav-link fw-semibold" asp-controller="Menu" asp-action="Index">Explore</a></li>
@@ -182,18 +199,25 @@
     <div id="userPopup">
         <div class="p-3 border-bottom fw-bold text-orange">User Account</div>
         <ul class="popup-list">
-            <li onclick="location.href='/User/Dashboard'"><i class="fa-solid fa-user-circle me-2"></i> My Profile</li>
-            <li onclick="location.href='/User/MyOrders'"><i class="fa-solid fa-shopping-bag me-2"></i> My Orders</li>
-            <li onclick="location.href='/User/ContactUs'"><i class="fa-solid fa-headset me-2"></i> Contact Us</li>
-            <hr class="my-1">
-            @if (User.Identity.IsAuthenticated)
-            {
-                <li onclick="location.href='/Home/Logout'" class="text-danger"><i class="fa-solid fa-right-from-bracket me-2"></i> Logout</li>
-            }
-            else
-            {
-                <li onclick="location.href='/Home/SignIn'"><i class="fa-solid fa-right-to-bracket me-2"></i> Sign In</li>
-            }
+            <li onclick="location.href='/User/Dashboard'"><i class="fa-solid fa-user-circle"></i> My Profile</li>
+            <li onclick="location.href='/Cart/MyBasket'"><i class="fa-solid fa-cart-shopping"></i> My Basket</li>
+            <li onclick="location.href='/User/MyOrders'"><i class="fa-solid fa-shopping-bag"></i> My Orders</li>
+            <li onclick="location.href='/User/ContactUs'"><i class="fa-solid fa-headset"></i> Contact Us</li>
+            <li class="logout">
+                @if (User.Identity.IsAuthenticated)
+                {
+                    <a href="/Home/SignIn" style="text-decoration: none; color: inherit;">
+                        <i class="fa-solid fa-arrow-right-from-bracket"></i> Logout
+                    </a>
+                }
+                else
+                {
+                    <a href="/Home/SignIn" style="text-decoration: none; color: inherit;">
+                        <i class="fa-solid fa-right-to-bracket"></i> Logout
+                    </a>
+                }
+            </li>
+            
         </ul>
     </div>
 

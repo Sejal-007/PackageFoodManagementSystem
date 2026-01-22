@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+//using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 namespace PackageFoodManagementSystem.Repository.Models
 
 {
@@ -27,7 +28,7 @@ namespace PackageFoodManagementSystem.Repository.Models
         public required string Category { get; set; }
 
         public bool IsActive { get; set; } = true;
-
+       // [ValidateNever]
         public string? ImageData { get; set; }
 
     }

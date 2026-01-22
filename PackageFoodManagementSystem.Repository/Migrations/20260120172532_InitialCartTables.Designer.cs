@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using PackageFoodManagementSystem.Repository.Data;
 
@@ -11,9 +12,11 @@ using PackageFoodManagementSystem.Repository.Data;
 namespace PackageFoodManagementSystem.Repository.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260120172532_InitialCartTables")]
+    partial class InitialCartTables
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -175,20 +178,12 @@ namespace PackageFoodManagementSystem.Repository.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("AddressId"));
 
-                    b.Property<string>("AddressType")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("City")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("CustomerId")
                         .HasColumnType("int");
-
-                    b.Property<string>("Landmark")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("PostalCode")
                         .IsRequired()
@@ -406,27 +401,6 @@ namespace PackageFoodManagementSystem.Repository.Migrations
                     b.ToTable("UserAuthentications");
                 });
 
-            modelBuilder.Entity("PackageFoodManagementSystem.Repository.Models.Wallet", b =>
-                {
-                    b.Property<int>("WalletId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("WalletId"));
-
-                    b.Property<decimal>("Balance")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<int>("UserId")
-                        .HasColumnType("int");
-
-                    b.HasKey("WalletId");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("Wallets");
-                });
-
             modelBuilder.Entity("PackageFoodManagementSystem.Repository.Models.Bill", b =>
                 {
                     b.HasOne("PackageFoodManagementSystem.Repository.Models.Order", "Order")
@@ -508,17 +482,6 @@ namespace PackageFoodManagementSystem.Repository.Migrations
                         .IsRequired();
 
                     b.Navigation("Bill");
-                });
-
-            modelBuilder.Entity("PackageFoodManagementSystem.Repository.Models.Wallet", b =>
-                {
-                    b.HasOne("PackageFoodManagementSystem.Repository.Models.UserAuthentication", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("PackageFoodManagementSystem.Repository.Models.Bill", b =>

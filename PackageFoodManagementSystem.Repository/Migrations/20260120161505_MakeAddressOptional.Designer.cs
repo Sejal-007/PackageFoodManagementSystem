@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using PackageFoodManagementSystem.Repository.Data;
 
@@ -11,9 +12,11 @@ using PackageFoodManagementSystem.Repository.Data;
 namespace PackageFoodManagementSystem.Repository.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260120161505_MakeAddressOptional")]
+    partial class MakeAddressOptional
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -81,59 +84,6 @@ namespace PackageFoodManagementSystem.Repository.Migrations
                     b.ToTable("Bills");
                 });
 
-            modelBuilder.Entity("PackageFoodManagementSystem.Repository.Models.Cart", b =>
-                {
-                    b.Property<int>("CartId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("CartId"));
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<bool>("IsActive")
-                        .HasColumnType("bit");
-
-                    b.Property<int>("UserAuthenticationId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("UserId")
-                        .HasColumnType("int");
-
-                    b.HasKey("CartId");
-
-                    b.HasIndex("UserAuthenticationId");
-
-                    b.ToTable("Cart");
-                });
-
-            modelBuilder.Entity("PackageFoodManagementSystem.Repository.Models.CartItem", b =>
-                {
-                    b.Property<int>("CartItemId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("CartItemId"));
-
-                    b.Property<int>("CartId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("ProductId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Quantity")
-                        .HasColumnType("int");
-
-                    b.HasKey("CartItemId");
-
-                    b.HasIndex("CartId");
-
-                    b.HasIndex("ProductId");
-
-                    b.ToTable("CartItem");
-                });
-
             modelBuilder.Entity("PackageFoodManagementSystem.Repository.Models.Customer", b =>
                 {
                     b.Property<int>("CustomerId")
@@ -175,20 +125,12 @@ namespace PackageFoodManagementSystem.Repository.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("AddressId"));
 
-                    b.Property<string>("AddressType")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("City")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("CustomerId")
                         .HasColumnType("int");
-
-                    b.Property<string>("Landmark")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("PostalCode")
                         .IsRequired()
@@ -233,11 +175,11 @@ namespace PackageFoodManagementSystem.Repository.Migrations
 
             modelBuilder.Entity("PackageFoodManagementSystem.Repository.Models.Order", b =>
                 {
-                    b.Property<int>("OrderID")
+                    b.Property<int>("OrderId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("OrderID"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("OrderId"));
 
                     b.Property<int>("CreatedByUserID")
                         .HasColumnType("int");
@@ -246,7 +188,6 @@ namespace PackageFoodManagementSystem.Repository.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("DeliveryAddress")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("LastUpdateOn")
@@ -263,7 +204,7 @@ namespace PackageFoodManagementSystem.Repository.Migrations
                     b.Property<decimal>("TotalAmount")
                         .HasColumnType("decimal(18,2)");
 
-                    b.HasKey("OrderID");
+                    b.HasKey("OrderId");
 
                     b.ToTable("Orders");
                 });
@@ -285,6 +226,9 @@ namespace PackageFoodManagementSystem.Repository.Migrations
                     b.Property<int>("OrderID")
                         .HasColumnType("int");
 
+                    b.Property<int>("OrderId")
+                        .HasColumnType("int");
+
                     b.Property<int>("ProductId")
                         .HasColumnType("int");
 
@@ -301,7 +245,7 @@ namespace PackageFoodManagementSystem.Repository.Migrations
 
                     b.HasIndex("OrderID");
 
-                    b.ToTable("OrderItem");
+                    b.ToTable("OrderItems");
                 });
 
             modelBuilder.Entity("PackageFoodManagementSystem.Repository.Models.Payment", b =>
@@ -406,27 +350,6 @@ namespace PackageFoodManagementSystem.Repository.Migrations
                     b.ToTable("UserAuthentications");
                 });
 
-            modelBuilder.Entity("PackageFoodManagementSystem.Repository.Models.Wallet", b =>
-                {
-                    b.Property<int>("WalletId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("WalletId"));
-
-                    b.Property<decimal>("Balance")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<int>("UserId")
-                        .HasColumnType("int");
-
-                    b.HasKey("WalletId");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("Wallets");
-                });
-
             modelBuilder.Entity("PackageFoodManagementSystem.Repository.Models.Bill", b =>
                 {
                     b.HasOne("PackageFoodManagementSystem.Repository.Models.Order", "Order")
@@ -436,36 +359,6 @@ namespace PackageFoodManagementSystem.Repository.Migrations
                         .IsRequired();
 
                     b.Navigation("Order");
-                });
-
-            modelBuilder.Entity("PackageFoodManagementSystem.Repository.Models.Cart", b =>
-                {
-                    b.HasOne("PackageFoodManagementSystem.Repository.Models.UserAuthentication", "UserAuthentication")
-                        .WithMany()
-                        .HasForeignKey("UserAuthenticationId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("UserAuthentication");
-                });
-
-            modelBuilder.Entity("PackageFoodManagementSystem.Repository.Models.CartItem", b =>
-                {
-                    b.HasOne("PackageFoodManagementSystem.Repository.Models.Cart", "Cart")
-                        .WithMany("CartItems")
-                        .HasForeignKey("CartId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("PackageFoodManagementSystem.Repository.Models.Product", "Product")
-                        .WithMany()
-                        .HasForeignKey("ProductId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Cart");
-
-                    b.Navigation("Product");
                 });
 
             modelBuilder.Entity("PackageFoodManagementSystem.Repository.Models.Customer", b =>
@@ -510,26 +403,10 @@ namespace PackageFoodManagementSystem.Repository.Migrations
                     b.Navigation("Bill");
                 });
 
-            modelBuilder.Entity("PackageFoodManagementSystem.Repository.Models.Wallet", b =>
-                {
-                    b.HasOne("PackageFoodManagementSystem.Repository.Models.UserAuthentication", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("User");
-                });
-
             modelBuilder.Entity("PackageFoodManagementSystem.Repository.Models.Bill", b =>
                 {
                     b.Navigation("Payment")
                         .IsRequired();
-                });
-
-            modelBuilder.Entity("PackageFoodManagementSystem.Repository.Models.Cart", b =>
-                {
-                    b.Navigation("CartItems");
                 });
 
             modelBuilder.Entity("PackageFoodManagementSystem.Repository.Models.Customer", b =>

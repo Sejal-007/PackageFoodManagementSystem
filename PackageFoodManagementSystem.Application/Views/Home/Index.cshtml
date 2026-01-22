@@ -9,7 +9,7 @@
         <div class="row align-items-center py-5">
             <div class="col-lg-6 mb-5 mb-lg-0 text-white">
                 <div class="badge rounded-pill bg-white text-orange px-3 py-2 mb-4 animate__animated animate__fadeInDown">
-                    <i class="fa-solid fa-truck-fast me-2"></i> 
+                    <i class="fa-solid fa-truck-fast me-2"></i>
                 </div>
 
                 <h1 class="display-3 fw-800 mb-4 animate__animated animate__fadeInLeft text-white">
@@ -68,57 +68,43 @@
 
     <div class="row g-4 text-center mb-4">
         <div class="col-6 col-md-3">
+            <a asp-controller="Menu" asp-action="Index" asp-route-category="Vegetables and Fruits" class="text-decoration-none text-dark">
             <div class="category-card p-4 rounded-4 shadow-sm h-100 border-0">
                 <div class="icon-circle mb-3 mx-auto bg-orange-light"><i class="fa-solid fa-leaf text-orange fs-2"></i></div>
-                <h6 class="fw-bold">Vegetables</h6>
+                <h6 class="fw-bold">Vegetables & Fruits</h6>
             </div>
+            </a>
         </div>
         <div class="col-6 col-md-3">
+            <a asp-controller="Menu" asp-action="Index" asp-route-category="Dairy and Eggs" class="text-decoration-none text-dark">
             <div class="category-card p-4 rounded-4 shadow-sm h-100 border-0">
                 <div class="icon-circle mb-3 mx-auto bg-blue-light"><i class="fa-solid fa-cow text-primary fs-2"></i></div>
                 <h6 class="fw-bold">Dairy & Eggs</h6>
             </div>
+            </a>
         </div>
         <div class="col-6 col-md-3">
+                        <a asp-controller="Menu" asp-action="Index" asp-route-category="Snacks and Drinks" class="text-decoration-none text-dark">
+
             <div class="category-card p-4 rounded-4 shadow-sm h-100 border-0">
                 <div class="icon-circle mb-3 mx-auto bg-purple-light"><i class="fa-solid fa-bottle-water text-purple fs-2"></i></div>
-                <h6 class="fw-bold">Beverages</h6>
+                <h6 class="fw-bold">Snacks & Drinks</h6>
             </div>
+            </a>
         </div>
-        <div class="col-6 col-md-3">
-            <div class="category-card p-4 rounded-4 shadow-sm h-100 border-0">
-                <div class="icon-circle mb-3 mx-auto bg-green-light"><i class="fa-solid fa-apple-whole text-success fs-2"></i></div>
-                <h6 class="fw-bold">Fruits</h6>
-            </div>
-        </div>
-    </div>
 
-    <div class="row g-4 text-center">
         <div class="col-6 col-md-3">
-            <div class="category-card p-4 rounded-4 shadow-sm h-100 border-0">
-                <div class="icon-circle mb-3 mx-auto bg-yellow-light"><i class="fa-solid fa-cookie text-warning fs-2"></i></div>
-                <h6 class="fw-bold">Snacks</h6>
-            </div>
-        </div>
-        <div class="col-6 col-md-3">
-            <div class="category-card p-4 rounded-4 shadow-sm h-100 border-0">
-                <div class="icon-circle mb-3 mx-auto bg-red-light"><i class="fa-solid fa-bread-slice text-danger fs-2"></i></div>
-                <h6 class="fw-bold">Bakery</h6>
-            </div>
-        </div>
-        <div class="col-6 col-md-3">
+            <a asp-controller="Menu" asp-action="Index" asp-route-category="Meat and Seafoods" class="text-decoration-none text-dark">
             <div class="category-card p-4 rounded-4 shadow-sm h-100 border-0">
                 <div class="icon-circle mb-3 mx-auto bg-meat-light"><i class="fa-solid fa-drumstick-bite text-brown fs-2"></i></div>
                 <h6 class="fw-bold">Meat & Fish</h6>
             </div>
+            </a>
         </div>
-        <div class="col-6 col-md-3">
-            <div class="category-card p-4 rounded-4 shadow-sm h-100 border-0">
-                <div class="icon-circle mb-3 mx-auto bg-pink-light"><i class="fa-solid fa-ice-cream text-pink fs-2"></i></div>
-                <h6 class="fw-bold">Sweets</h6>
-            </div>
-        </div>
+
     </div>
+
+
 </div>
 
 <div class="container py-5 my-5">
