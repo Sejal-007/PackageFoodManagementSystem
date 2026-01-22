@@ -27,7 +27,7 @@
 
                 @foreach (var item in Model.CartItems)
                 {
-                    <div class="basket-item mb-3 p-3 shadow-sm d-flex align-items-center">
+                    <div class="basket-item card mb-3 p-3 shadow-sm d-flex flex-row align-items-center border-0" data-id="@item.ProductId">
                         <img src="@item.Product.ImageData" class="rounded-3 me-3" style="width:80px; height:80px; object-fit:cover;">
 
                         <div class="flex-grow-1">
@@ -35,15 +35,15 @@
                             <p class="text-muted small mb-2">Unit Price: ₹@item.Product.Price</p>
 
                             <div class="d-flex align-items-center gap-2">
-                                <button class="qty-btn" onclick="updateQty(@item.ProductId, -1)">-</button>
-                                <span class="fw-bold px-2">@item.Quantity</span>
-                                <button class="qty-btn" onclick="updateQty(@item.ProductId, 1)">+</button>
+                                <button class="qty-btn" onclick="cartDecrease(@item.ProductId)">-</button>
+                                <span class="fw-bold px-2 qty" id="cart-qty-@item.ProductId">@item.Quantity</span> 
+                                <button class="qty-btn" onclick="cartIncrease(@item.ProductId)">+</button>
                             </div>
                         </div>
 
                         <div class="text-end">
                             <h5 class="fw-800 mb-1">₹@(item.Quantity* item.Product.Price)</h5>
-                            <button class="btn btn-link text-danger p-0" >
+                            <button class="btn btn-link text-danger p-0" onclick="removeDirect(@item.ProductId)">
                                 <i class="fa-solid fa-trash-can"></i>
                             </button>
                         </div>
@@ -79,34 +79,46 @@
 </div>
 
 <script>
-    async function updateQty(productId, change) {
+    function updateQty(productId, change) {
 
-        let url = '';
+        const url = change > 0 ? '/Cart/Add' : '/Cart/Decrease';
 
-        if (change === 1) {
-            url = '/Cart/Add';
-        }
-        else if (change === -1) {
-            url = '/Cart/Decrease';
-        }
-        else if (change === -999) {
-            url = '/Cart/Remove';
-        }
-
-        const response = await fetch(url, {
+        fetch(url, {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ productId: productId })
+            credentials: 'include',
+            headers: {'Content-Type' : 'application/json'},
+            body: JSON.stringify({productId})
+        })
+        .then(res => {
+            if (!res.ok throw "Update failed";
+            location.reload();
         });
-
-        if (response.ok) {
-            location.reload(); // reload cart from DB
-        } else {
-            alert('Something went wrong');
-        }
     }
+
+async function refreshQty(card) {
+    const productId = parseInt(card.dataset.id);
+    
+    const res = await fetch(`/Cart/GetItemQty?productId=${productId}`);
+    const qty = await res.json();
+    
+    if (qty <= 0) {
+        location.reload(); // Reload to remove the item from the list
+    } else {
+        // For the basket page, it is usually better to reload 
+        // to update the Grand Totals and Delivery Fees automatically.
+        location.reload(); 
+    }
+}
+
+// Helper for the trash can button
+async function removeDirect(pId) {
+    await fetch('/Cart/Remove', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ productId: pId })
+    });
+    location.reload();
+}
 </script>
 
 <style>
