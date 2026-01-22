@@ -1,6 +1,14 @@
-﻿function increase(btn) {
+﻿document.addEventListener("DOMContentLoaded", () => {
+    document.querySelectorAll(".card").forEach(card => {
+        refreshQty(card);
+    });
+});
+
+function increase(btn) {
     const card = btn.closest('.card');
     const productId = parseInt(card.dataset.id);
+
+    btn.disabled = true;
 
     fetch('/Cart/Add', {
         method: 'POST',
@@ -10,13 +18,16 @@
     })
         .then(res => {
             if (!res.ok) throw "Add failed";
-            refreshQty(card);
-        });
+            return refreshQty(card);
+        })
+        .finally(() => btn.disabled = false);
 }
 
 function decrease(btn) {
     const card = btn.closest('.card');
     const productId = parseInt(card.dataset.id);
+
+    btn.disabled = true;
 
     fetch('/Cart/Decrease', {
         method: 'POST',
@@ -26,15 +37,16 @@ function decrease(btn) {
     })
         .then(res => {
             if (!res.ok) throw "Decrease failed";
-            refreshQty(card);
-        });
+            return refreshQty(card);
+        })
+        .finally(() => btn.disabled = false);
 }
 
 function refreshQty(card) {
     const productId = parseInt(card.dataset.id);
 
-    fetch('/Cart/GetItemQty?productId=' + productId, {
-        credentials: 'include',
+    return fetch(`/Cart/GetItemQty?productId=${productId}`, {
+        credentials: 'include'
     })
         .then(res => res.json())
         .then(qty => {
