@@ -43,65 +43,71 @@ public class StoreManager1Controller : Controller
         {
             _service.CreateProduct(product);
             // Redirect back to the LIST (Index) after saving
+            TempData["SuccessMessage"] = "Product added successfully!"; // <--- Add this
             return RedirectToAction("Index");
         }
 
         return View("AddProduct", product);
     }
 
-    // 4. DELETE LOGIC: Triggered by the trash icon
-    //[HttpPost]
-    //public IActionResult Delete(int id)
-    //{
-    //    _service.DeleteProduct(id); // Ensure your service has a Delete method
-    //    return RedirectToAction("Index");
-    //}
+    // 4. EDIT PAGE: Shows the form with existing data
+    [HttpGet]
+    // GET: StoreManager1/Edit/5
+    public IActionResult Edit(int id)
+    {
+        // This fetches the SPECIFIC product from the DB
+        var product = _service.GetProductById(id);
+
+        if (product == null)
+        {
+            return NotFound();
+        }
+
+        // This sends the data to the Edit.cshtml page so the fields are filled
+        return View(product);
+    }
+
+    // 5. UPDATE LOGIC: Saves the changes from the Edit form
+    [HttpPost]
+    public IActionResult Edit(Product product, IFormFile? imageFile)
+    {
+        // 1. Fetch the actual record currently in the DB
+        var productInDb = _service.GetProductById(product.ProductId);
+
+        if (productInDb == null) return NotFound();
+
+        // 2. Map EVERY column from your list
+        productInDb.ProductName = product.ProductName;
+        productInDb.Price = product.Price;
+        productInDb.Category = product.Category;
+        productInDb.IsActive = product.IsActive; // Added IsActive
+        productInDb.Quantity = product.Quantity;
+
+        // 3. Handle Image logic (Only update if a new file is chosen)
+        if (imageFile != null && imageFile.Length > 0)
+        {
+            using var ms = new MemoryStream();
+            imageFile.CopyTo(ms);
+            productInDb.ImageData = "data:image/png;base64," + Convert.ToBase64String(ms.ToArray());
+        }
+
+        // 4. Save the modified object
+        if (ModelState.IsValid)
+        {
+            _service.UpdateProduct(productInDb);
+            TempData["SuccessMessage"] = "Product updated successfully!"; // <--- Add this
+            return RedirectToAction("Index");
+        }
+
+        return View(product);
+    }
+
+    // 6. DELETE LOGIC: Triggered by the trash icon
+    [HttpPost]
+    public IActionResult Delete(int id)
+    {
+        _service.DeleteProduct(id);
+        TempData["DeleteMessage"] = "Product deleted successfully!"; // <--- Add this
+        return RedirectToAction("Index");
+    }
 }
-
-//using PackageFoodManagementSystem.Repository.Models;
-//using Microsoft.AspNetCore.Mvc;
-//using PackageFoodManagementSystem.Services.Interfaces;
-//using Microsoft.AspNetCore.Http; // Required for IFormFile
-//using System.IO; // Required for MemoryStream
-
-//public class StoreManager1Controller : Controller
-//{
-//    private readonly IProductService _service;
-
-//    public StoreManager1Controller(IProductService service)
-//    {
-//        _service = service;
-//    }
-
-//    [HttpGet]
-//    public IActionResult AddProduct()
-//    {
-//        var products = _service.GetAllProducts();
-//        return View(products);
-//    }
-
-//    [HttpPost]
-//    [HttpPost]
-//    public IActionResult Create(Product product, IFormFile imageFile)
-//    {
-//        if (imageFile != null && imageFile.Length > 0)
-//        {
-//            using (var ms = new MemoryStream())
-//            {
-//                imageFile.CopyTo(ms);
-//                byte[] fileBytes = ms.ToArray();
-
-//                // Fix: Use ToBase64String
-//                product.ImageData = "data:image/png;base64," + Convert.ToBase64String(fileBytes);
-//            }
-//        }
-
-//        if (ModelState.IsValid)
-//        {
-//            _service.CreateProduct(product);
-//            return RedirectToAction("AddProduct");
-//        }
-
-//        return View("AddProduct", _service.GetAllProducts());
-//    }
-//}
