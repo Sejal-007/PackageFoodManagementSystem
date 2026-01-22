@@ -172,7 +172,7 @@ namespace PackagedFoodFrontend.Controllers
         public IActionResult Logout()
         {
             HttpContext.Session.Clear();
-            return RedirectToAction("Index", "Home");
+            return RedirectToAction("Welcome", "Home");
         }
 
         public IActionResult MyWallet()
