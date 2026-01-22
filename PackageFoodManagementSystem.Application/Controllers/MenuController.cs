@@ -12,10 +12,18 @@ namespace PackageFoodManagementSystem.Application.Controllers
 
         public MenuController(IProductService service) => _service = service;
 
-        public IActionResult Index()
+        public IActionResult Index(string? category)
         {
-            // This pulls the same data the manager just saved
+            // Fetch all products from the service
             var products = _service.GetAllProducts();
+
+            // If a category is selected, filter the list
+            if (!string.IsNullOrEmpty(category))
+            {
+                products = products.Where(p => p.Category == category).ToList();
+                ViewBag.SelectedCategory = category; // This helps the UI know what is selected
+            }
+
             return View(products);
         }
     }

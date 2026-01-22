@@ -4,15 +4,15 @@ namespace PackageFoodManagementSystem.Services.Interfaces
 {
     public interface IProductService
     {
-        // Add these so the Controllers stop throwing errors
         IEnumerable<Product> GetAllProducts();
+        Product GetProductById(int id); // Needed to find the item before editing
         void CreateProduct(Product product);
-
-        // Keep these if your other ProductController uses them
+        void UpdateProduct(Product product);
         IEnumerable<Product> GetMenuForCustomer();
         void CreateNewProduct(Product product);
 
-        void UpdateProduct(Product product);
+        // Match this name to your ProductService implementation
         void RemoveProduct(int id);
+        void DeleteProduct(int id); // Changed name to match standard controller naming
     }
 }
