@@ -1,5 +1,6 @@
 ﻿using PackageFoodManagementSystem.Repository.Models;
 using PackageFoodManagementSystem.Services.Interfaces;
+using PackageFoodManagementSystem.Repository.Interfaces; // Ensure this is included
 
 namespace PackageFoodManagementSystem.Services.Implementations
 {
@@ -12,19 +13,49 @@ namespace PackageFoodManagementSystem.Services.Implementations
             _repo = repo;
         }
 
-        // Fixes StoreManager1Controller and MenuController errors
         public IEnumerable<Product> GetAllProducts() => _repo.GetAllProducts();
+
+        // Added this to help the Edit function find the specific product
+        public Product GetProductById(int id) => _repo.GetProductById(id);
+
         public void CreateProduct(Product product) => CreateNewProduct(product);
 
-        // Fixes ProductController errors
         public IEnumerable<Product> GetMenuForCustomer() => _repo.GetAllProducts();
+
         public void CreateNewProduct(Product product)
         {
             _repo.AddProduct(product);
             _repo.Save();
         }
 
-        public void UpdateProduct(Product product) { /* later */ }
-        public void RemoveProduct(int id) { /* later */ }
+        // Logic for EDIT
+
+        public void UpdateProduct(Product product)
+        {
+            _repo.UpdateProduct(product);
+            _repo.Save(); // Crucial: Saves the edit to the database
+        }
+
+        // Logic for DELETE
+        public void RemoveProduct(int id) => DeleteProduct(id);
+
+        public void DeleteProduct(int id)
+        {
+            var product = _repo.GetProductById(id);
+            if (product != null)
+            {
+                _repo.RemoveProduct(product);
+                _repo.Save();
+            }
+        }
+        //public void RemoveProduct(int id)
+        //{
+        //    var product = _repo.GetProductById(id);
+        //    if (product != null)
+        //    {
+        //        _repo.RemoveProduct(product);
+        //        _repo.Save(); // Crucial: Removes the row from the database
+        //    }
+        //}
     }
 }

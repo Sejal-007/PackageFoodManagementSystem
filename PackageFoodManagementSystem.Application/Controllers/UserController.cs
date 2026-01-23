@@ -157,10 +157,10 @@ namespace PackagedFoodFrontend.Controllers
         }
 
         // Use this if your URL is /User/MyBasket
-        public IActionResult MyBasket()
-        {
-            return View(GetUserFromSession());
-        }
+        //public IActionResult MyBasket()
+        //{
+        //    return View(GetUserFromSession());
+        //}
 
         public IActionResult SmartBasket() => View(GetUserFromSession());
         public IActionResult Dashboard() => View(GetUserFromSession());

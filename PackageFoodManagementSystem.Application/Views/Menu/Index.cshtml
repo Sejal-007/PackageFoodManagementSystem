@@ -1,26 +1,102 @@
 ﻿@model IEnumerable<PackageFoodManagementSystem.Repository.Models.Product>
-@{
-
-    ViewData["Title"] = "Menu";
-
+@section Scripts {
+    <script src="~/js/menu.js"></script>
 }
+
 <div class="container mt-5">
-    <h1 class="text-center mb-4">Customer Menu</h1>
+    <div class="text-center mb-4">
+        <h2 class="fw-bold">Our <span style="color: #FF6B00;">Menu</span></h2>
+        
+        <div class="d-flex flex-wrap justify-content-center gap-2 mt-3">
+            <a asp-action="Index" asp-route-category="" 
+               class="btn @(string.IsNullOrEmpty(ViewBag.SelectedCategory) ? "btn-dark" : "btn-outline-dark") rounded-pill">All</a>
+
+            <a asp-action="Index" asp-route-category="Vegetables and Fruits" 
+               class="btn @(ViewBag.SelectedCategory == "Vegetables and Fruits" ? "btn-warning" : "btn-outline-secondary") rounded-pill">Veg & Fruits</a>
+
+            <a asp-action="Index" asp-route-category="Dairy and Eggs" 
+               class="btn @(ViewBag.SelectedCategory == "Dairy and Eggs" ? "btn-warning" : "btn-outline-secondary") rounded-pill">Dairy & Eggs</a>
+
+            <a asp-action="Index" asp-route-category="Snacks and Drinks" 
+               class="btn @(ViewBag.SelectedCategory == "Snacks and Drinks" ? "btn-warning" : "btn-outline-secondary") rounded-pill">Snacks & Drinks</a>
+
+            <a asp-action="Index" asp-route-category="Meat and Seafoods" 
+               class="btn @(ViewBag.SelectedCategory == "Meat and Seafoods" ? "btn-warning" : "btn-outline-secondary") rounded-pill">Meat & Fish</a>
+        </div>
+    </div>
+
     <div class="row">
+        @foreach (var item in Model) {
+             }
+    </div>
+</div>
+<div class="container py-5">
+    <h1 class="text-center fw-bold mb-5"></h1>
+    @if (ViewBag.CurrentCategory != null)
+    {
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h3>Showing: <span class="text-orange">@ViewBag.CurrentCategory</span></h3>
+            <a asp-action="Index" class="btn btn-outline-secondary btn-sm">Show All Products</a>
+        </div>
+    }
+    @* The row uses g-4 for spacing. 6 items will naturally form 2 rows of 3 *@
+    <div class="row g-4 justify-content-center">
         @foreach (var item in Model)
         {
+          
             @if (item.IsActive)
             {
-                <div class="col-md-4 mb-4">
-                    <div class="card h-100 shadow-sm">
-                        <div class="card-body">
-                            <span class="badge bg-info text-dark mb-2">@item.Category</span>
-                            <h5 class="card-title">@item.ProductName</h5>
-                            <p class="card-text text-muted">Stock Available: @item.Quantity</p>
+                <div class="col-12 col-md-6 col-lg-3">
+                    @* Added mx-auto and a max-width to make the card "Smaller" *@
+                    <div class="card h-100 border-0 shadow-sm mx-auto p-2"
+                         style="max-width: 280px; border-radius: 20px;"
+                         data-id="@item.ProductId"
+                         data-name="@item.ProductName"
+                         data-price="@item.Price">
+
+                        <div class="overflow-hidden mb-2" style="height: 160px; border-radius: 15px;">
+                            @if (!string.IsNullOrEmpty(item.ImageData))
+                            {
+                                <img src="@item.ImageData"
+                                     class="w-100 h-100"
+                                     style="object-fit: cover;"
+                                     alt="@item.ProductName">
+                            }
+                            else
+                            {
+                                <img src="~/images/default-food.png"
+                                     class="w-100 h-100"
+                                     style="object-fit: cover;"
+                                     alt="No Image">
+                            }
                         </div>
-                        <div class="card-footer bg-white border-top-0 d-flex justify-content-between align-items-center">
-                            <span class="h5 mb-0 text-primary">$@item.Price</span>
-                            <button class="btn btn-outline-success btn-sm">Add to Cart</button>
+
+                        <div class="card-body text-center p-2">
+                            <small class="text-muted text-uppercase mb-1 d-block" style="font-size: 0.7rem;">
+                                @item.Category
+                            </small>
+                            <h6 class="fw-bold mb-1">@item.ProductName</h6>
+
+                            @* Price Centered *@
+                            <p class="text-success fw-bold mb-3">₹@item.Price</p>
+
+                            <div class="d-flex justify-content-center mb-2">
+                                <div class="d-flex align-items-center bg-light rounded-pill p-1 border">
+                                    <button class="btn btn-sm btn-success rounded-circle d-flex align-items-center justify-content-center"
+                                            style="width: 28px; height: 28px;"
+                                            onclick="decrease(this)">
+                                        <i class="fa fa-minus small" style="font-size: 10px;"></i>
+                                    </button>
+
+                                    <span class="qty fw-bold px-3" data-product-id="@item.ProductId" style="font-size: 14px;">0</span>
+
+                                    <button class="btn btn-sm btn-success rounded-circle d-flex align-items-center justify-content-center"
+                                            style="width: 28px; height: 28px;"
+                                            onclick="increase(this)">
+                                        <i class="fa fa-plus small" style="font-size: 10px;"></i>
+                                    </button>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -29,326 +105,14 @@
     </div>
 </div>
 
-<!DOCTYPE html>
-<html>
-<head>
-    <meta charset="utf-8" />
-    <title>Menu</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-    <link href="~/css/menu.css" rel="stylesheet" />
-</head>
+<style>
+    /* Professional Hover Effect */
+    .card {
+        transition: all 0.3s ease;
+    }
 
-<body>
-
-    <div class="container my-5">
-        <h2 class="mb-4 fw-bold">🛒 Explore Products</h2>
-
-        <div class="row g-4">
-
-            <div class="col-md-4">
-                <div class="product-card shadow-sm border-0 p-3" style="border-radius: 15px;"
-                     data-id="1" data-name="Potato Chips" data-price="50" data-image="/images/chips.png">
-                    <img src="~/images/chips.png" alt="Chips" class="img-fluid rounded mb-3" style="height:110px; object-fit:cover;">
-                    <h6 class="fw-bold">Potato Chips</h6>
-                    <p class="price text-success fw-bold">₹50</p>
-                    <div class="cart-actions d-flex justify-content-center align-items-center bg-light rounded-pill p-2 mx-auto" style="width: fit-content;">
-                        <button class="btn btn-sm btn-success rounded-circle" onclick="changeQty(this, -1)">−</button>
-                        <span class="qty fw-bold mx-3" id="qty-1">0</span>
-                        <button class="btn btn-sm btn-success rounded-circle" onclick="changeQty(this, 1)">+</button>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-md-4">
-                <div class="product-card shadow-sm border-0 p-3" style="border-radius: 15px;"
-                     data-id="2" data-name="Fruit Juice" data-price="80" data-image="/images/juice.png">
-                    <img src="~/images/juice.png" alt="Juice" class="img-fluid rounded mb-3" style="height:110px; object-fit:cover;">
-                    <h6 class="fw-bold">Fruit Juice</h6>
-                    <p class="price text-success fw-bold">₹80</p>
-                    <div class="cart-actions d-flex justify-content-center align-items-center bg-light rounded-pill p-2 mx-auto" style="width: fit-content;">
-                        <button class="btn btn-sm btn-success rounded-circle" onclick="changeQty(this, -1)">−</button>
-                        <span class="qty fw-bold mx-3" id="qty-2">0</span>
-                        <button class="btn btn-sm btn-success rounded-circle" onclick="changeQty(this, 1)">+</button>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-md-4">
-                <div class="product-card shadow-sm border-0 p-3" style="border-radius: 15px;"
-                     data-id="3" data-name="Instant Noodles" data-price="60" data-image="/images/noodles.png">
-                    <img src="~/images/noodles.png" alt="Noodles" class="img-fluid rounded mb-3" style="height:110px; object-fit:cover;">
-                    <h6 class="fw-bold">Instant Noodles</h6>
-                    <p class="price text-success fw-bold">₹60</p>
-                    <div class="cart-actions d-flex justify-content-center align-items-center bg-light rounded-pill p-2 mx-auto" style="width: fit-content;">
-                        <button class="btn btn-sm btn-success rounded-circle" onclick="changeQty(this, -1)">−</button>
-                        <span class="qty fw-bold mx-3" id="qty-3">0</span>
-                        <button class="btn btn-sm btn-success rounded-circle" onclick="changeQty(this, 1)">+</button>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-md-4">
-                <div class="product-card shadow-sm border-0 p-3" style="border-radius: 15px;"
-                     data-id="4" data-name="Traditional Sweets" data-price="120" data-image="/images/sweets.png">
-                    <img src="~/images/sweets.png" alt="Sweets" class="img-fluid rounded mb-3" style="height:110px; object-fit:cover;">
-                    <h6 class="fw-bold">Traditional Sweets</h6>
-                    <p class="price text-success fw-bold">₹120</p>
-                    <div class="cart-actions d-flex justify-content-center align-items-center bg-light rounded-pill p-2 mx-auto" style="width: fit-content;">
-                        <button class="btn btn-sm btn-success rounded-circle" onclick="changeQty(this, -1)">−</button>
-                        <span class="qty fw-bold mx-3" id="qty-4">0</span>
-                        <button class="btn btn-sm btn-success rounded-circle" onclick="changeQty(this, 1)">+</button>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-md-4">
-                <div class="product-card shadow-sm border-0 p-3" style="border-radius: 15px;"
-                     data-id="5" data-name="Milk" data-price="40" data-image="/images/milk.png">
-                    <img src="~/images/milk.png" alt="Milk" class="img-fluid rounded mb-3" style="height:110px; object-fit:cover;">
-                    <h6 class="fw-bold">Milk</h6>
-                    <p class="price text-success fw-bold">₹40</p>
-                    <div class="cart-actions d-flex justify-content-center align-items-center bg-light rounded-pill p-2 mx-auto" style="width: fit-content;">
-                        <button class="btn btn-sm btn-success rounded-circle" onclick="changeQty(this, -1)">−</button>
-                        <span class="qty fw-bold mx-3" id="qty-5">0</span>
-                        <button class="btn btn-sm btn-success rounded-circle" onclick="changeQty(this, 1)">+</button>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-md-4">
-                <div class="product-card shadow-sm border-0 p-3" style="border-radius: 15px;"
-                     data-id="6" data-name="Meat" data-price="25" data-image="/images/meat.png">
-                    <img src="~/images/meat.png" alt="Meat" class="img-fluid rounded mb-3" style="height:110px; object-fit:cover;">
-                    <h6 class="fw-bold">Meat</h6>
-                    <p class="price text-success fw-bold">₹25</p>
-                    <div class="cart-actions d-flex justify-content-center align-items-center bg-light rounded-pill p-2 mx-auto" style="width: fit-content;">
-                        <button class="btn btn-sm btn-success rounded-circle" onclick="changeQty(this, -1)">−</button>
-                        <span class="qty fw-bold mx-3" id="qty-6">0</span>
-                                    <button class="btn btn-sm btn-success rounded-circle" onclick="changeQty(this, 1)">+</button>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-md-4">
-                <div class="product-card shadow-sm border-0 p-3" style="border-radius: 15px;"
-                     data-id="7" data-name="Bread" data-price="50" data-image="/images/Bread.jpg">
-                    <img src="~/images/Bread.jpg" alt="Bread" class="img-fluid rounded mb-3" style="height:110px; object-fit:cover;">
-                    <h6 class="fw-bold">Bread</h6>
-                    <p class="price text-success fw-bold">₹50</p>
-                    <div class="cart-actions d-flex justify-content-center align-items-center bg-light rounded-pill p-2 mx-auto" style="width: fit-content;">
-                        <button class="btn btn-sm btn-success rounded-circle" onclick="changeQty(this, -1)">−</button>
-                        <span class="qty fw-bold mx-3" id="qty-6">0</span>
-                                    <button class="btn btn-sm btn-success rounded-circle" onclick="changeQty(this, 1)">+</button>
-                    </div>
-                </div>
-            </div>
-
- 
-            <div class="col-md-4">
-                <div class="product-card shadow-sm border-0 p-3" style="border-radius: 15px;"
-                     data-id="7" data-name="Dairy Milk" data-price="80" data-image="/images/DairyMilk.jpg">
-                    <img src="~/images/DairyMilk.jpg" alt="DairyMilk" class="img-fluid rounded mb-3" style="height:110px; object-fit:cover;">
-                    <h6 class="fw-bold">Dairy Milk</h6>
-                    <p class="price text-success fw-bold">₹80</p>
-                    <div class="cart-actions d-flex justify-content-center align-items-center bg-light rounded-pill p-2 mx-auto" style="width: fit-content;">
-                        <button class="btn btn-sm btn-success rounded-circle" onclick="changeQty(this, -1)">−</button>
-                        <span class="qty fw-bold mx-3" id="qty-6">0</span>
-                                    <button class="btn btn-sm btn-success rounded-circle" onclick="changeQty(this, 1)">+</button>
-                    </div>
-                </div>
-            </div>
-
-
-            <div class="col-md-4">
-                <div class="product-card shadow-sm border-0 p-3" style="border-radius: 15px;"
-                     data-id="7" data-name="Hide And Seek" data-price="40" data-image="/images/HideAndSeek.jpg">
-                    <img src="~/images/HideAndSeek.jpg" alt="HideAndSeek" class="img-fluid rounded mb-3" style="height:110px; object-fit:cover;">
-                    <h6 class="fw-bold">HideAndSeek</h6>
-                    <p class="price text-success fw-bold">₹40</p>
-                    <div class="cart-actions d-flex justify-content-center align-items-center bg-light rounded-pill p-2 mx-auto" style="width: fit-content;">
-                        <button class="btn btn-sm btn-success rounded-circle" onclick="changeQty(this, -1)">−</button>
-                        <span class="qty fw-bold mx-3" id="qty-6">0</span>
-                        <button class="btn btn-sm btn-success rounded-circle" onclick="changeQty(this, 1)">+</button>
-                    </div>
-                </div>
-            </div>
-
-
-            <div class="col-md-4">
-                <div class="product-card shadow-sm border-0 p-3" style="border-radius: 15px;"
-                     data-id="7" data-name="Oil" data-price="120" data-image="/images/Oil.jpg">
-                    <img src="~/images/Oil.jpg" alt="Oil" class="img-fluid rounded mb-3" style="height:110px; object-fit:cover;">
-                    <h6 class="fw-bold">Oil</h6>
-                    <p class="price text-success fw-bold">₹120</p>
-                    <div class="cart-actions d-flex justify-content-center align-items-center bg-light rounded-pill p-2 mx-auto" style="width: fit-content;">
-                        <button class="btn btn-sm btn-success rounded-circle" onclick="changeQty(this, -1)">−</button>
-                        <span class="qty fw-bold mx-3" id="qty-6">0</span>
-                        <button class="btn btn-sm btn-success rounded-circle" onclick="changeQty(this, 1)">+</button>
-                    </div>
-                </div>
-            </div>
- 
-
-
-            <div class="col-md-4">
-                <div class="product-card shadow-sm border-0 p-3" style="border-radius: 15px;"
-                     data-id="7" data-name="Dry Fruits" data-price="250" data-image="/images/DryFruits.jpg">
-                    <img src="~/images/DryFruits.jpg" alt="Dry Fruits" class="img-fluid rounded mb-3" style="height:110px; object-fit:cover;">
-                    <h6 class="fw-bold">Dry Fruits</h6>
-                    <p class="price text-success fw-bold">₹250</p>
-                    <div class="cart-actions d-flex justify-content-center align-items-center bg-light rounded-pill p-2 mx-auto" style="width: fit-content;">
-                        <button class="btn btn-sm btn-success rounded-circle" onclick="changeQty(this, -1)">−</button>
-                        <span class="qty fw-bold mx-3" id="qty-6">0</span>
-                        <button class="btn btn-sm btn-success rounded-circle" onclick="changeQty(this, 1)">+</button>
-                    </div>
-                </div>
-            </div>
-
-
-            <div class="col-md-4">
-                <div class="product-card shadow-sm border-0 p-3" style="border-radius: 15px;"
-                     data-id="7" data-name="Masala" data-price="20" data-image="/images/Masala.jpg">
-                    <img src="~/images/Masala.jpg" alt="Masala" class="img-fluid rounded mb-3" style="height:110px; object-fit:cover;">
-                    <h6 class="fw-bold">Masala</h6>
-                    <p class="price text-success fw-bold">₹20</p>
-                    <div class="cart-actions d-flex justify-content-center align-items-center bg-light rounded-pill p-2 mx-auto" style="width: fit-content;">
-                        <button class="btn btn-sm btn-success rounded-circle" onclick="changeQty(this, -1)">−</button>
-                        <span class="qty fw-bold mx-3" id="qty-6">0</span>
-                        <button class="btn btn-sm btn-success rounded-circle" onclick="changeQty(this, 1)">+</button>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-md-4">
-                <div class="product-card shadow-sm border-0 p-3" style="border-radius: 15px;"
-                     data-id="7" data-name="Kurkure" data-price="30" data-image="/images/Kurkure.jpg">
-                    <img src="~/images/Kurkure.jpg" alt="Kurkure" class="img-fluid rounded mb-3" style="height:110px; object-fit:cover;">
-                    <h6 class="fw-bold">Kurkure</h6>
-                    <p class="price text-success fw-bold">₹30</p>
-                    <div class="cart-actions d-flex justify-content-center align-items-center bg-light rounded-pill p-2 mx-auto" style="width: fit-content;">
-                        <button class="btn btn-sm btn-success rounded-circle" onclick="changeQty(this, -1)">−</button>
-                        <span class="qty fw-bold mx-3" id="qty-6">0</span>
-                        <button class="btn btn-sm btn-success rounded-circle" onclick="changeQty(this, 1)">+</button>
-                    </div>
-                </div>
-            </div>
-
-
-            <div class="col-md-4">
-                <div class="product-card shadow-sm border-0 p-3" style="border-radius: 15px;"
-                     data-id="7" data-name="Sweets" data-price="180" data-image="/images/Sweets.jpg">
-                    <img src="~/images/Sweets.jpg" alt="Sweets" class="img-fluid rounded mb-3" style="height:110px; object-fit:cover;">
-                    <h6 class="fw-bold">Sweets</h6>
-                    <h1>Hello</h1>
-                    <p class="price text-success fw-bold">₹180</p>
-                    <div class="cart-actions d-flex justify-content-center align-items-center bg-light rounded-pill p-2 mx-auto" style="width: fit-content;">
-                        <button class="btn btn-sm btn-success rounded-circle" onclick="changeQty(this, -1)">−</button>
-                        <span class="qty fw-bold mx-3" id="qty-6">0</span>
-                        <button class="btn btn-sm btn-success rounded-circle" onclick="changeQty(this, 1)">+</button>
-                    </div>
-                </div>
-            </div>
-
-
-
- 
- 
-            
- 
- 
-        </div>
-</div>
- 
-    <script>
-
-        let cart = JSON.parse(localStorage.getItem("myCart")) || [];
- 
-        document.addEventListener("DOMContentLoaded", () => {
-
-            cart.forEach(item => {
-
-                const qtySpan = document.getElementById(`qty-${item.id}`);
-
-                if (qtySpan) qtySpan.innerText = item.qty;
-
-            });
-
-            updateCartBadge();
-
-        });
- 
-        function changeQty(button, change) {
-
-            const card = button.closest('.product-card');
-
-            const id = card.getAttribute('data-id');
-
-            const name = card.getAttribute('data-name');
-
-            const price = parseInt(card.getAttribute('data-price'));
-
-            const image = card.getAttribute('data-image');
-
-            const qtySpan = card.querySelector('.qty');
- 
-            let currentQty = parseInt(qtySpan.innerText);
-
-            currentQty += change;
- 
-            if (currentQty < 0) currentQty = 0;
-
-            qtySpan.innerText = currentQty;
- 
-            updateCart(id, name, price, image, currentQty);
-
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1) !important;
         }
- 
-        function updateCart(id, name, price, image, qty) {
-
-            const index = cart.findIndex(item => item.id === id);
- 
-            if (qty > 0) {
-
-                if (index > -1) {
-
-                    cart[index].qty = qty;
-
-                } else {
-
-                    cart.push({ id, name, price, image, qty });
-
-                }
-
-            } else {
-
-                if (index > -1) cart.splice(index, 1);
-
-            }
- 
-            localStorage.setItem("myCart", JSON.stringify(cart));
-
-            updateCartBadge();
-
-        }
- 
-        function updateCartBadge() {
-
-            // Assuming your layout has an element with id="cart-count"
-
-            const badge = document.getElementById("cart-count");
-
-            if (badge) {
-
-                const total = cart.reduce((sum, item) => sum + item.qty, 0);
-
-                badge.innerText = total;
-
-            }
-
-        }
-</script>
- 
-</body>
-</html>
- 
+</style>
