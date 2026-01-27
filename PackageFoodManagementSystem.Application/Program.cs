@@ -63,6 +63,9 @@ builder.Services.AddScoped<IProductService, ProductService>();
 
 builder.Services.AddScoped<ICartService, CartService>();
 
+builder.Services.AddDbContext<ApplicationDbContext>(options =>
+options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+
 // MVC Services
 // --- ADD THESE TWO LINES (Do not comment them out) ---
 builder.Services.AddScoped<ICustomerAddressRepository, CustomerAddressRepository>();

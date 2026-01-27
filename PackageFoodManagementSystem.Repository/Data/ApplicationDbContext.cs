@@ -33,6 +33,8 @@ namespace PackageFoodManagementSystem.Repository.Data
 
         public DbSet<CartItem> CartItems { get; set; }
 
+        public DbSet<OrderStatusHistory> OrderStatusHistories { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);

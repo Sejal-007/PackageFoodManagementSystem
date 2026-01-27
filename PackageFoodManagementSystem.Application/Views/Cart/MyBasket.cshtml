@@ -6,6 +6,10 @@
     decimal deliveryFee = (subtotal > 0 && subtotal < 500) ? 40 : 0;
 }
 
+@section Scripts {
+    <script src="~/js/menu.js"></script>
+}
+
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
 
 <div class="container my-5" id="cartContainer">
@@ -35,9 +39,9 @@
                             <p class="text-muted small mb-2">Unit Price: ₹@item.Product.Price</p>
 
                             <div class="d-flex align-items-center gap-2">
-                                <button class="qty-btn" onclick="cartDecrease(@item.ProductId)">-</button>
+                                <button class="qty-btn" onclick="decrease(this)">-</button>
                                 <span class="fw-bold px-2 qty" id="cart-qty-@item.ProductId">@item.Quantity</span> 
-                                <button class="qty-btn" onclick="cartIncrease(@item.ProductId)">+</button>
+                                <button class="qty-btn" onclick="increase(this)">+</button>
                             </div>
                         </div>
 
@@ -69,7 +73,7 @@
                         <span class="h5 fw-800 mb-0">Grand Total:</span>
                         <span class="h3 fw-800 text-dark mb-0">₹@(subtotal + deliveryFee)</span>
                     </div>
-                    <a href="/Payment/Checkout" class="btn btn-dark w-100 py-3 rounded-pill fw-800 shadow">
+                    <a href="/Order/Checkout" class="btn btn-dark w-100 py-3 rounded-pill fw-800 shadow">
                         Proceed to Checkout <i class="fa-solid fa-arrow-right ms-2"></i>
                     </a>
                 </div>

@@ -1,4 +1,6 @@
-﻿using PackageFoodManagementSystem.Repository.Interfaces;
+﻿using Microsoft.EntityFrameworkCore;
+using PackageFoodManagementSystem.Repository.Data;
+using PackageFoodManagementSystem.Repository.Interfaces;
 
 using PackageFoodManagementSystem.Repository.Models;
 
@@ -15,13 +17,14 @@ namespace PackageFoodManagementSystem.Services.Implementations
     public class OrderService : IOrderService
 
     {
+        private readonly ApplicationDbContext _context;
 
         private readonly IOrderRepository _orderRepository;
 
-        public OrderService(IOrderRepository orderRepository)
+        public OrderService(ApplicationDbContext context ,IOrderRepository orderRepository)
 
         {
-
+            _context = context;
             _orderRepository = orderRepository;
 
         }
@@ -41,6 +44,73 @@ namespace PackageFoodManagementSystem.Services.Implementations
             return _orderRepository.GetOrderById(id);
 
         }
+
+        public int CreateOrder(int userId, string address)
+
+        {
+
+            var cart = _context.Carts
+
+                .Include(c => c.CartItems)
+
+                .ThenInclude(ci => ci.Product)
+
+                .FirstOrDefault(c => c.UserAuthenticationId == userId && c.IsActive);
+
+            if (cart == null || !cart.CartItems.Any())
+
+                throw new Exception("Cart is empty");
+
+            var order = new Order
+
+            {
+
+                CustomerId = userId,
+
+                DeliveryAddress = address,
+
+                OrderStatus = "PendingPayment",
+
+                OrderDate = DateTime.Now
+
+            };
+
+            _context.Orders.Add(order);
+
+            _context.SaveChanges();
+
+            foreach (var item in cart.CartItems)
+
+            {
+
+                _context.OrderItems.Add(new OrderItem
+
+                {
+
+                    OrderID = order.OrderID,
+
+                    ProductId = item.ProductId,
+
+                    Quantity = item.Quantity,
+
+                    UnitPrice = item.Product.Price,
+
+                    Subtotal = item.Quantity * item.Product.Price
+
+                });
+
+            }
+
+            order.TotalAmount = cart.CartItems.Sum(x => x.Quantity * x.Product.Price);
+
+            cart.IsActive = false; // 🔒 lock cart
+
+            _context.SaveChanges();
+
+            return order.OrderID;
+
+        }
+
 
         public void PlaceOrder(Order order)
 
@@ -96,6 +166,7 @@ namespace PackageFoodManagementSystem.Services.Implementations
 
         }
 
+        
     }
 
 }
