@@ -1,96 +1,161 @@
-﻿@{
+﻿@model IEnumerable<PackageFoodManagementSystem.Repository.Models.CustomerAddress>
+@{
     ViewData["Title"] = "Delivery Addresses";
-    var userName = User.Identity.IsAuthenticated ? User.Identity.Name : "User";
+    var currentPath = Context.Request.Path.ToString();
 }
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
-<div class="container my-5">
+<div class="container py-5">
+    @if (TempData["Message"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show rounded-pill px-4 mb-4 shadow-sm border-0" role="alert">
+            <i class="fa-solid fa-circle-check me-2"></i> @TempData["Message"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
     <div class="row">
-        <div class="col-md-3">
-            <div class="card border-0 shadow-sm p-3" style="border-radius: 15px;">
-                @Html.Partial("_AccountSidebar")
+        @* Sidebar Navigation *@
+        <div class="col-md-3 border-end">
+            <div class="account-sidebar-nav">
+                <div class="section-group mb-4">
+                    <h6 class="text-uppercase text-muted fw-bold small mb-3">Personal Details</h6>
+                    <ul class="list-unstyled">
+                        <li><a href="/User/EditProfile" class="nav-link @(currentPath == "/User/EditProfile" ? "active" : "")"><i class="fa-solid fa-user-pen me-2"></i> Edit Profile</a></li>
+                        <li><a href="/User/DeliveryAddress" class="nav-link @(currentPath == "/User/DeliveryAddress" ? "active" : "")"><i class="fa-solid fa-map-location-dot me-2"></i> Delivery Addresses</a></li>
+                        <li><a href="/User/EmailAddress" class="nav-link @(currentPath == "/User/EmailAddress" ? "active" : "")"><i class="fa-solid fa-envelope me-2"></i> Email Addresses</a></li>
+                    </ul>
+                </div>
+
+                <div class="section-group mb-4">
+                    <h6 class="text-uppercase text-muted fw-bold small mb-3">Shop From</h6>
+                    <ul class="list-unstyled">
+                        <li><a href="/User/SmartBasket" class="nav-link @(currentPath == "/User/SmartBasket" ? "active" : "")"><i class="fa-solid fa-basket-shopping me-2"></i> Smart Basket</a></li>
+                        <li><a href="/User/PastOrders" class="nav-link @(currentPath == "/User/PastOrders" ? "active" : "")"><i class="fa-solid fa-history me-2"></i> Past Orders</a></li>
+                    </ul>
+                </div>
+
+                <div class="section-group">
+                    <h6 class="text-uppercase text-muted fw-bold small mb-3">My Account</h6>
+                    <ul class="list-unstyled">
+                        <li><a href="/User/MyOrders" class="nav-link @(currentPath == "/User/MyOrders" ? "active" : "")"><i class="fa-solid fa-box me-2"></i> My Orders</a></li>
+                        <li><a href="/User/MyWallet" class="nav-link @(currentPath == "/User/MyWallet" ? "active" : "")"><i class="fa-solid fa-wallet me-2"></i> My Wallet</a></li>
+                        <li><a href="/User/GiftCards" class="nav-link @(currentPath == "/User/GiftCards" ? "active" : "")"><i class="fa-solid fa-gift me-2"></i> My Gift Cards</a></li>
+                    </ul>
+                </div>
             </div>
         </div>
 
-        <div class="col-md-9">
+        @* Main Content *@
+        <div class="col-md-9 ps-md-5">
             <div class="d-flex justify-content-between align-items-center mb-4">
                 <div>
                     <h2 class="fw-bold mb-0">Delivery <span class="text-success">Addresses</span></h2>
-                    <p class="text-muted small">Locations saved for @userName</p>
+                   
+                    
                 </div>
-                <div class="d-flex gap-2">
-                    <a href="/User/EditAddress?id=1" class="btn btn-sm btn-outline-dark rounded-pill px-3">Edit</a>
-                    <button class="btn btn-sm btn-outline-danger rounded-pill px-3" onclick="confirmDelete(this)">Remove</button>
-                </div>
+                <a href="@Url.Action("AddAddress", "User")" class="btn btn-dark rounded-pill px-4 shadow-sm">
+                    <i class="fa-solid fa-plus me-1"></i> Add New
+                </a>
             </div>
 
-            @if (TempData["Message"] != null)
-            {
-                <div class="alert alert-success border-0 shadow-sm rounded-3">
-                    <i class="fa-solid fa-circle-check me-2"></i> @TempData["Message"]
-                </div>
-            }
+            <div class="row g-4">
+                @if (Model != null && Model.Any())
+                {
+                    @foreach (var addr in Model)
+                    {
+                        <div class="col-md-6">
+                            <div class="card h-100 border-0 shadow-sm p-3 address-card" style="border-radius: 20px;">
+                                <div class="d-flex justify-content-between align-items-start">
+                                    <span class="badge rounded-pill bg-light text-dark border px-3 mb-3">
+                                        @if (addr.AddressType == "Home")
+                                        {
+                                            <span>🏠 Home</span>
+                                        }
+                                        else if (addr.AddressType == "Work")
+                                        {
 
-            <div class="row g-3">
-                <div class="col-md-6 address-item">
-                    <div class="card h-100 border-0 shadow-sm p-3 position-relative" style="border-radius: 15px;">
-                        <span class="badge bg-success position-absolute top-0 end-0 m-3 rounded-pill">Default</span>
-                        <div class="d-flex align-items-center mb-2">
-                            <div class="bg-light p-2 rounded-circle me-3">
-                                <i class="fa-solid fa-house text-success fs-5"></i>
-                            </div>
-                            <h6 class="fw-bold mb-0">Home</h6>
-                        </div>
-                        <p class="text-muted small mb-3">Old Madras Road, Chennai,<br>PIN 600130</p>
-                        <div class="d-flex gap-2">
-                            <button class="btn btn-sm btn-outline-dark rounded-pill px-3">Edit</button>
-                            <button class="btn btn-sm btn-outline-danger rounded-pill px-3" onclick="confirmDelete(this)">Remove</button>
-                        </div>
-                    </div>
-                </div>
+                                            <span>🏢 Work</span>
+                                        }
+                                        else
+                                        {
 
-                <div class="col-md-6 address-item">
-                    <div class="card h-100 border-0 shadow-sm p-3" style="border-radius: 15px;">
-                        <div class="d-flex align-items-center mb-2">
-                            <div class="bg-light p-2 rounded-circle me-3">
-                                <i class="fa-solid fa-briefcase text-primary fs-5"></i>
+                                            <span>🏨 Hotel</span>
+                                        }
+                                    </span>
+
+                                    <div class="dropdown">
+                                        <i class="fa-solid fa-ellipsis-vertical text-muted cursor-pointer p-2" data-bs-toggle="dropdown"></i>
+                                        <ul class="dropdown-menu shadow border-0">
+                                            <li>
+                                                <a class="dropdown-item text-danger" href="@Url.Action("DeleteAddress", "User", new { id = addr.AddressId })" onclick="return confirm('Are you sure you want to delete this address?')">
+                                                    <i class="fa-solid fa-trash-can me-2"></i>Delete
+                                                </a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+
+                                <h6 class="fw-bold mb-1">@addr.StreetAddress</h6>
+                                <p class="text-muted small mb-1">@addr.Landmark</p>
+                                <p class="text-muted small mb-0">@addr.City, @addr.PostalCode</p>
                             </div>
-                            <h6 class="fw-bold mb-0">Office</h6>
                         </div>
-                        <p class="text-muted small mb-3">Tidel Park, Sholinganallur,<br>PIN 600119</p>
-                        <div class="d-flex gap-2">
-                            <button class="btn btn-sm btn-outline-dark rounded-pill px-3">Edit</button>
-                            <button class="btn btn-sm btn-outline-danger rounded-pill px-3" onclick="confirmDelete(this)">Remove</button>
+                    }
+                }
+                else
+                {
+                    <div class="col-12 text-center py-5">
+                        <div class="mb-3">
+                            <i class="fa-solid fa-map-location-dot fa-4x text-light"></i>
                         </div>
+                        <h5 class="text-muted">No saved addresses found.</h5>
+                        <p class="text-muted small">Click "+ Add New" to add your first delivery location.</p>
                     </div>
-                </div>
+                }
             </div>
         </div>
     </div>
 </div>
 
-<script>
-    function confirmDelete(btn) {
-        if(confirm("Are you sure you want to remove this address?")) {
-            const card = btn.closest('.address-item');
-            card.style.transition = "all 0.4s ease";
-            card.style.opacity = "0";
-            card.style.transform = "scale(0.8)";
-
-            setTimeout(() => {
-                card.remove();
-                // Optionally call an API here to delete from DB
-            }, 400);
-        }
-    }
-</script>
-
 <style>
-    .card {
-        transition: transform 0.2s;
+    .nav-link {
+        padding: 10px 15px;
+        border-radius: 8px;
+        color: #333;
+        transition: all 0.3s ease;
+        display: block;
+        text-decoration: none;
+        margin-bottom: 2px;
     }
 
-        .card:hover {
-            transform: translateY(-5px);
+        .nav-link:hover {
+            background-color: #f0fff4;
+            color: #198754;
+            transform: translateX(5px);
         }
+
+        .nav-link.active {
+            background-color: #198754 !important;
+            color: white !important;
+        }
+
+    .address-card {
+        transition: all 0.3s ease;
+        border: 1px solid #f0f0f0 !important;
+    }
+
+        .address-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 24px rgba(0,0,0,0.08) !important;
+            border-color: #198754 !important;
+        }
+
+    .cursor-pointer {
+        cursor: pointer;
+    }
+
+    .dropdown-item:active {
+        background-color: #f8f9fa;
+        color: #dc3545;
+    }
 </style>
