@@ -1,49 +1,93 @@
-﻿function increase(btn) {
-    const card = btn.closest(".product-card");
-    const qtySpan = card.querySelector(".qty");
+﻿document.addEventListener("DOMContentLoaded", () => {
 
-    let qty = parseInt(qtySpan.innerText);
-    qtySpan.innerText = qty + 1;
+    document.querySelectorAll(".card").forEach(card => {
 
-    updateCartCount(1);
+        refreshQty(card);
 
-    sendToCart(card);
+    });
+
+});
+
+function increase(btn) {
+
+    const card = btn.closest('.card');
+
+    const productId = parseInt(card.dataset.id);
+
+    btn.disabled = true;
+
+    fetch('/Cart/Add', {
+
+        method: 'POST',
+
+        credentials: 'include',
+
+        headers: { 'Content-Type': 'application/json' },
+
+        body: JSON.stringify({ productId })
+
+    })
+
+        .then(res => {
+
+            if (!res.ok) throw "Add failed";
+
+            return refreshQty(card);
+
+        })
+
+        .finally(() => btn.disabled = false);
+
 }
 
 function decrease(btn) {
-    const card = btn.closest(".product-card");
-    const qtySpan = card.querySelector(".qty");
 
-    let qty = parseInt(qtySpan.innerText);
-    if (qty > 0) {
-        qtySpan.innerText = qty - 1;
-        updateCartCount(-1);
-    }
-}
+    const card = btn.closest('.card');
 
-function updateCartCount(change) {
-    const badge = document.getElementById("cart-count");
-    let count = parseInt(badge.innerText) || 0;
+    const productId = parseInt(card.dataset.id);
 
-    count += change;
-    if (count < 0) count = 0;
+    btn.disabled = true;
 
-    badge.innerText = count;
+    fetch('/Cart/Decrease', {
 
-    // small animation
-    badge.style.transform = "scale(1.3)";
-    setTimeout(() => badge.style.transform = "scale(1)", 150);
-}
-
-function sendToCart(card) {
-    const id = card.dataset.id;
-    const name = card.dataset.name;
-    const price = card.dataset.price;
-    const quantity = card.dataset.quantity;
-
-    fetch('/Cart/AddToCart', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-        body: `id=${id}&name=${encodeURIComponent(name)}&quantity=${quantity}&price=${price}`
-    });
+
+        credentials: 'include',
+
+        headers: { 'Content-Type': 'application/json' },
+
+        body: JSON.stringify({ productId })
+
+    })
+
+        .then(res => {
+
+            if (!res.ok) throw "Decrease failed";
+
+            return refreshQty(card);
+
+        })
+
+        .finally(() => btn.disabled = false);
+
+}
+
+function refreshQty(card) {
+
+    const productId = parseInt(card.dataset.id);
+
+    return fetch(`/Cart/GetItemQty?productId=${productId}`, {
+
+        credentials: 'include'
+
+    })
+
+        .then(res => res.json())
+
+        .then(qty => {
+
+            card.querySelector('.qty').innerText = qty;
+
+        });
+
 }

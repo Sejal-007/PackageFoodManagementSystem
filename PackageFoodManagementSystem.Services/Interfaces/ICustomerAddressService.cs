@@ -12,5 +12,6 @@ namespace PackageFoodManagementSystem.Services.Interfaces
         Task AddAsync(CustomerAddress address);
         Task UpdateAsync(CustomerAddress address);
         Task DeleteAsync(int id);
+        Task<dynamic> GetAddressesByUserIdAsync(int value);
     }
 }

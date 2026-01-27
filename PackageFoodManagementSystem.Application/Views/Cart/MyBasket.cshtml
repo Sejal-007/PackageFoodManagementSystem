@@ -1,0 +1,204 @@
+﻿@model PackageFoodManagementSystem.Repository.Models.Cart
+
+@{
+    ViewData["Title"] = "My Basket";
+    decimal subtotal = Model?.CartItems?.Sum(i => i.Quantity * i.Product.Price) ?? 0;
+    decimal deliveryFee = (subtotal > 0 && subtotal < 500) ? 40 : 0;
+}
+
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
+
+<div class="container my-5" id="cartContainer">
+    @if (Model == null || Model.CartItems == null || !Model.CartItems.Any())
+    {
+        <div id="empty-basket" class="text-center py-5">
+            <h2 class="fw-800">Your basket is <span class="text-warning">empty</span></h2>
+            <a href="/Menu/Index" class="btn btn-outline-dark px-5 rounded-pill mt-3">Start Shopping</a>
+        </div>
+    }
+    else
+    {
+        <div class="row g-4">
+            <div class="col-lg-8">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h2 class="fw-800">Your <span class="text-warning">Selection</span> 🥤</h2>
+                    <span class="badge bg-dark rounded-pill px-3">@Model.CartItems.Count Items</span>
+                </div>
+
+                @foreach (var item in Model.CartItems)
+                {
+                    <div class="basket-item card mb-3 p-3 shadow-sm d-flex flex-row align-items-center border-0" data-id="@item.ProductId">
+                        <img src="@item.Product.ImageData" class="rounded-3 me-3" style="width:80px; height:80px; object-fit:cover;">
+
+                        <div class="flex-grow-1">
+                            <h5 class="fw-bold mb-0">@item.Product.ProductName</h5>
+                            <p class="text-muted small mb-2">Unit Price: ₹@item.Product.Price</p>
+
+                            <div class="d-flex align-items-center gap-2">
+                                <button class="qty-btn" onclick="cartDecrease(@item.ProductId)">-</button>
+                                <span class="fw-bold px-2 qty" id="cart-qty-@item.ProductId">@item.Quantity</span> 
+                                <button class="qty-btn" onclick="cartIncrease(@item.ProductId)">+</button>
+                            </div>
+                        </div>
+
+                        <div class="text-end">
+                            <h5 class="fw-800 mb-1">₹@(item.Quantity* item.Product.Price)</h5>
+                            <button class="btn btn-link text-danger p-0" onclick="removeDirect(@item.ProductId)">
+                                <i class="fa-solid fa-trash-can"></i>
+                            </button>
+                        </div>
+                    </div>
+                }
+            </div>
+
+            <div class="col-lg-4">
+                <div class="card p-4 shadow-sm border-0 sticky-top rounded-5" style="top:20px;">
+                    <h4 class="fw-800 mb-4">🛒 Order Summary</h4>
+                    <div class="d-flex justify-content-between mb-2">
+                        <span class="text-muted">Subtotal</span>
+                        <span class="fw-bold">₹@subtotal</span>
+                    </div>
+                    <div class="d-flex justify-content-between mb-2">
+                        <span class="text-muted">Delivery Fee</span>
+                        <span class="fw-bold @(deliveryFee == 0 ? "text-success" : "")">
+                            @(deliveryFee == 0 ? "FREE" : "₹" + deliveryFee)
+                        </span>
+                    </div>
+                    <hr>
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <span class="h5 fw-800 mb-0">Grand Total:</span>
+                        <span class="h3 fw-800 text-dark mb-0">₹@(subtotal + deliveryFee)</span>
+                    </div>
+                    <a href="/Payment/Checkout" class="btn btn-dark w-100 py-3 rounded-pill fw-800 shadow">
+                        Proceed to Checkout <i class="fa-solid fa-arrow-right ms-2"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+<script>
+    function updateQty(productId, change) {
+
+        const url = change > 0 ? '/Cart/Add' : '/Cart/Decrease';
+
+        fetch(url, {
+            method: 'POST',
+            credentials: 'include',
+            headers: {'Content-Type' : 'application/json'},
+            body: JSON.stringify({productId})
+        })
+        .then(res => {
+            if (!res.ok throw "Update failed";
+            location.reload();
+        });
+    }
+
+async function refreshQty(card) {
+    const productId = parseInt(card.dataset.id);
+    
+    const res = await fetch(`/Cart/GetItemQty?productId=${productId}`);
+    const qty = await res.json();
+    
+    if (qty <= 0) {
+        location.reload(); // Reload to remove the item from the list
+    } else {
+        // For the basket page, it is usually better to reload 
+        // to update the Grand Totals and Delivery Fees automatically.
+        location.reload(); 
+    }
+}
+
+// Helper for the trash can button
+async function removeDirect(pId) {
+    await fetch('/Cart/Remove', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ productId: pId })
+    });
+    location.reload();
+}
+</script>
+
+<style>
+    body {
+        background: #f8fafc;
+        font-family: 'Plus Jakarta Sans', sans-serif;
+    }
+
+    .fw-800 {
+        font-weight: 800;
+    }
+
+    .basket-item {
+        background: white;
+        border-radius: 20px;
+        border: 1px solid #f1f5f9;
+        transition: 0.3s;
+    }
+
+        .basket-item:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.05);
+        }
+
+    .qty-btn {
+        width: 32px;
+        height: 32px;
+        border-radius: 8px;
+        border: 1px solid #eee;
+        background: white;
+        font-weight: bold;
+        cursor: pointer;
+    }
+
+        .qty-btn:hover {
+            background: #000;
+            color: #fff;
+            border-color: #000;
+        }
+</style>
+
+<style>
+		body {
+				background: #f8fafc;
+				font-family: 'Plus Jakarta Sans', sans-serif;
+
+	}
+
+		.fw-800 {
+		font-weight: 800;
+	}
+
+		.basket-item {
+				background: white;
+				border-radius: 20px;
+				transition: 0.3s;
+				border: 1px solid #f1f5f9;
+
+	}
+
+			.basket-item:hover {
+					transform: translateY(-3px);
+					box-shadow: 0 10px 20px rgba(0,0,0,0.05);
+
+		}
+
+		.qty-btn {
+				width: 32px;
+				height: 32px;
+				border-radius: 8px;
+				border: 1px solid #eee;
+				background: white;
+				font-weight: bold;
+
+	}
+
+			.qty-btn:hover {
+					background: #000;
+					color: #fff;
+					border-color: #000;
+
+		}
+</style>

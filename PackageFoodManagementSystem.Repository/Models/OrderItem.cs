@@ -8,7 +8,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace PackageFoodManagementSystem.Repository.Models
 
 {
-
+    [Table("OrderItem")]
     public class OrderItem
 
     {
@@ -27,7 +27,7 @@ namespace PackageFoodManagementSystem.Repository.Models
 
         [Required]
 
-        public int ProductID { get; set; }
+        public int ProductId { get; set; }
 
         // Foreign Key to Batch Management
 
