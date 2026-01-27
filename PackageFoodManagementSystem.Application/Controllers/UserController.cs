@@ -1,139 +1,11 @@
-﻿//using Microsoft.AspNetCore.Mvc;
-//using PackageFoodManagementSystem.Repository.Models;
-
-//namespace PackagedFoodFrontend.Controllers
-//{
-//    public class UserController : Controller
-//    {
-//        private static Wallet _wallet = new Wallet { Balance = 0 };
-
-//        public IActionResult MyWallet()
-
-//        {
-
-//            return View(_wallet);
-
-//        }
-
-//        [HttpPost]
-
-//        public IActionResult AddMoney(decimal amount)
-
-//        {
-
-//            _wallet.Balance += amount;
-
-//            return RedirectToAction("MyWallet");
-
-//        }
-
-
-//        public IActionResult Dashboard()
-//        {
-//            return View();
-//        }
-//        public IActionResult MyBasket()
-//        {
-//            return View();
-//        }
-//        public IActionResult MyOrders()
-//        {
-//            return View();
-//        }
-//        public IActionResult ContactUs()
-//        {
-//            return View();
-//        }
-//        public IActionResult Logout() => RedirectToAction("Index", "Home");
-
-//        public IActionResult EditProfile()
-//        {
-//            return View();
-//        }
-//        public IActionResult DeliveryAddress()
-//        {
-//            return View();
-//        }
-//        public IActionResult EmailAddress()
-//        {
-//            return View();
-//        }
-//        public IActionResult SmartBasket()
-//        {
-//            return View();
-//        }
-//        public IActionResult PastOrders()
-//        {
-//            return View();
-//        }
-//        public IActionResult GiftCards()
-//        {
-//            return View();
-//        }
-
-//        public IActionResult AddAddress()
-
-//        {
-
-//            return View();
-
-//        }
-//        public IActionResult Payment()
-//        {
-//            return View();
-//        }
-
-
-//        // Handle Add Address form submission (POST)
-
-//        [HttpPost]
-
-//        public IActionResult AddAddress(string street, string city, string pin)
-
-//        {
-
-//            // For now, just simulate saving the address
-
-//            TempData["Message"] = $"New address added: {street}, {city}, {pin}";
-
-//            return RedirectToAction("DeliveryAddress");
-
-//        }
-//        public IActionResult AddGiftCard()
-//        {
-//            return View();
-//        }
-//        [HttpPost]
-//        public IActionResult AddGiftCard(string cardNumber, decimal amount, string expiry)
-//        {
-//            // For now, just simulate saving the card
-//            TempData["Message"] = $"Gift card added: {cardNumber} ₹{amount} – Expires: {expiry}";
-//            return RedirectToAction("GiftCards");
-//        }
-//        // GET: User/EditAddress/5
-//        public IActionResult EditAddress(int id)
-//        {
-//            // In a real app, you would fetch the address from a database using the 'id'
-//            // For now, we return the view
-//            return View();
-//        }
-
-//        [HttpPost]
-//        public IActionResult UpdateAddress(int id, string street, string city, string pin)
-//        {
-//            // Logic to save changes goes here
-//            TempData["Message"] = "Address updated successfully!";
-//            return RedirectToAction("DeliveryAddress");
-//        }
-
-//    }
-//}
-
-
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using PackageFoodManagementSystem.Repository.Data;
 using PackageFoodManagementSystem.Repository.Models;
 using PackageFoodManagementSystem.Services.Interfaces;
+using System;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace PackagedFoodFrontend.Controllers
@@ -141,63 +13,56 @@ namespace PackagedFoodFrontend.Controllers
     public class UserController : Controller
     {
         private readonly ICustomerAddressService _addressService;
-        private static Wallet _wallet = new Wallet { Balance = 0 };
+        private readonly ApplicationDbContext _context;
 
-        public UserController(ICustomerAddressService addressService)
+        public UserController(ICustomerAddressService addressService, ApplicationDbContext context)
         {
             _addressService = addressService;
+            _context = context;
         }
 
-        private UserAuthentication GetUserFromSession()
+        #region Dashboard & Profile
+
+        public async Task<IActionResult> Dashboard()
         {
-            return new UserAuthentication
-            {
-                Name = HttpContext.Session.GetString("UserName") ?? "Guest",
-                Email = HttpContext.Session.GetString("UserEmail") ?? "",
-                MobileNumber = HttpContext.Session.GetString("UserMobile") ?? ""
-            };
+            int? userId = HttpContext.Session.GetInt32("UserId");
+            if (userId == null) return RedirectToAction("SignIn", "Home");
+
+            // Meta Data
+            ViewBag.FullName = HttpContext.Session.GetString("UserName");
+            ViewBag.Email = HttpContext.Session.GetString("UserEmail");
+            ViewBag.Phone = HttpContext.Session.GetString("UserPhone");
+
+            // FIXED: Comparing int to int directly (No .ToString() needed)
+            ViewBag.TotalOrders = await _context.Orders
+                .CountAsync(o => o.CreatedByUserID == userId.Value);
+
+            var userWallet = await _context.Wallets
+                .FirstOrDefaultAsync(w => w.UserId == userId);
+
+            ViewBag.WalletBalance = userWallet?.Balance ?? 0m;
+
+            return View();
         }
 
-        // Use this if your URL is /User/MyBasket
-        //public IActionResult MyBasket()
-        //{
-        //    return View(GetUserFromSession());
-        //}
-
-        public IActionResult SmartBasket() => View(GetUserFromSession());
-        public IActionResult Dashboard() => View(GetUserFromSession());
-        public IActionResult MyBasket() => View(GetUserFromSession());
-        public IActionResult SmartBasket() => View(GetUserFromSession());
         public IActionResult EditProfile() => View(GetUserFromSession());
-        public IActionResult EmailAddress() => View(GetUserFromSession());
-        public IActionResult MyOrders() => View();
-        public IActionResult PastOrders() => View();
-        public IActionResult Payment() => View();
-        public IActionResult ContactUs() => View();
-        public IActionResult GiftCards() => View();
-
-        public IActionResult Logout()
-        {
-            HttpContext.Session.Clear();
-            return RedirectToAction("Welcome", "Home");
-        }
-
-        public IActionResult MyWallet()
-        {
-            ViewBag.WalletBalance = _wallet.Balance;
-            return View(_wallet);
-        }
 
         [HttpPost]
-        public IActionResult AddMoney(decimal amount)
+        public async Task<IActionResult> UpdateProfile(UserAuthentication model)
         {
-            if (amount > 0)
-            {
-                _wallet.Balance += amount;
-                TempData["Message"] = $"Added ₹{amount} to wallet!";
-            }
-            return RedirectToAction("MyWallet");
+            HttpContext.Session.SetString("UserName", model.Name ?? "Guest");
+            HttpContext.Session.SetString("UserPhone", model.MobileNumber ?? "");
+            // In a real app, call: await _userService.UpdateProfileAsync(model);
+            return Json(new { success = true });
         }
+
+        public IActionResult MyBasket() => View(GetUserFromSession());
+        public IActionResult SmartBasket() => View(GetUserFromSession());
+        public IActionResult MyOrders() => View();
+        public IActionResult PastOrders() => View();
+
+        public IActionResult Payment() => View();
+        public IActionResult GiftCards() => View();
 
         [HttpGet]
         public IActionResult AddGiftCard() => View();
@@ -209,60 +74,144 @@ namespace PackagedFoodFrontend.Controllers
             return RedirectToAction("GiftCards");
         }
 
-        // --- Delivery Address Management ---
+
+
+        #endregion
+
+        #region Wallet & Payments
+
+        public async Task<IActionResult> MyWallet()
+        {
+            int? userId = HttpContext.Session.GetInt32("UserId");
+            if (userId == null) return RedirectToAction("SignIn", "Home");
+
+            var wallet = await _context.Wallets.FirstOrDefaultAsync(w => w.UserId == userId);
+
+            if (wallet == null)
+            {
+                wallet = new Wallet { UserId = userId.Value, Balance = 0 };
+                _context.Wallets.Add(wallet);
+                await _context.SaveChangesAsync();
+            }
+
+            return View(wallet);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> AddMoney(decimal amount)
+        {
+            int? userId = HttpContext.Session.GetInt32("UserId");
+            if (userId == null || amount <= 0) return RedirectToAction("MyWallet");
+
+            var wallet = await _context.Wallets.FirstOrDefaultAsync(w => w.UserId == userId);
+            if (wallet != null)
+            {
+                wallet.Balance += amount;
+                await _context.SaveChangesAsync();
+            }
+
+            return RedirectToAction("MyWallet");
+        }
+
+        #endregion
+
+        #region Address Management
 
         public async Task<IActionResult> DeliveryAddress()
         {
-            // Fetches all addresses to display in the list
-            var addresses = await _addressService.GetAllAsync();
-            return View(addresses);
+            int? userId = HttpContext.Session.GetInt32("UserId");
+            if (userId == null) return RedirectToAction("SignIn", "Home");
+
+            var allAddresses = await _addressService.GetAllAsync();
+            var userAddresses = allAddresses.Where(x => x.CustomerId == userId).ToList();
+
+            return View(userAddresses);
         }
 
         [HttpGet]
-        public IActionResult AddAddress() => View();
-
+        public IActionResult AddAddress()
+        {
+            if (HttpContext.Session.GetInt32("UserId") == null)
+            {
+                return RedirectToAction("SignIn", "Home");
+            }
+            return View();
+        }
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> AddAddress(CustomerAddress address)
         {
+            // 1. Get the real CustomerId from the session
+            int? userId = HttpContext.Session.GetInt32("UserId");
+
+            if (!userId.HasValue)
+            {
+                return RedirectToAction("SignIn", "Home");
+            }
+
+            // 2. Assign the ID before validation
+            address.CustomerId = userId.Value;
+
+            // 3. Remove validation for fields the user doesn't fill manually
+            ModelState.Remove("CustomerId");
+            ModelState.Remove("Customer");
+
             if (ModelState.IsValid)
             {
-                address.CustomerId = HttpContext.Session.GetInt32("UserId") ?? 1;
-                await _addressService.AddAsync(address);
-                return RedirectToAction("DeliveryAddress");
+                try
+                {
+                    // 4. Save to DB
+                    await _addressService.AddAsync(address);
+
+                    TempData["Message"] = "Address saved successfully!";
+
+                    // 5. Success Redirect
+                    return RedirectToAction("DeliveryAddress");
+                }
+                catch (Exception ex)
+                {
+                    ModelState.AddModelError("", "Unable to save to database. Error: " + ex.Message);
+                }
             }
+
+            // If we reach here, something failed; reload the form with errors
+            return View(address);
+        }
+
+
+        public async Task<IActionResult> DeleteAddress(int id)
+        {
+            if (HttpContext.Session.GetInt32("UserId") == null) return RedirectToAction("SignIn", "Home");
+
+            await _addressService.DeleteAsync(id);
+            TempData["Message"] = "Address removed!";
             return RedirectToAction("DeliveryAddress");
         }
 
-        // Action specifically linked to your Modal "Save Address" button
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> SaveAddress(CustomerAddress address)
+        #endregion
+
+        #region Helpers & Auth
+
+        private UserAuthentication GetUserFromSession()
         {
-            // Fixes the 404 error by providing a valid endpoint
-            if (ModelState.IsValid)
+            return new UserAuthentication
             {
-                address.CustomerId = HttpContext.Session.GetInt32("UserId") ?? 1;
-
-                // Saves the new Landmark and AddressType fields
-                await _addressService.AddAsync(address);
-            }
-
-            // Refreshes the page to show the newly added address
-            return RedirectToAction("DeliveryAddress");
+                Id = HttpContext.Session.GetInt32("UserId") ?? 0,
+                Name = HttpContext.Session.GetString("UserName") ?? "Guest",
+                Email = HttpContext.Session.GetString("UserEmail") ?? "",
+                MobileNumber = HttpContext.Session.GetString("UserPhone") ?? ""
+            };
         }
 
-        [HttpPost]
-        public async Task<IActionResult> UpdateProfile(UserAuthentication model)
+        public IActionResult EmailAddress() => View(GetUserFromSession());
+        public IActionResult ContactUs() => View();
+        public IActionResult Logout()
         {
-            // 1. Call your Service/Repository to update the SQL Database
-            // await _userService.UpdateProfileAsync(model); 
-
-            // 2. Update the session so the change shows in the Navbar immediately
-            HttpContext.Session.SetString("UserName", model.Name);
-            HttpContext.Session.SetString("UserMobile", model.MobileNumber);
-
-            return Json(new { success = true });
+            HttpContext.Session.Clear();
+            return RedirectToAction("Welcome", "Home");
         }
+
+        #endregion
     }
 }
