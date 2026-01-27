@@ -111,3 +111,28 @@ document.addEventListener("DOMContentLoaded", () => {
     updateCartBadge();
     syncCardNumbers();
 });
+
+function filterLocations() {
+    let input = document.getElementById('locationSearchInput').value.toLowerCase();
+    let list = document.getElementById('locationList');
+    let items = list.getElementsByClassName('loc-item');
+
+    for (let i = 0; i < items.length; i++) {
+        let name = items[i].querySelector('.loc-name').innerText.toLowerCase();
+        if (name.includes(input)) {
+            items[i].style.display = "flex"; // Show
+        } else {
+            items[i].style.display = "none"; // Hide
+        }
+    }
+}
+
+function updateLocation(name) {
+    document.getElementById('displayLocation').innerText = name;
+    bootstrap.Modal.getInstance(document.getElementById('locationModal')).hide();
+}
+
+function getLocation() {
+    document.getElementById('displayLocation').innerText = "Detecting...";
+    setTimeout(() => { updateLocation("Chennai, Tamil Nadu"); }, 1000);
+}

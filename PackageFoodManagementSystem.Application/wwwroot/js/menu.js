@@ -4,7 +4,9 @@ document.addEventListener("DOMContentLoaded", () => {
     document.querySelectorAll(".qty[data-product-id]").forEach(qty => {
         const productId = qty.dataset.productId;
         refreshQty(productId);
+
     });
+
 });
 
 function increase(btn) {
@@ -21,6 +23,7 @@ function increase(btn) {
 
         method: 'POST'
 
+
     })
 
         .then(res => {
@@ -30,6 +33,7 @@ function increase(btn) {
                 qtySpan.innerText = parseInt(qtySpan.innerText) + 1;
 
             }
+
 
         })
 
@@ -52,6 +56,7 @@ function decrease(btn) {
 
         method: 'POST'
 
+
     })
 
         .then(res => {
@@ -64,6 +69,7 @@ function decrease(btn) {
 
             }
 
+
         })
 
         .finally(() => btn.disabled = false);
@@ -73,10 +79,13 @@ function decrease(btn) {
 
 function refreshQty(productId) {
     return fetch(`/Cart/GetItemQty?productId=${productId}`)
+
         .then(res => res.json())
+
         .then(qty => {
             document
                 .querySelector(`.card[data-product-id="${productId}"] .qty`)
                 .innerText = qty;
         });
+
 }
