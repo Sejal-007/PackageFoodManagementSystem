@@ -29,7 +29,7 @@ public class CartController : Controller
         var cart = _context.Carts
           .Include(c => c.CartItems)
           .ThenInclude(ci => ci.Product)
-          .FirstOrDefault(c => c.UserId == userId && c.IsActive);
+          .FirstOrDefault(c => c.UserAuthenticationId == userId && c.IsActive);
 
         if (cart == null)
         {
@@ -45,19 +45,19 @@ public class CartController : Controller
 
     // ================== ADD / INCREASE ==================
     [HttpPost("Add")]
-    public IActionResult Add([FromBody] CartRequest request)
+    public IActionResult Add(int productId)
     {
         int userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
-        _cartService.AddItem(userId, request.ProductId);
+        _cartService.AddItem(userId, productId);
         return Ok();
     }
 
     // ================== DECREASE ==================
     [HttpPost("Decrease")]
-    public IActionResult Decrease([FromBody] CartRequest request)
+    public IActionResult Decrease(int productId)
     {
         int userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
-        _cartService.DecreaseItem(userId, request.ProductId);
+        _cartService.DecreaseItem(userId, productId);
         return Ok();
     }
     [HttpGet("GetItemQty")]
@@ -67,7 +67,7 @@ public class CartController : Controller
 
         var cart = _context.Carts
           .Include(c => c.CartItems)
-          .FirstOrDefault(c => c.UserId == userId && c.IsActive);
+          .FirstOrDefault(c => c.UserAuthenticationId == userId && c.IsActive);
 
         if (cart == null)
             return Json(0);

@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using PackageFoodManagementSystem.Repository.Data;
 
@@ -11,9 +12,11 @@ using PackageFoodManagementSystem.Repository.Data;
 namespace PackageFoodManagementSystem.Repository.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260123035928_AddColumnToPayment")]
+    partial class AddColumnToPayment
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -241,28 +244,16 @@ namespace PackageFoodManagementSystem.Repository.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("ExpectedDeliveryDate")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
-
                     b.Property<DateTime>("LastUpdateOn")
                         .HasColumnType("datetime2");
 
                     b.Property<DateTime>("OrderDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("OrderNumber")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("OrderStatus")
                         .IsRequired()
                         .HasMaxLength(30)
                         .HasColumnType("nvarchar(30)");
-
-                    b.Property<string>("PaymentStatus")
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<decimal>("TotalAmount")
                         .HasColumnType("decimal(18,2)");
@@ -283,23 +274,14 @@ namespace PackageFoodManagementSystem.Repository.Migrations
                     b.Property<int>("BatchID")
                         .HasColumnType("int");
 
-                    b.Property<string>("CreatedOn")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<DateTime>("ExpiryDate")
                         .HasColumnType("datetime2");
-
-                    b.Property<bool>("IsCancelled")
-                        .HasColumnType("bit");
 
                     b.Property<int>("OrderID")
                         .HasColumnType("int");
 
                     b.Property<int>("ProductId")
                         .HasColumnType("int");
-
-                    b.Property<string>("ProductNameSnapshot")
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("Quantity")
                         .HasColumnType("int");
@@ -317,37 +299,6 @@ namespace PackageFoodManagementSystem.Repository.Migrations
                     b.ToTable("OrderItem");
                 });
 
-            modelBuilder.Entity("PackageFoodManagementSystem.Repository.Models.OrderStatusHistory", b =>
-                {
-                    b.Property<int>("StatusHistoryID")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("StatusHistoryID"));
-
-                    b.Property<int>("ChangedBy")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("ChangedOn")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("OrderID")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Remarks")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Status")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("StatusHistoryID");
-
-                    b.HasIndex("OrderID");
-
-                    b.ToTable("OrderStatusHistories");
-                });
-
             modelBuilder.Entity("PackageFoodManagementSystem.Repository.Models.Payment", b =>
                 {
                     b.Property<int>("PaymentID")
@@ -356,14 +307,8 @@ namespace PackageFoodManagementSystem.Repository.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("PaymentID"));
 
-                    b.Property<string>("AmountPaid")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<int>("BillID")
                         .HasColumnType("int");
-
-                    b.Property<string>("GatewayResponse")
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("OrderID")
                         .HasColumnType("int");
@@ -526,17 +471,6 @@ namespace PackageFoodManagementSystem.Repository.Migrations
                 {
                     b.HasOne("PackageFoodManagementSystem.Repository.Models.Order", "Order")
                         .WithMany("OrderItems")
-                        .HasForeignKey("OrderID")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Order");
-                });
-
-            modelBuilder.Entity("PackageFoodManagementSystem.Repository.Models.OrderStatusHistory", b =>
-                {
-                    b.HasOne("PackageFoodManagementSystem.Repository.Models.Order", "Order")
-                        .WithMany()
                         .HasForeignKey("OrderID")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();

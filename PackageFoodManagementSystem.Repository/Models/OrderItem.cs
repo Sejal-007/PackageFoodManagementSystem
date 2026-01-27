@@ -49,6 +49,12 @@ namespace PackageFoodManagementSystem.Repository.Models
 
         public DateTime ExpiryDate { get; set; }
 
+        public string? ProductNameSnapshot { get; set; }
+
+        public string? CreatedOn { get; set; }
+
+        public bool IsCancelled { get; set; }
+
         // Navigation Properties
 
         [ForeignKey("OrderID")]

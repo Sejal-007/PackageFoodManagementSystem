@@ -1,132 +1,74 @@
-﻿//using Microsoft.AspNetCore.Mvc;
-//using PackageFoodManagementSystem.Repository.Models;
-//using PackageFoodManagementSystem.Services.Interfaces;
-//namespace PackagedFoodFrontend.Controllers // Updated namespace to match Solution Explorer
-
-//{
-
-//    public class PaymentController : Controller
-
-//    {
-
-//        [HttpGet]
-
-//        public IActionResult Checkout()
-
-//        {
-
-//            return View(); // Refers to Views/Payment/Checkout.cshtml
-
-//        }
-
-//        [HttpPost]
-
-//        public IActionResult Confirm(string method)
-
-//        {
-
-//            TempData["PaymentMethod"] = method;
-
-//            return RedirectToAction("Success");
-
-//        }
-
-//        public IActionResult Success()
-
-//        {
-
-//            return View(); // Refers to Views/Payment/Success.cshtml
-
-//        }
-
-//    }
-
-//}
-
-
-
-
-
-
-
-
-
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using PackageFoodManagementSystem.Repository.Data;
+using PackageFoodManagementSystem.Repository.Models;
+using PackageFoodManagementSystem.Services.Interfaces;
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
 
 namespace PackagedFoodFrontend.Controllers
 {
+    [Authorize]
     public class PaymentController : Controller
     {
-        // Simulated database for orders
-        private static List<OrderModel> _orderHistory = new List<OrderModel>();
+        private readonly ApplicationDbContext _context;
 
-        [HttpGet]
-        public IActionResult Checkout() => View();
-
-        [HttpPost]
-        public IActionResult Confirm(string method, string amount)
+        public PaymentController(ApplicationDbContext context)
         {
-            if (string.IsNullOrEmpty(method))
-            {
-                ModelState.AddModelError("", "Please select a payment method.");
-                return View("Checkout");
-            }
-
-            // 1. Create the order based on login and current payment
-            var newOrder = new OrderModel
-            {
-                OrderId = "#" + new Random().Next(10000, 99999),
-                UserName = User.Identity.Name ?? "yayati", // Uses logged-in name
-                Amount = amount ?? "0.00",
-                Method = method,
-                Date = DateTime.Now,
-                Status = "Delivered"
-            };
-
-            // 2. Save order to history
-            _orderHistory.Add(newOrder);
-
-            // 3. Pass data to Success page
-            TempData["PaymentMethod"] = method;
-            TempData["OrderTotal"] = amount;
-
-            return RedirectToAction("Success");
+            _context = context;
         }
 
-        public IActionResult Success()
+        public IActionResult Payment(int orderId)
         {
-            if (TempData["PaymentMethod"] == null)
-            {
-                return RedirectToAction("Checkout");
-            }
+            ViewBag.OrderId = orderId;
             return View();
         }
 
-        [HttpGet]
-        public IActionResult PastOrders()
+        [HttpPost]
+
+        public IActionResult Confirm(int orderId)
+
         {
-            var currentUser = User.Identity.Name ?? "yayati";
-            // Filter list to show only current user's orders
-            var userOrders = _orderHistory
-                .Where(o => o.UserName == currentUser)
-                .OrderByDescending(o => o.Date)
-                .ToList();
 
-            return View(userOrders);
+            var order = _context.Orders.FirstOrDefault(o => o.OrderID == orderId);
+
+            if (order == null)
+
+            {
+
+                return BadRequest("Invalid Order. Order does not exist.");
+
+            }
+
+            var payment = new Payment
+
+            {
+
+                OrderID = orderId,
+
+                PaymentMethod = "COD",
+
+                PaymentStatus = "Success",
+
+                PaymentDate = DateTime.Now,
+
+                TransactionReference = Guid.NewGuid().ToString()
+
+            };
+
+            _context.Payments.Add(payment);
+
+            order.OrderStatus = "Confirmed";
+
+            _context.SaveChanges();
+
+            return RedirectToAction("Success");
+
         }
-    }
 
-    // Simple model for the order
-    public class OrderModel
-    {
-        public string OrderId { get; set; }
-        public string UserName { get; set; }
-        public string Amount { get; set; }
-        public string Method { get; set; }
-        public DateTime Date { get; set; }
-        public string Status { get; set; }
+
+
     }
 }
