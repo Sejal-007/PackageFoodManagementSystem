@@ -28,6 +28,7 @@ namespace PackageFoodManagementSystem.Repository.Models
         [Required]
 
         public int ProductId { get; set; }
+        public Product Product { get; set; }
 
         // Foreign Key to Batch Management
 
@@ -60,7 +61,6 @@ namespace PackageFoodManagementSystem.Repository.Models
         [ForeignKey("OrderID")]
 
         public Order Order { get; set; }
-
     }
 
 }
