@@ -41,7 +41,6 @@ function decrease(btn) {
 }
 
 function saveToLocalStorage(card, qty) {
-    // 1. Get existing cart or empty array
     let cart = JSON.parse(localStorage.getItem("myCart")) || [];
 
     const productId = card.dataset.id;
@@ -53,22 +52,18 @@ function saveToLocalStorage(card, qty) {
         qty: qty
     };
 
-    // 2. Check if this specific product is already in the array
     const existingItemIndex = cart.findIndex(item => item.id === productId);
 
     if (existingItemIndex > -1) {
-        // If it exists, update its quantity or remove it if qty is 0
         if (qty > 0) {
             cart[existingItemIndex].qty = qty;
         } else {
             cart.splice(existingItemIndex, 1);
         }
     } else if (qty > 0) {
-        // 3. If it's a NEW item, PUSH it so it doesn't overlap
         cart.push(itemData);
     }
 
-    // 4. Save the full list back to memory
     localStorage.setItem("myCart", JSON.stringify(cart));
 }
 
@@ -77,12 +72,9 @@ function updateCartBadge() {
     const badge = document.getElementById("cart-count");
 
     if (badge) {
-        // FIXED: Sum all quantities (3 chips + 3 juices = 6)
         const totalItems = cart.reduce((sum, item) => sum + parseInt(item.qty), 0);
-
         badge.innerText = totalItems;
 
-        // Start from 0: Hide if empty, show if > 0
         if (totalItems > 0) {
             badge.style.display = "flex";
         } else {
@@ -91,26 +83,21 @@ function updateCartBadge() {
     }
 }
 
-// Sync the numbers on the cards when you return to the page
 function syncCardNumbers() {
     const cart = JSON.parse(localStorage.getItem("myCart")) || [];
     document.querySelectorAll(".product-card").forEach(card => {
         const productId = card.dataset.id;
         const qtySpan = card.querySelector(".qty");
-        const item = cart.find(i => i.id === productId);
-        if (item) {
-            qtySpan.innerText = item.qty;
-        } else {
-            qtySpan.innerText = "0";
+
+        // Added safety check to prevent "null" error if .qty is missing
+        if (qtySpan) {
+            const item = cart.find(i => i.id === productId);
+            qtySpan.innerText = item ? item.qty : "0";
         }
     });
 }
 
-// Run when page loads
-document.addEventListener("DOMContentLoaded", () => {
-    updateCartBadge();
-    syncCardNumbers();
-});
+// --- Location Logic ---
 
 function filterLocations() {
     let input = document.getElementById('locationSearchInput').value.toLowerCase();
@@ -120,9 +107,9 @@ function filterLocations() {
     for (let i = 0; i < items.length; i++) {
         let name = items[i].querySelector('.loc-name').innerText.toLowerCase();
         if (name.includes(input)) {
-            items[i].style.display = "flex"; // Show
+            items[i].style.display = "flex";
         } else {
-            items[i].style.display = "none"; // Hide
+            items[i].style.display = "none";
         }
     }
 }
@@ -136,3 +123,54 @@ function getLocation() {
     document.getElementById('displayLocation').innerText = "Detecting...";
     setTimeout(() => { updateLocation("Chennai, Tamil Nadu"); }, 1000);
 }
+
+// --- Combined Initialization ---
+document.addEventListener("DOMContentLoaded", () => {
+    // 1. Initialize Cart
+    updateCartBadge();
+    syncCardNumbers();
+
+    // 2. Initialize Profile Edit Logic (Fix for the 'null' error)
+    const editToggle = document.getElementById('editToggle');
+    const updateBtn = document.getElementById('btnUpdate');
+    const inputs = document.querySelectorAll('#profileForm input');
+
+    if (editToggle && updateBtn) {
+        editToggle.addEventListener('click', () => {
+            const isEditing = updateBtn.classList.toggle('d-none');
+
+            // UI text and style changes
+            editToggle.innerHTML = isEditing ?
+                '<i class="fa-solid fa-pen-to-square me-1"></i> Edit Mode' :
+                '<i class="fa-solid fa-xmark me-1"></i> Cancel';
+
+            editToggle.classList.toggle('btn-outline-danger', !isEditing);
+
+            // Toggle input states
+            inputs.forEach(input => {
+                input.readOnly = isEditing;
+                input.classList.toggle('bg-light', isEditing);
+            });
+        });
+
+        updateBtn.addEventListener('click', function () {
+            const btn = this;
+            const originalContent = btn.innerHTML;
+
+            btn.disabled = true;
+            btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span> Saving...';
+
+            setTimeout(() => {
+                btn.innerHTML = '<i class="fa-solid fa-check-double me-2"></i> Profile Updated';
+                btn.className = "btn btn-primary px-5 py-2 rounded-pill fw-bold shadow-sm";
+
+                setTimeout(() => {
+                    btn.innerHTML = originalContent;
+                    btn.className = "btn btn-success px-5 py-2 rounded-pill fw-bold shadow-sm d-none";
+                    btn.disabled = false;
+                    editToggle.click(); // Reset UI to view mode
+                }, 2000);
+            }, 1200);
+        });
+    }
+});
