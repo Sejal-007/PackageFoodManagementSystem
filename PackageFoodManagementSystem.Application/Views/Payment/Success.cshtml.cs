@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
-namespace PackageFoodManagementSystem.Application.Views.Order
+namespace PackageFoodManagementSystem.Application.Views.Payment
 {
     public class SuccessModel : PageModel
     {

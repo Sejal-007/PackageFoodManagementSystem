@@ -1,7 +1,10 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace PackageFoodManagementSystem.Application.Controllers
 {
+
+    [Authorize(Roles = "StoreManager")]
     public class StoreManagerController : Controller
     {
     //    [HttpPost]

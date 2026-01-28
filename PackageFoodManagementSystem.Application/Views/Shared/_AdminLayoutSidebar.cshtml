@@ -34,8 +34,12 @@
             </a>
         </li>
         <li>
-            <a asp-controller="Home" asp-action="SignIn">🚪 Log Out</a>
+            <a asp-controller="Home" asp-action="Logout"
+               class="logout-link"
+               onclick="return confirm('Do you want to logout?');">
+                🚪 Log Out
             </a>
+
         </li>
 
     </ul>
