@@ -210,10 +210,24 @@
             <li onclick="location.href='/User/MyOrders'"><i class="fa-solid fa-shopping-bag"></i> My Orders</li>
             <li onclick="location.href='/User/ContactUs'"><i class="fa-solid fa-headset"></i> Contact Us</li>
             <li class="logout mt-2 border-top">
-                <a href="/Home/SignIn" style="text-decoration: none; color: inherit; display: block; padding: 5px 0;">
-                    <i class="fa-solid fa-right-from-bracket"></i> @(User.Identity.IsAuthenticated ? "Logout" : "Login")
-                </a>
+                @if (User.Identity.IsAuthenticated)
+                {
+                    <a asp-controller="Home" asp-action="Logout"
+                       style="text-decoration: none; color: inherit; display: block; padding: 5px 0;"
+                       onclick="return confirm('Do you want to logout?');">
+                        <i class="fa-solid fa-right-from-bracket"></i> Logout
+                    </a>
+                }
+                else
+                {
+                    <a asp-controller="Home" asp-action="SignIn"
+                       style="text-decoration: none; color: inherit; display: block; padding: 5px 0;">
+                        <i class="fa-solid fa-right-from-bracket"></i> Login
+                    </a>
+                }
             </li>
+
+
         </ul>
     </div>
 

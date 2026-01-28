@@ -58,11 +58,12 @@
             </a>
         </li>
         <li>
-            <a asp-controller="Home" asp-action="SignIn"
-               class="@(currentAction == "SignIn" ? "active" : "")">
-
+            <a asp-controller="Home" asp-action="Logout"
+               class="logout-link"
+               onclick="return confirm('Do you want to logout?');">
                 🚪 Log Out
             </a>
+
         </li>
     </ul>
 
