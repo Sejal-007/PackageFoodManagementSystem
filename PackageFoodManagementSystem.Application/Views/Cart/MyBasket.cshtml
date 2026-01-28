@@ -83,47 +83,47 @@
 </div>
 
 <script>
-    function updateQty(productId, change) {
-
+    // Global updateQty used by + and - buttons
+       function updateQty(productId, change) {
         const url = change > 0 ? '/Cart/Add' : '/Cart/Decrease';
 
-        fetch(url, {
+        // Pass productId as a query string in the URL
+        fetch(`${url}?productId=${productId}`, {
             method: 'POST',
-            credentials: 'include',
-            headers: {'Content-Type' : 'application/json'},
-            body: JSON.stringify({productId})
+            credentials: 'include'
         })
         .then(res => {
-            if (!res.ok throw "Update failed";
-            location.reload();
+            if (!res.ok) throw new Error("Server error");
+            updateCartBadge(); // Refresh navbar
+            location.reload(); // Refresh totals on page
+        })
+        .catch(err => console.error(err));
+    }
+
+    function increase(btn) {
+        const productId = btn.closest('.basket-item').dataset.id;
+        updateQty(productId, 1);
+    }
+
+    function decrease(btn) {
+        const productId = btn.closest('.basket-item').dataset.id;
+        updateQty(productId, -1);
+    }
+
+    async function removeDirect(pId) {
+        await fetch('/Cart/Remove', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ productId: pId })
         });
-    }
 
-async function refreshQty(card) {
-    const productId = parseInt(card.dataset.id);
-    
-    const res = await fetch(`/Cart/GetItemQty?productId=${productId}`);
-    const qty = await res.json();
-    
-    if (qty <= 0) {
-        location.reload(); // Reload to remove the item from the list
-    } else {
-        // For the basket page, it is usually better to reload 
-        // to update the Grand Totals and Delivery Fees automatically.
-        location.reload(); 
+        if (typeof updateCartBadge === 'function') {
+            updateCartBadge();
+        }
+        location.reload();
     }
-}
-
-// Helper for the trash can button
-async function removeDirect(pId) {
-    await fetch('/Cart/Remove', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ productId: pId })
-    });
-    location.reload();
-}
 </script>
+
 
 <style>
     body {
@@ -164,45 +164,3 @@ async function removeDirect(pId) {
         }
 </style>
 
-<style>
-		body {
-				background: #f8fafc;
-				font-family: 'Plus Jakarta Sans', sans-serif;
-
-	}
-
-		.fw-800 {
-		font-weight: 800;
-	}
-
-		.basket-item {
-				background: white;
-				border-radius: 20px;
-				transition: 0.3s;
-				border: 1px solid #f1f5f9;
-
-	}
-
-			.basket-item:hover {
-					transform: translateY(-3px);
-					box-shadow: 0 10px 20px rgba(0,0,0,0.05);
-
-		}
-
-		.qty-btn {
-				width: 32px;
-				height: 32px;
-				border-radius: 8px;
-				border: 1px solid #eee;
-				background: white;
-				font-weight: bold;
-
-	}
-
-			.qty-btn:hover {
-					background: #000;
-					color: #fff;
-					border-color: #000;
-
-		}
-</style>

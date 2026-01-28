@@ -163,7 +163,10 @@
                     <li class="nav-item me-4">
                         <a class="nav-link position-relative" asp-controller="Cart" asp-action="MyBasket">
                             <i class="fa-solid fa-cart-shopping fa-lg text-orange"></i>
-                            <span id="cart-count" class="badge bg-danger rounded-circle position-absolute top-0 start-100 translate-middle" style="display: none; font-size: 0.7rem;">0</span>
+                            <span id="cart-count" class="badge bg-danger rounded-circle position-absolute top-0 start-100 translate-middle"
+                                  style="display: none; font-size: 0.7rem; min-width: 18px; height: 18px;">
+                                0
+                            </span>
                         </a>
                     </li>
                     <li class="nav-item">
@@ -280,20 +283,23 @@
 
     <script>
         // CART LOGIC
+                // Replace the script block in your _Layout.cshtml with this:
+                       // Ensure this is NOT inside another function. It must be at the top level.
         function updateCartBadge() {
-            const cart = JSON.parse(localStorage.getItem("myCart")) || [];
-            const totalItems = cart.reduce((sum, item) => sum + parseInt(item.qty || 0), 0);
-            const badge = document.getElementById("cart-count");
-            if (badge) {
-                if (totalItems > 0) {
-                    badge.innerText = totalItems;
-                    badge.style.display = "block";
-                } else {
-                    badge.style.display = "none";
-                }
-            }
+            fetch('/Cart/GetTotalItems')
+                .then(res => res.json())
+                .then(count => {
+                    const badge = document.getElementById("cart-count");
+                    if (badge) {
+                        badge.innerText = count;
+                        badge.style.display = count > 0 ? "block" : "none";
+                    }
+                })
+                .catch(err => console.warn("Badge sync error:", err));
         }
 
+        // Only the INITIAL call goes inside the listener
+        document.addEventListener("DOMContentLoaded", updateCartBadge);
         // USER MENU LOGIC
         function openUserMenu() {
             document.getElementById('userPopup').style.display = 'block';
