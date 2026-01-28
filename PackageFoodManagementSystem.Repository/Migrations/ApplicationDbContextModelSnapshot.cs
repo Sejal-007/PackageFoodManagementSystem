@@ -24,22 +24,29 @@ namespace PackageFoodManagementSystem.Repository.Migrations
 
             modelBuilder.Entity("PackageFoodManagementSystem.Repository.Models.Batch", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<int>("BatchId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("BatchNumber")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("BatchId"));
 
                     b.Property<DateTime>("ExpiryDate")
                         .HasColumnType("datetime2");
 
-                    b.HasKey("Id");
+                    b.Property<DateTime>("ManufactureDate")
+                        .HasColumnType("datetime2");
 
-                    b.ToTable("Batches");
+                    b.Property<int>("ProductId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Quantity")
+                        .HasColumnType("int");
+
+                    b.HasKey("BatchId");
+
+                    b.HasIndex("ProductId");
+
+                    b.ToTable("Batch");
                 });
 
             modelBuilder.Entity("PackageFoodManagementSystem.Repository.Models.Bill", b =>
@@ -71,6 +78,9 @@ namespace PackageFoodManagementSystem.Repository.Migrations
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<decimal>("TaxAmount")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("TotalAmount")
                         .HasColumnType("decimal(18,2)");
 
                     b.HasKey("BillID");
@@ -396,6 +406,17 @@ namespace PackageFoodManagementSystem.Repository.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("UserAuthentications");
+                });
+
+            modelBuilder.Entity("PackageFoodManagementSystem.Repository.Models.Batch", b =>
+                {
+                    b.HasOne("PackageFoodManagementSystem.Repository.Models.Product", "Product")
+                        .WithMany()
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Product");
                 });
 
             modelBuilder.Entity("PackageFoodManagementSystem.Repository.Models.Bill", b =>

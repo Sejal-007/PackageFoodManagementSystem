@@ -12,8 +12,6 @@ namespace PackageFoodManagementSystem.Repository.Interfaces
         Task AddBatchAsync(Batch batch);
         Task UpdateBatchAsync(Batch batch);
         Task DeleteBatchAsync(int id);
-
-        // This satisfies the BatchRepository error from earlier
         Task SaveChangesAsync();
     }
 }

@@ -2,10 +2,9 @@
 using PackageFoodManagementSystem.Repository.Data;
 using PackageFoodManagementSystem.Repository.Interfaces;
 using PackageFoodManagementSystem.Repository.Models;
-using System;
 using System.Collections.Generic;
-using System.Threading.Tasks;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace PackageFoodManagementSystem.Repository.Implementations
 {
@@ -20,20 +19,24 @@ namespace PackageFoodManagementSystem.Repository.Implementations
 
         public async Task<IEnumerable<Batch>> GetAllBatchesAsync()
         {
-            return await _context.Batches.Include(b => b.Product).ToListAsync();
+            // Includes the Product details so you can see the Product Name in the list
+            return await _context.Batches
+                .Include(b => b.Product)
+                .ToListAsync();
         }
 
         public async Task<Batch?> GetBatchByIdAsync(int id)
         {
-            // Changed back to .Id because your Batch model likely uses 'Id'
-            return await _context.Batches.Include(b => b.Product)
-                                         .FirstOrDefaultAsync(b => b.Id == id);
+            return await _context.Batches
+                .Include(b => b.Product)
+                .FirstOrDefaultAsync(b => b.BatchId == id);
         }
 
         public async Task<IEnumerable<Batch>> GetBatchesByProductIdAsync(int productId)
         {
-            // Keeping ProductId here because the error confirmed Product uses ProductId
-            return await _context.Batches.Where(b => b.Product.ProductId == productId).ToListAsync();
+            return await _context.Batches
+                .Where(b => b.ProductId == productId)
+                .ToListAsync();
         }
 
         public async Task AddBatchAsync(Batch batch)

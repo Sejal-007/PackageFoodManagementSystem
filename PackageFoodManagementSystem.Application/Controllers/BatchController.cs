@@ -1,17 +1,24 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using PackageFoodManagementSystem.Repository.Models;
 using PackageFoodManagementSystem.Services.Interfaces;
+using PackageFoodManagementSystem.Repository.Data;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace PackageFoodManagementSystem.Controllers
 {
     public class BatchController : Controller
     {
         private readonly IBatchService _batchService;
+        private readonly IProductService _productService; // Added to fetch products for the dropdown
+        private readonly ApplicationDbContext _context;
 
-        public BatchController(IBatchService batchService)
+        public BatchController(IBatchService batchService, IProductService productService, ApplicationDbContext context)
         {
             _batchService = batchService;
+            _productService = productService;
+            _context = context;
         }
 
         // GET: Batch/Index
@@ -21,8 +28,30 @@ namespace PackageFoodManagementSystem.Controllers
             return View(batches);
         }
 
+        // GET: Batch/Create
+        public IActionResult Create()
+        {
+            // Fetch products so the user can select which product this batch belongs to
+            ViewBag.Products = _productService.GetAllProducts();
+            return View();
+        }
+
+        // POST: Batch/Create
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Create(Batch batch)
+        {
+            if (ModelState.IsValid)
+            {
+                // Using the service to maintain consistency across the app
+                await _batchService.AddBatchAsync(batch);
+                return RedirectToAction(nameof(Index));
+            }
+            ViewBag.Products = _productService.GetAllProducts();
+            return View(batch);
+        }
+
         // POST: Batch/CreateAjax
-        // This handles the AJAX request from your AddProduct.cshtml modal
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> CreateAjax([FromBody] Batch batch)
@@ -34,14 +63,33 @@ namespace PackageFoodManagementSystem.Controllers
 
             if (ModelState.IsValid)
             {
-                // Set initial logic: Remaining quantity starts equal to Initial Quantity
-                batch.RemainingQuantity = batch.InitialQuantity;
-
                 await _batchService.AddBatchAsync(batch);
-                return Json(new { success = true, message = "Product saved successfully!" });
+                return Json(new { success = true, message = "Batch saved successfully!" });
             }
 
             return Json(new { success = false, message = "Validation failed.", errors = ModelState });
+        }
+
+        // POST: Batch/Edit
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Edit(int id, Batch batch)
+        {
+            if (id != batch.BatchId) return NotFound();
+
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    await _batchService.UpdateBatchAsync(batch);
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    return NotFound();
+                }
+                return RedirectToAction(nameof(Index));
+            }
+            return View(batch);
         }
 
         // POST: Batch/EditAjax

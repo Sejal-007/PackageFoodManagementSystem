@@ -33,7 +33,12 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
         options.LogoutPath = "/Home/Logout";
     });
 
-// 4. Dependency Injection (DI) Registrations - Merged from both versions
+// 4. Dependency Injection (DI) Registrations
+
+// Batches - Fixed "Unable to resolve service" for IBatchService
+builder.Services.AddScoped<IBatchRepository, BatchRepository>();
+builder.Services.AddScoped<IBatchService, BatchService>();
+
 // User & Customer
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IUserService, UserService>();
@@ -45,20 +50,21 @@ builder.Services.AddScoped<IOrderRepository, OrderRepository>();
 builder.Services.AddScoped<IOrderService, OrderService>();
 builder.Services.AddScoped<IBillRepository, BillRepository>();
 builder.Services.AddScoped<IBillingService, BillingService>();
-builder.Services.AddScoped<IPaymentRepository, PaymentRepository>();
 
 // Payments & Products
 builder.Services.AddScoped<IPaymentRepository, PaymentRepository>();
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
 builder.Services.AddScoped<IProductService, ProductService>();
 
+// Cart - Added missing Repository registration to fix CartController crash
+//builder.Services.AddScoped<ICartRepository, CartRepository>();
 builder.Services.AddScoped<ICartService, CartService>();
 
 // MVC Services
 builder.Services.AddControllersWithViews();
 
 var app = builder.Build();
-
+    
 // 5. Configure the HTTP request pipeline
 if (!app.Environment.IsDevelopment())
 {

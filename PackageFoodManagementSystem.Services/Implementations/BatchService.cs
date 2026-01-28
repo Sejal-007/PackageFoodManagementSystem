@@ -1,12 +1,11 @@
 ﻿using PackageFoodManagementSystem.Repository.Interfaces;
 using PackageFoodManagementSystem.Repository.Models;
-using PackageFoodManagementSystem.Services.Interfaces; // Added this to fix the error
+using PackageFoodManagementSystem.Services.Interfaces;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace PackageFoodManagementSystem.Services.Implementations
 {
-    // Now the compiler will recognize that BatchService implements IBatchService
     public class BatchService : IBatchService
     {
         private readonly IBatchRepository _batchRepository;
@@ -16,38 +15,42 @@ namespace PackageFoodManagementSystem.Services.Implementations
             _batchRepository = batchRepository;
         }
 
-        public Task AddBatchAsync(Batch batch)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task DeleteBatchAsync(int id)
-        {
-            throw new NotImplementedException();
-        }
-
         public async Task<IEnumerable<Batch>> GetAllBatchesAsync()
         {
             return await _batchRepository.GetAllBatchesAsync();
         }
 
-        public Task UpdateBatchAsync(Batch batch)
+        public async Task AddBatchAsync(Batch batch)
         {
-            throw new NotImplementedException();
+            // Adding the batch to the repository
+            await _batchRepository.AddBatchAsync(batch);
+
+            // Crucial: Ensure SaveChanges() is called in the Repository 
+            // or here if your unit of work pattern requires it.
+            await _batchRepository.SaveChangesAsync();
         }
 
-        public async Task UpdateRemainingQuantity(int batchId, int quantitySold)
+        public async Task UpdateBatchAsync(Batch batch)
+        {
+            await _batchRepository.UpdateBatchAsync(batch);
+        }
+
+        public async Task DeleteBatchAsync(int id)
+        {
+            await _batchRepository.DeleteBatchAsync(id);
+        }
+
+        // Replaced UpdateRemainingQuantity with this method to match IBatchService
+        public async Task UpdateQuantity(int batchId, int quantitySold)
         {
             var batch = await _batchRepository.GetBatchByIdAsync(batchId);
             if (batch != null)
             {
-                batch.RemainingQuantity -= quantitySold;
+                batch.Quantity -= quantitySold;
 
-                // Set status to OutOfStock if quantity reaches 0 or less
-                if (batch.RemainingQuantity <= 0)
+                if (batch.Quantity < 0)
                 {
-                    batch.RemainingQuantity = 0; // Prevent negative stock
-                    batch.Status = BatchStatus.OutOfStock;
+                    batch.Quantity = 0; // Prevent negative stock
                 }
 
                 await _batchRepository.UpdateBatchAsync(batch);

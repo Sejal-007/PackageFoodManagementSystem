@@ -52,7 +52,7 @@ namespace PackageFoodManagementSystem.Repository.Models
         public Order Order { get; set; }
 
         public Payment Payment { get; set; }
-
+        public decimal TotalAmount { get; set; }
     }
 
 }
