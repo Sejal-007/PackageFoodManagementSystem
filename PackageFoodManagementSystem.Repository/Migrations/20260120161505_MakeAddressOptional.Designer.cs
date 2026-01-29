@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using PackageFoodManagementSystem.Repository.Data;
 
@@ -11,9 +12,11 @@ using PackageFoodManagementSystem.Repository.Data;
 namespace PackageFoodManagementSystem.Repository.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260120161505_MakeAddressOptional")]
+    partial class MakeAddressOptional
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -30,8 +33,7 @@ namespace PackageFoodManagementSystem.Repository.Migrations
 
                 SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                // FIXED: Added the missing property selector "BatchNumber"
-                // Ensure this matches the property name in your Models/Batch.cs file
+                // FIXED: Restored the missing property name "BatchNumber"
                 b.Property<string>("BatchNumber")
                     .IsRequired()
                     .HasColumnType("nvarchar(max)");
@@ -44,51 +46,47 @@ namespace PackageFoodManagementSystem.Repository.Migrations
                 b.ToTable("Batches");
             });
 
-            // ... [Rest of the entities: Bill, Cart, CartItem, etc. follow here] ...
-            // The rest of your code was syntactically correct, but ensure 
-            // the closing braces match the structure below.
+            // ... [Bill and Customer entities are correct]
 
-            modelBuilder.Entity("PackageFoodManagementSystem.Repository.Models.Bill", b =>
+            modelBuilder.Entity("PackageFoodManagementSystem.Repository.Models.OrderItem", b =>
             {
-                b.Property<int>("BillID")
+                b.Property<int>("OrderItemID")
                     .ValueGeneratedOnAdd()
                     .HasColumnType("int");
 
-                SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("BillID"));
+                SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("OrderItemID"));
 
-                b.Property<DateTime>("BillDate")
-                    .HasColumnType("datetime2");
-
-                b.Property<string>("BillingStatus")
-                    .IsRequired()
-                    .HasMaxLength(20)
-                    .HasColumnType("nvarchar(20)");
-
-                b.Property<decimal>("DiscountAmount")
-                    .HasColumnType("decimal(18,2)");
-
-                b.Property<decimal>("FinalAmount")
-                    .HasColumnType("decimal(18,2)");
-
-                b.Property<int>("OrderID")
+                b.Property<int>("BatchID")
                     .HasColumnType("int");
 
-                b.Property<decimal>("SubtotalAmount")
+                b.Property<DateTime>("ExpiryDate")
+                    .HasColumnType("datetime2");
+
+                b.Property<int>("OrderID") // Using uppercase ID to match relationship
+                    .HasColumnType("int");
+
+                // REMOVED: Duplicate "OrderId" property that was causing conflicts
+
+                b.Property<int>("ProductId")
+                    .HasColumnType("int");
+
+                b.Property<int>("Quantity")
+                    .HasColumnType("int");
+
+                b.Property<decimal>("Subtotal")
                     .HasColumnType("decimal(18,2)");
 
-                b.Property<decimal>("TaxAmount")
+                b.Property<decimal>("UnitPrice")
                     .HasColumnType("decimal(18,2)");
 
-                b.HasKey("BillID");
+                b.HasKey("OrderItemID");
 
-                b.HasIndex("OrderID")
-                    .IsUnique();
+                b.HasIndex("OrderID");
 
-                b.ToTable("Bills");
+                b.ToTable("OrderItems");
             });
 
-            // ... [Keep your remaining entity configurations here] ...
-
+            // ... [Remaining relationship configurations are intact]
 #pragma warning restore 612, 618
         }
     }

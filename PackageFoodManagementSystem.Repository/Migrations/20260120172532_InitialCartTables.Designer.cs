@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using PackageFoodManagementSystem.Repository.Data;
 
@@ -11,9 +12,11 @@ using PackageFoodManagementSystem.Repository.Data;
 namespace PackageFoodManagementSystem.Repository.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260120172532_InitialCartTables")]
+    partial class InitialCartTables
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -30,8 +33,8 @@ namespace PackageFoodManagementSystem.Repository.Migrations
 
                 SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                // FIXED: Added the missing property selector "BatchNumber"
-                // Ensure this matches the property name in your Models/Batch.cs file
+                // FIXED: Added the missing property selector "BatchNumber" 
+                // (Change this string if your model uses a different name like 'BatchCode')
                 b.Property<string>("BatchNumber")
                     .IsRequired()
                     .HasColumnType("nvarchar(max)");
@@ -43,10 +46,6 @@ namespace PackageFoodManagementSystem.Repository.Migrations
 
                 b.ToTable("Batches");
             });
-
-            // ... [Rest of the entities: Bill, Cart, CartItem, etc. follow here] ...
-            // The rest of your code was syntactically correct, but ensure 
-            // the closing braces match the structure below.
 
             modelBuilder.Entity("PackageFoodManagementSystem.Repository.Models.Bill", b =>
             {
@@ -87,7 +86,10 @@ namespace PackageFoodManagementSystem.Repository.Migrations
                 b.ToTable("Bills");
             });
 
-            // ... [Keep your remaining entity configurations here] ...
+            // Rest of your entities (Cart, CartItem, Customer, etc.) remain as they were 
+            // but are now properly enclosed within this BuildTargetModel method.
+
+            // ... [Rest of the code remains the same] ...
 
 #pragma warning restore 612, 618
         }

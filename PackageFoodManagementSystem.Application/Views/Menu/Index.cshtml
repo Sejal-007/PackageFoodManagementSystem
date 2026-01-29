@@ -1,6 +1,31 @@
 ﻿@model IEnumerable<PackageFoodManagementSystem.Repository.Models.Product>
 @section Scripts {
     <script src="~/js/menu.js"></script>
+
+    @* JavaScript to handle Modal Data Population *@
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const productModal = document.getElementById('productModal');
+            if (productModal) {
+                productModal.addEventListener('show.bs.modal', function (event) {
+                    // Button that triggered the modal
+                    const button = event.relatedTarget;
+
+                    // Extract info from data-* attributes
+                    const name = button.getAttribute('data-name');
+                    const desc = button.getAttribute('data-desc');
+                    const price = button.getAttribute('data-price');
+                    const image = button.getAttribute('data-image');
+
+                    // Update the modal's content
+                    document.getElementById('modalProductName').textContent = name;
+                    document.getElementById('modalProductDesc').textContent = desc || "No description available.";
+                    document.getElementById('modalProductPrice').textContent = "₹" + price;
+                    document.getElementById('modalProductImage').src = image || "/images/default-food.png";
+                });
+            }
+        });
+    </script>
 }
 
 <div class="container mt-5">
@@ -69,17 +94,18 @@
                                 @item.Category
                             </small>
                             <h6 class="fw-bold mb-1">@item.ProductName</h6>
-
                             <p class="text-success fw-bold mb-2">₹@item.Price</p>
 
-                            @* --- View Details Button Added Here --- *@
-                            <div class="mb-3">
-                                <a asp-action="Details" asp-route-id="@item.ProductId"
-                                   class="btn btn-sm text-white"
-                                   style="background-color: #FF6B00; border-radius: 10px; font-size: 0.8rem;">
-                                    View Details
-                                </a>
-                            </div>
+                            @* --- Updated View Details Button --- *@
+                            <button class="btn btn-orange text-white view-details-btn mb-2 w-100 rounded-pill"
+                                    data-name="@item.ProductName"
+                                    @* data-desc="@item.Description" *@
+                                    data-price="@item.Price"
+                                    data-image="@(string.IsNullOrEmpty(item.ImageData) ? "/images/default-food.png" : item.ImageData)"
+                                    data-bs-toggle="modal"
+                                    data-bs-target="#productModal">
+                                View Details
+                            </button>
 
                             <div class="d-flex justify-content-center mb-2">
                                 <div class="d-flex align-items-center bg-light rounded-pill p-1 border">
@@ -106,6 +132,26 @@
     </div>
 </div>
 
+@* --- Product Details Modal --- *@
+<div class="modal fade" id="productModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow" style="border-radius: 15px;">
+            <div class="modal-header border-0 pb-0">
+                <h5 class="modal-title fw-bold" id="modalProductName"></h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body text-center">
+                <img id="modalProductImage" src="" class="img-fluid rounded mb-3 shadow-sm" style="max-height: 250px; width: 100%; object-fit: cover; border-radius: 15px;" alt="Product">
+                <p id="modalProductDesc" class="text-muted px-3"></p>
+                <h4 id="modalProductPrice" class="fw-bold text-orange"></h4>
+            </div>
+            <div class="modal-footer border-0 justify-content-center pb-4">
+                <button type="button" class="btn btn-secondary rounded-pill px-4" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <style>
     .text-orange {
         color: #FF6B00;
@@ -120,13 +166,18 @@
             box-shadow: 0 10px 20px rgba(0,0,0,0.1) !important;
         }
 
-    /* Style for the button if you prefer standard bootstrap orange */
     .btn-orange {
         background-color: #FF6B00;
         border: none;
+        transition: background-color 0.2s;
     }
 
         .btn-orange:hover {
             background-color: #e66000;
+            color: white;
         }
+
+    .modal-content {
+        overflow: hidden;
+    }
 </style>
