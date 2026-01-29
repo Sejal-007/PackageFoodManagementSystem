@@ -83,65 +83,19 @@ namespace PackageFoodManagementSystem.Application.Controllers
         }
 
 
+        [HttpPost]
+        public IActionResult PlaceOrder(string deliveryAddress)
+        {
+            int userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
+            var orderId = _orderService.CreateOrder(userId, deliveryAddress);
+
+            return RedirectToAction("Payment", "Payment", new { orderId });
+        }
+
         public IActionResult Success()
         {
             return View();
         }
-
-        [HttpPost]
-
-        public IActionResult PlaceOrder(string deliveryAddress)
-
-        {
-
-            int userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
-
-            // 1️⃣ Create Order
-
-            var orderId = _orderService.CreateOrder(userId, deliveryAddress);
-
-            // 2️⃣ Generate Bill IMMEDIATELY
-
-            var order = _context.Orders
-
-                .Include(o => o.OrderItems)
-
-                .ThenInclude(oi => oi.Product)
-
-                .First(o => o.OrderID == orderId);
-
-            decimal subtotal = order.OrderItems.Sum(x => x.Quantity * x.Product.Price);
-
-            var bill = new Bill
-
-            {
-
-                OrderID = orderId,
-
-                BillDate = DateTime.Now,
-
-                SubtotalAmount = subtotal,
-
-                TaxAmount = 0,
-
-                DiscountAmount = 0,
-
-                FinalAmount = subtotal,
-
-                BillingStatus = "Generated"
-
-            };
-
-            _context.Bills.Add(bill);
-
-            _context.SaveChanges();
-
-            // 3️⃣ Redirect to Payment Page
-
-            return RedirectToAction("Payment", "Payment", new { orderId });
-
-        }
-
 
     }
 
