@@ -11,7 +11,7 @@ namespace PackageFoodManagementSystem.Controllers
     public class BatchController : Controller
     {
         private readonly IBatchService _batchService;
-        private readonly IProductService _productService; // Added to fetch products for the dropdown
+        private readonly IProductService _productService;
         private readonly ApplicationDbContext _context;
 
         public BatchController(IBatchService batchService, IProductService productService, ApplicationDbContext context)
@@ -31,46 +31,40 @@ namespace PackageFoodManagementSystem.Controllers
         // GET: Batch/Create
         public IActionResult Create()
         {
-            // Fetch products so the user can select which product this batch belongs to
             ViewBag.Products = _productService.GetAllProducts();
             return View();
         }
 
-        // POST: Batch/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(Batch batch)
         {
             if (ModelState.IsValid)
             {
-                // Using the service to maintain consistency across the app
-                await _batchService.AddBatchAsync(batch);
+                // Changed from .Batch to .Batches
+                _context.Batches.Add(batch);
+                await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewBag.Products = _productService.GetAllProducts();
+
+            ViewBag.Products = new SelectList(_context.Products, "ProductId", "ProductName", batch.ProductId);
             return View(batch);
         }
 
-        // POST: Batch/CreateAjax
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> CreateAjax([FromBody] Batch batch)
+        // GET: Batch/Edit/5
+        public async Task<IActionResult> Edit(int? id)
         {
-            if (batch == null)
-            {
-                return Json(new { success = false, message = "Invalid data received." });
-            }
+            if (id == null) return NotFound();
 
-            if (ModelState.IsValid)
-            {
-                await _batchService.AddBatchAsync(batch);
-                return Json(new { success = true, message = "Batch saved successfully!" });
-            }
+            // Changed from .Batch to .Batches
+            var batch = await _context.Batches.FindAsync(id);
+            if (batch == null) return NotFound();
 
-            return Json(new { success = false, message = "Validation failed.", errors = ModelState });
+            ViewBag.Products = new SelectList(_context.Products, "ProductId", "ProductName", batch.ProductId);
+            return View(batch);
         }
 
-        // POST: Batch/Edit
+        // POST: Batch/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, Batch batch)
@@ -81,18 +75,56 @@ namespace PackageFoodManagementSystem.Controllers
             {
                 try
                 {
-                    await _batchService.UpdateBatchAsync(batch);
+                    // Changed from .Batch to .Batches
+                    _context.Batches.Update(batch);
+                    await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    return NotFound();
+                    if (!BatchExists(batch.BatchId)) return NotFound();
+                    else throw;
                 }
                 return RedirectToAction(nameof(Index));
             }
+            ViewBag.Products = new SelectList(_context.Products, "ProductId", "ProductName", batch.ProductId);
             return View(batch);
         }
 
-        // POST: Batch/EditAjax
+        // POST: Batch/Delete/5
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Delete(int id)
+        {
+            // Changed from .Batch to .Batches
+            var batch = await _context.Batches.FindAsync(id);
+            if (batch != null)
+            {
+                _context.Batches.Remove(batch);
+                await _context.SaveChangesAsync();
+            }
+            return RedirectToAction(nameof(Index));
+        }
+
+        private bool BatchExists(int id)
+        {
+            // Changed from .Batch to .Batches
+            return _context.Batches.Any(e => e.BatchId == id);
+        }
+
+        #region Ajax Methods
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> CreateAjax([FromBody] Batch batch)
+        {
+            if (batch == null) return Json(new { success = false, message = "Invalid data." });
+            if (ModelState.IsValid)
+            {
+                await _batchService.AddBatchAsync(batch);
+                return Json(new { success = true });
+            }
+            return Json(new { success = false, errors = ModelState });
+        }
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> EditAjax([FromBody] Batch batch)
@@ -104,20 +136,6 @@ namespace PackageFoodManagementSystem.Controllers
             }
             return Json(new { success = false });
         }
-
-        // POST: Batch/Delete/5
-        [HttpPost]
-        public async Task<IActionResult> Delete(int id)
-        {
-            try
-            {
-                await _batchService.DeleteBatchAsync(id);
-                return Json(new { success = true });
-            }
-            catch
-            {
-                return Json(new { success = false });
-            }
-        }
+        #endregion
     }
 }

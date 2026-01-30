@@ -5,60 +5,56 @@
     Layout = "_StoreManagerLayout";
 }
 
-<div class="container-fluid d-flex justify-content-center align-items-center" style="min-height: 80vh;">
-    <div class="card shadow-sm border-0 p-4" style="width: 100%; max-width: 500px; border-radius: 15px;">
-        <div class="text-center mb-4">
-            <h2 class="fw-bold">Add New Batch</h2>
-            <p class="text-muted">Enter batch details to update your inventory levels.</p>
+<div class="container d-flex justify-content-center mt-5" style="min-height: 80vh;">
+    <div class="card shadow" style="width: 100%; max-width: 450px; border-radius: 15px;">
+        <div class="card-body p-4">
+            <h2 class="text-center fw-bold">Add New Batch</h2>
+            <p class="text-center text-muted">Enter batch details to update your inventory levels.</p>
+
+            <form asp-action="Create" method="post">
+                @Html.AntiForgeryToken()
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                <div class="mb-3">
+                    <label asp-for="ProductId" class="form-label fw-bold">Select Product</label>
+                    <select asp-for="ProductId" class="form-select"
+                            asp-items="@(new SelectList(ViewBag.Products, "ProductId", "ProductName"))">
+                        <option value="">-- Select Product --</option>
+                    </select>
+                    <span asp-validation-for="ProductId" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="ManufactureDate" class="form-label fw-bold">Manufacture Date</label>
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="fa fa-calendar"></i></span>
+                        <input asp-for="ManufactureDate" type="date" class="form-control" required />
+                    </div>
+                    <span asp-validation-for="ManufactureDate" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="ExpiryDate" class="form-label fw-bold">Expiry Date</label>
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="fa fa-calendar-times"></i></span>
+                        <input asp-for="ExpiryDate" type="date" class="form-control" required />
+                    </div>
+                    <span asp-validation-for="ExpiryDate" class="text-danger"></span>
+                </div>
+
+                <div class="mb-4">
+                    <label asp-for="Quantity" class="form-label fw-bold">Quantity</label>
+                    <input asp-for="Quantity" type="number" class="form-control" placeholder="Enter quantity" min="1" required />
+                    <span asp-validation-for="Quantity" class="text-danger"></span>
+                </div>
+
+                <div class="d-grid gap-2">
+                    <button type="submit" class="btn btn-primary fw-bold" style="background-color: #9c27b0; border: none; border-radius: 8px; padding: 10px;">
+                        <i class="fas fa-plus-circle me-2"></i> Save Batch
+                    </button>
+                    <a asp-action="Index" class="btn btn-link text-decoration-none text-muted text-center">Cancel</a>
+                </div>
+            </form>
         </div>
-
-        @* The form points to the Create POST action to save data to the database *@
-        <form asp-action="Create" method="post">
-            @Html.AntiForgeryToken()
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-
-            <div class="mb-3">
-                <label class="form-label fw-semibold">Select Product</label>
-                @* This dropdown links the batch to a specific ProductId *@
-                <select asp-for="ProductId" class="form-select"
-                        asp-items="@(new SelectList(ViewBag.Products, "ProductId", "ProductName"))">
-                    <option value="">-- Select Product --</option>
-                </select>
-                <span asp-validation-for="ProductId" class="text-danger"></span>
-            </div>
-
-            <div class="mb-3">
-                <label class="form-label fw-semibold">Manufacture Date</label>
-                <div class="input-group">
-                    <span class="input-group-text"><i class="fa fa-calendar"></i></span>
-                    <input asp-for="ManufactureDate" type="date" class="form-control" required />
-                </div>
-                <span asp-validation-for="ManufactureDate" class="text-danger"></span>
-            </div>
-
-            <div class="mb-3">
-                <label class="form-label fw-semibold">Expiry Date</label>
-                <div class="input-group">
-                    <span class="input-group-text"><i class="fa fa-calendar-times"></i></span>
-                    <input asp-for="ExpiryDate" type="date" class="form-control" required />
-                </div>
-                <span asp-validation-for="ExpiryDate" class="text-danger"></span>
-            </div>
-
-            <div class="mb-4">
-                <label class="form-label fw-semibold">Quantity</label>
-                <input asp-for="Quantity" type="number" class="form-control" placeholder="Enter quantity" min="1" required />
-                <span asp-validation-for="Quantity" class="text-danger"></span>
-            </div>
-
-            <div class="gap-2 d-flex flex-column">
-                @* This button triggers the POST request to the BatchController *@
-                <button type="submit" class="btn btn-primary w-100 py-2 fw-bold"
-                        style="background-color: #9c27b0; border: none; border-radius: 8px;">
-                    <i class="fa fa-plus-circle me-2"></i> Save Batch
-                </button>
-                <a asp-action="Index" class="btn btn-outline-secondary w-100 border-0">Cancel</a>
-            </div>
-        </form>
     </div>
 </div>

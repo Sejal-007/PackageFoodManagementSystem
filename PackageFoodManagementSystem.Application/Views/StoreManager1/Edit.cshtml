@@ -1,46 +1,45 @@
-﻿@model PackageFoodManagementSystem.Repository.Models.Product
+﻿@model PackageFoodManagementSystem.Repository.Models.Batch
 
-<div class="container">
-    <div class="form-container" style="max-width: 600px; margin: 50px auto; padding: 30px; background: #fff; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.1);">
-        <form asp-action="Edit" method="post" enctype="multipart/form-data">
-            <input type="hidden" asp-for="ProductId" />
+@{
+    ViewData["Title"] = "Edit Batch";
+    Layout = "_StoreManagerLayout";
+}
 
-            <div class="mb-3 text-center">
-                <img src="@Model.ImageData" class="rounded shadow-sm mb-2" style="width: 120px; height: 120px; object-fit: cover;" />
-                <input type="file" name="imageFile" class="form-control" />
-            </div>
+<div class="container d-flex justify-content-center mt-5">
+    <div class="card shadow" style="width: 100%; max-width: 450px; border-radius: 15px;">
+        <div class="card-body p-4">
+            <h2 class="text-center fw-bold">Edit Batch</h2>
+            <form asp-action="Edit" method="post">
+                @Html.AntiForgeryToken()
+                <input type="hidden" asp-for="BatchId" />
 
-            <div class="mb-3">
-                <label class="fw-bold">Product Name</label>
-                <input asp-for="ProductName" class="form-control" required />
-            </div>
-
-            <div class="mb-3">
-                <label class="fw-bold">Category</label>
-                <input asp-for="Category" class="form-control" required />
-            </div>
-
-            <div class="row">
-                <div class="col-md-6 mb-3">
-                    <label class="fw-bold">Price (₹)</label>
-                    <input asp-for="Price" type="number" step="0.01" class="form-control" required />
+                <div class="mb-3">
+                    <label asp-for="ProductId" class="form-label fw-bold">Product</label>
+                    <select asp-for="ProductId" class="form-select" asp-items="ViewBag.Products"></select>
                 </div>
-                <div class="col-md-6 mb-3">
-                    <label class="fw-bold">Stock Quantity</label>
-                    <input asp-for="Quantity" type="number" class="form-control" required />
+
+                <div class="mb-3">
+                    <label asp-for="ManufactureDate" class="form-label fw-bold">Manufacture Date</label>
+                    <input asp-for="ManufactureDate" type="date" class="form-control" />
                 </div>
-            </div>
 
-            @* Added IsActive Checkbox *@
-            <div class="mb-3 form-check form-switch">
-                <input asp-for="IsActive" class="form-check-input" type="checkbox" id="isActiveCheck">
-                <label class="form-check-label fw-bold" for="isActiveCheck">Available for Sale (IsActive)</label>
-            </div>
+                <div class="mb-3">
+                    <label asp-for="ExpiryDate" class="form-label fw-bold">Expiry Date</label>
+                    <input asp-for="ExpiryDate" type="date" class="form-control" />
+                </div>
 
-            <div class="d-grid gap-2">
-                <button type="submit" class="btn btn-primary" style="background: linear-gradient(135deg, #d122e3 0%, #8b129a 100%); border:none;">Update All Columns</button>
-                <a asp-action="Index" class="btn btn-light">Cancel</a>
-            </div>
-        </form>
+                <div class="mb-4">
+                    <label asp-for="Quantity" class="form-label fw-bold">Quantity</label>
+                    <input asp-for="Quantity" type="number" class="form-control" />
+                </div>
+
+                <div class="d-grid gap-2">
+                    <button type="submit" class="btn btn-primary fw-bold" style="background-color: #007bff; border: none;">
+                        Save Changes
+                    </button>
+                    <a asp-action="Index" class="btn btn-link text-decoration-none text-muted text-center">Cancel</a>
+                </div>
+            </form>
+        </div>
     </div>
 </div>

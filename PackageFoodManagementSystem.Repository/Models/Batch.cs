@@ -23,7 +23,7 @@ namespace PackageFoodManagementSystem.Repository.Models
 
         // Navigation Property for Entity Framework
         [ForeignKey("ProductId")]
-        public virtual Product Product { get; set; }
+        public virtual Product? Product { get; set; }
     }
 }
 
