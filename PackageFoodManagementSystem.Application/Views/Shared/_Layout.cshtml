@@ -22,54 +22,12 @@
             color: var(--brand-orange) !important;
         }
 
-        .btn-orange {
-            background-color: var(--brand-orange);
-            border: none;
-            color: white;
+        #cart-badge {
+            font-size: 0.7rem;
         }
-
-        .footer-links li {
-            margin-bottom: 12px;
-        }
-
-        .footer-links a {
-            color: rgba(255,255,255,0.6);
-            text-decoration: none;
-            transition: 0.3s;
-        }
-
-            .footer-links a:hover {
-                color: var(--brand-orange);
-                padding-left: 5px;
-            }
-
-        .social-icon-box {
-            width: 38px;
-            height: 38px;
-            background: rgba(255,255,255,0.05);
-            color: white;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 50%;
-            text-decoration: none;
-            transition: 0.3s;
-        }
-
-            .social-icon-box:hover {
-                background: var(--brand-orange);
-                color: white;
-                transform: translateY(-3px);
-            }
     </style>
-
-    @* --- FIX: This renders the CSS from your individual pages --- *@
-    @await RenderSectionAsync("Styles", required: false)
-
 </head>
 <body class="d-flex flex-column min-vh-100">
-    @* Flexbox ensures sticky footer *@
-
     <header class="app-header">
         <nav class="navbar navbar-expand-lg px-4 py-3 shadow-sm bg-white">
             <div class="d-flex align-items-center">
@@ -81,15 +39,19 @@
                 <li class="nav-item me-3"><a class="nav-link fw-semibold" asp-controller="Home" asp-action="Index">Home</a></li>
                 <li class="nav-item me-3"><a class="nav-link fw-semibold" asp-controller="Menu" asp-action="Index">Explore</a></li>
 
+                @* --- FIXED CART ICON SECTION --- *@
                 <li class="nav-item me-4">
                     <a class="nav-link position-relative" asp-controller="Cart" asp-action="MyBasket">
                         <i class="fa-solid fa-cart-shopping fa-lg" style="color: #ff6347;"></i>
-                        <span id="cart-count" class="badge bg-danger rounded-circle position-absolute top-0 start-100 translate-middle" style="display: none; font-size: 0.7rem;">0</span>
+                        <span id="cart-badge" class="badge bg-danger rounded-pill position-absolute top-0 start-100 translate-middle"
+                              style="@(ViewBag.CartCount > 0 ? "display:block;" : "display:none;") font-size: 0.7rem;">
+                            @(ViewBag.CartCount ?? 0)
+                        </span>
                     </a>
                 </li>
 
                 <li class="nav-item">
-                    <a class="nav-link" onclick="openUserMenu()">
+                    <a class="nav-link" style="cursor: pointer;" onclick="openUserMenu()">
                         <i class="fa-solid fa-user-circle fa-2x" style="color: #ff6347;"></i>
                     </a>
                 </li>
@@ -118,104 +80,30 @@
                 else
                 {
                     <a href="/Home/SignIn" style="text-decoration: none; color: inherit;">
-                        <i class="fa-solid fa-right-to-bracket"></i> Logout
+                        <i class="fa-solid fa-right-to-bracket"></i> Login
                     </a>
                 }
             </li>
-            
         </ul>
     </div>
     <div id="popupOverlay" onclick="closeUserMenu()"></div>
 
-    @* --- Main Content Wrapper --- *@
-    <div class="flex-grow-1">
-        <main role="main" class="pb-3">
-            @RenderBody()
-        </main>
-    </div>
+    <main class="flex-grow-1">
+        @RenderBody()
+    </main>
 
-    @* --- Footer --- *@
-
-    <footer class="footer-section bg-dark text-white pt-5 pb-3 mt-5">
-        <div class="container">
-            <div class="row gy-4 mb-5">
-                <div class="col-lg-4 col-md-6">
-                    <h4 class="fw-bold text-orange mb-4">ALWAYZZZ FRESH</h4>
-                    <p class="text-white-50 pe-lg-5">
-                        Providing high-quality farm-fresh produce and daily essentials delivered directly to your doorstep in just 30 minutes.
-                    </p>
-                    <div class="d-flex gap-3 mt-4">
-                        <a href="#" class="social-icon-box"><i class="fa-brands fa-facebook-f"></i></a>
-                        <a href="#" class="social-icon-box"><i class="fa-brands fa-instagram"></i></a>
-                        <a href="#" class="social-icon-box"><i class="fa-brands fa-twitter"></i></a>
-                    </div>
-                </div>
-
-                <div class="col-lg-2 col-6">
-                    <h6 class="fw-bold text-white mb-4">Quick Links</h6>
-                    <ul class="list-unstyled footer-links">
-                        <li><a asp-controller="Home" asp-action="Index">Home</a></li>
-                        <li><a asp-controller="Menu" asp-action="Index">Explore Menu</a></li>
-                        <li><a asp-controller="User" asp-action="ContactUs">Contact Us</a></li>
-                    </ul>
-                </div>
-
-                <div class="col-lg-3 col-6">
-                    <h6 class="fw-bold text-white mb-4">Why Fresh?</h6>
-                    <ul class="list-unstyled footer-links text-white-50">
-                        <li><i class="fa-solid fa-check text-orange me-2"></i> 30-Min Delivery</li>
-                        <li><i class="fa-solid fa-check text-orange me-2"></i> Secure Checkout</li>
-                        <li><i class="fa-solid fa-check text-orange me-2"></i> Farm-to-Fork</li>
-                        <li><i class="fa-solid fa-check text-orange me-2"></i> 24/7 Support</li>
-                    </ul>
-                </div>
-
-                <div class="col-lg-3 col-md-6">
-                    <h6 class="fw-bold text-white mb-4">Stay Fresh</h6>
-                    <p class="small text-white-50">Subscribe to get the latest deals on essentials.</p>
-                    <div class="input-group mb-3">
-                        <input type="text" class="form-control bg-transparent border-secondary text-white small" placeholder="Your Email">
-                        <button class="btn btn-orange btn-sm px-3" type="button">Join</button>
-                    </div>
-                </div>
-            </div>
-
-            <hr class="border-secondary opacity-25">
-
-            <div class="row align-items-center pt-3">
-                <div class="col-md-6 text-center text-md-start">
-                    <p class="small text-white-50 mb-0">&copy; @DateTime.Now.Year Alwayzzz Fresh. All rights reserved.</p>
-                    <p class="small text-white-50 mb-0">&copy; 2025 Alwayzzz Fresh. All rights reserved.</p>
-                </div>
-                <div class="col-md-6 text-center text-md-end">
-                    <div class="payment-methods opacity-50">
-                        <i class="fa-brands fa-cc-visa fs-3 mx-2"></i>
-                        <i class="fa-brands fa-cc-mastercard fs-3 mx-2"></i>
-                        <i class="fa-solid fa-credit-card fs-3 mx-2"></i>
-                    </div>
-                </div>
-            </div>
+    <footer class="mt-auto bg-dark text-white py-4">
+        <div class="container text-center">
+            <p>&copy; 2026 - ALWAYZZZ FRESH</p>
         </div>
     </footer>
 
-
-
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="~/js/site.js" asp-append-version="true"></script>
-
     <script>
-        function openUserMenu() {
-            document.getElementById('userPopup').style.display = 'block';
-            document.getElementById('popupOverlay').style.display = 'block';
-        }
-        function closeUserMenu() {
-            document.getElementById('userPopup').style.display = 'none';
-            document.getElementById('popupOverlay').style.display = 'none';
-        }
+        function openUserMenu() { $('#userPopup, #popupOverlay').addClass('show'); }
+        function closeUserMenu() { $('#userPopup, #popupOverlay').removeClass('show'); }
     </script>
-
-
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

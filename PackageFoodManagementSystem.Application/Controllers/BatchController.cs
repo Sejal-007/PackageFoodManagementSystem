@@ -52,12 +52,12 @@ namespace PackageFoodManagementSystem.Controllers
         }
 
         // GET: Batch/Edit/5
-        public async Task<IActionResult> Edit(int? id)
+        public IActionResult Edit(int id)
         {
             if (id == null) return NotFound();
 
             // Changed from .Batch to .Batches
-            var batch = await _context.Batches.FindAsync(id);
+            var batch = _context.Batches.Find(id);
             if (batch == null) return NotFound();
 
             ViewBag.Products = new SelectList(_context.Products, "ProductId", "ProductName", batch.ProductId);

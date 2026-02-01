@@ -1,28 +1,51 @@
 ﻿@model IEnumerable<PackageFoodManagementSystem.Repository.Models.Product>
+
 @section Scripts {
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/js/menu.js"></script>
 
-    @* JavaScript to handle Modal Data Population *@
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            const productModal = document.getElementById('productModal');
-            if (productModal) {
-                productModal.addEventListener('show.bs.modal', function (event) {
-                    // Button that triggered the modal
-                    const button = event.relatedTarget;
+                function updateCart(productId, action, quantityElement) {
+            $.ajax({
+                url: `/Cart/${action}`, // Ensure this points to your [Route("Cart")]
+                type: 'POST',
+                // This header is required for [FromBody] to work correctly
+                contentType: 'application/json; charset=utf-8',
+                // Data must be a JSON string and key name must match your DTO property
+                data: JSON.stringify({ productId: parseInt(productId) }),
+                success: function (response) {
+                    if (response.success) {
+                        // Update product card quantity
+                        quantityElement.text(response.newQty);
+                        // Update navbar badge
+                        $('#cart-badge').text(response.cartCount).show();
+                    }
+                },
+                error: function (xhr) {
+                    // Handle 401 Unauthorized if not logged in
+                    if(xhr.status === 401) {
+                        alert("Please log in first.");
+                    } else {
+                        alert("An error occurred.");
+                    }
+                }
+            });
+        }
 
-                    // Extract info from data-* attributes
-                    const name = button.getAttribute('data-name');
-                    const desc = button.getAttribute('data-desc');
-                    const price = button.getAttribute('data-price');
-                    const image = button.getAttribute('data-image');
+        // Button click handlers
+        $(document).on('click', '.btn-plus', function () {
+            const productId = $(this).data('id');
+            const qtySpan = $(`#qty-${productId}`);
+            updateCart(productId, 'Add', qtySpan);
+        });
 
-                    // Update the modal's content
-                    document.getElementById('modalProductName').textContent = name;
-                    document.getElementById('modalProductDesc').textContent = desc || "No description available.";
-                    document.getElementById('modalProductPrice').textContent = "₹" + price;
-                    document.getElementById('modalProductImage').src = image || "/images/default-food.png";
-                });
+        $(document).on('click', '.btn-minus', function () {
+            const productId = $(this).data('id');
+            const qtySpan = $(`#qty-${productId}`);
+            const currentQty = parseInt(qtySpan.text());
+
+            if (currentQty > 0) {
+                updateCart(productId, 'Decrease', qtySpan);
             }
         });
     </script>
@@ -66,27 +89,13 @@
             @if (item.IsActive)
             {
                 <div class="col-12 col-md-6 col-lg-3">
-                    <div class="card h-100 border-0 shadow-sm mx-auto p-2"
-                         style="max-width: 280px; border-radius: 20px;"
-                         data-id="@item.ProductId"
-                         data-name="@item.ProductName"
-                         data-price="@item.Price">
+                    <div class="card h-100 border-0 shadow-sm mx-auto p-2" style="max-width: 280px; border-radius: 20px;">
 
                         <div class="overflow-hidden mb-2" style="height: 160px; border-radius: 15px;">
-                            @if (!string.IsNullOrEmpty(item.ImageData))
-                            {
-                                <img src="@item.ImageData"
-                                     class="w-100 h-100"
-                                     style="object-fit: cover;"
-                                     alt="@item.ProductName">
-                            }
-                            else
-                            {
-                                <img src="~/images/default-food.png"
-                                     class="w-100 h-100"
-                                     style="object-fit: cover;"
-                                     alt="No Image">
-                            }
+                            <img src="@(string.IsNullOrEmpty(item.ImageData) ? "/images/default-food.png" : item.ImageData)"
+                                 class="w-100 h-100"
+                                 style="object-fit: cover;"
+                                 alt="@item.ProductName">
                         </div>
 
                         <div class="card-body text-center p-2">
@@ -96,10 +105,8 @@
                             <h6 class="fw-bold mb-1">@item.ProductName</h6>
                             <p class="text-success fw-bold mb-2">₹@item.Price</p>
 
-                            @* --- Updated View Details Button --- *@
-                            <button class="btn btn-orange text-white view-details-btn mb-2 w-100 rounded-pill"
+                            <button class="btn btn-orange text-white mb-2 w-100 rounded-pill"
                                     data-name="@item.ProductName"
-                                    @* data-desc="@item.Description" *@
                                     data-price="@item.Price"
                                     data-image="@(string.IsNullOrEmpty(item.ImageData) ? "/images/default-food.png" : item.ImageData)"
                                     data-bs-toggle="modal"
@@ -108,19 +115,24 @@
                             </button>
 
                             <div class="d-flex justify-content-center mb-2">
-                                <div class="d-flex align-items-center bg-light rounded-pill p-1 border">
-                                    <button class="btn btn-sm btn-success rounded-circle d-flex align-items-center justify-content-center"
-                                            style="width: 28px; height: 28px;"
-                                            onclick="decrease(this)">
-                                        <i class="fa fa-minus small" style="font-size: 10px;"></i>
+                                <div class="d-flex align-items-center bg-light rounded-pill px-2 py-1 border">
+                                    @* MINUS BUTTON *@
+                                    <button class="btn btn-sm text-success p-0 btn-minus"
+                                            onclick="decrease(this)"
+                                            data-id="@item.ProductId">
+                                        <i class="fa fa-minus-circle fa-lg"></i>
                                     </button>
 
-                                    <span class="qty fw-bold px-3" data-product-id="@item.ProductId" style="font-size: 14px;">0</span>
+                                    @* QUANTITY DISPLAY *@
+                                    <span class="mx-3 fw-bold qty"
+                                          id="qty-@item.ProductId"
+                                          data-product-id="@item.ProductId">0</span>
 
-                                    <button class="btn btn-sm btn-success rounded-circle d-flex align-items-center justify-content-center"
-                                            style="width: 28px; height: 28px;"
-                                            onclick="increase(this)">
-                                        <i class="fa fa-plus small" style="font-size: 10px;"></i>
+                                    @* PLUS BUTTON *@
+                                    <button class="btn btn-sm text-success p-0 btn-plus"
+                                            onclick="increase(this)"
+                                            data-id="@item.ProductId">
+                                        <i class="fa fa-plus-circle fa-lg"></i>
                                     </button>
                                 </div>
                             </div>
@@ -132,7 +144,7 @@
     </div>
 </div>
 
-@* --- Product Details Modal --- *@
+@* Modal code remains same as provided in original *@
 <div class="modal fade" id="productModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content border-0 shadow" style="border-radius: 15px;">
@@ -169,15 +181,10 @@
     .btn-orange {
         background-color: #FF6B00;
         border: none;
-        transition: background-color 0.2s;
     }
 
         .btn-orange:hover {
             background-color: #e66000;
             color: white;
         }
-
-    .modal-content {
-        overflow: hidden;
-    }
 </style>

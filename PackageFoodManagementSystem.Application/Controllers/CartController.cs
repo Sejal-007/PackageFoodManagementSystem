@@ -7,80 +7,125 @@ using PackageFoodManagementSystem.Repository.Models;
 using PackageFoodManagementSystem.Services.Interfaces;
 using System.Security.Claims;
 
-[Authorize]
-[Route("Cart")]
-public class CartController : Controller
+namespace PackageFoodManagementSystem.Controllers
 {
-    private readonly ApplicationDbContext _context;
-    private readonly ICartService _cartService;
-
-    public CartController(ApplicationDbContext context, ICartService cartService)
+    [Authorize]
+    [Route("Cart")]
+    public class CartController : Controller
     {
-        _context = context;
-        _cartService = cartService;
-    }
+        private readonly ApplicationDbContext _context;
+        private readonly ICartService _cartService;
 
-    // ================== CART PAGE ==================
-    [HttpGet("MyBasket")]
-    public IActionResult MyBasket()
-    {
-        int userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
-
-        var cart = _context.Carts
-          .Include(c => c.CartItems)
-          .ThenInclude(ci => ci.Product)
-          .FirstOrDefault(c => c.UserId == userId && c.IsActive);
-
-        if (cart == null)
+        public CartController(ApplicationDbContext context, ICartService cartService)
         {
-            cart = new Cart
-            {
-                UserId = userId,
-                CartItems = new List<CartItem>()
-            };
+            _context = context;
+            _cartService = cartService;
         }
 
-        return View("MyBasket", cart); // Views/Cart/MyBasket.cshtml
-    }
+        // ================== CART PAGE ==================
+        [HttpGet("MyBasket")]
+        public IActionResult MyBasket()
+        {
+            int userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
 
-    // ================== ADD / INCREASE ==================
-    [HttpPost("Add")]
-    public IActionResult Add([FromBody] CartRequest request)
-    {
-        int userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
-        _cartService.AddItem(userId, request.ProductId);
-        return Ok();
-    }
+            var cart = _context.Carts
+                .Include(c => c.CartItems)
+                .ThenInclude(ci => ci.Product)
+                .FirstOrDefault(c => c.UserId == userId && c.IsActive);
 
-    // ================== DECREASE ==================
-    [HttpPost("Decrease")]
-    public IActionResult Decrease([FromBody] CartRequest request)
-    {
-        int userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
-        _cartService.DecreaseItem(userId, request.ProductId);
-        return Ok();
-    }
-    [HttpGet("GetItemQty")]
-    public IActionResult GetItemQty(int productId)
-    {
-        int userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
+            if (cart == null)
+            {
+                cart = new Cart
+                {
+                    UserId = userId,
+                    CartItems = new List<CartItem>(),
+                    IsActive = true
+                };
+            }
 
-        var cart = _context.Carts
-          .Include(c => c.CartItems)
-          .FirstOrDefault(c => c.UserId == userId && c.IsActive);
+            // Set ViewBag so the Layout can render the initial badge count
+            ViewBag.CartCount = cart.CartItems.Sum(ci => ci.Quantity);
 
-        if (cart == null)
-            return Json(0);
+            return View("MyBasket", cart);
+        }
 
-        var item = cart.CartItems.FirstOrDefault(x => x.ProductId == productId);
-        return Json(item?.Quantity ?? 0);
-    }
-    // ================== REMOVE ==================
-    [HttpPost("Remove")]
-    public IActionResult Remove([FromBody] CartRequest request)
-    {
-        int userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
-        _cartService.Remove(userId, request.ProductId);
-        return Ok();
+        // ================== ADD / INCREASE ==================
+        [HttpPost("Add")]
+        public IActionResult Add([FromBody] CartRequest request)
+        {
+            // Defensive check to prevent NullReferenceException
+            if (request == null || request.ProductId <= 0)
+            {
+                return BadRequest(new { success = false, message = "Invalid data received." });
+            }
+
+            // Safely parse user ID
+            var userIdClaim = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier);
+            if (userIdClaim == null) return Unauthorized();
+            int userId = int.Parse(userIdClaim.Value);
+
+            _cartService.AddItem(userId, request.ProductId);
+
+            // Refresh cart data for response
+            var cart = _context.Carts
+                .Include(c => c.CartItems)
+                .FirstOrDefault(c => c.UserId == userId && c.IsActive);
+
+            int newItemQty = cart?.CartItems.FirstOrDefault(ci => ci.ProductId == request.ProductId)?.Quantity ?? 0;
+            int totalCartCount = cart?.CartItems.Sum(ci => ci.Quantity) ?? 0;
+
+            return Json(new { success = true, newQty = newItemQty, cartCount = totalCartCount });
+        }
+
+        // ================== DECREASE ==================
+        [HttpPost("Decrease")]
+        public IActionResult Decrease([FromBody] CartRequest request)
+        {
+            int userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
+
+            _cartService.DecreaseItem(userId, request.ProductId);
+
+            var cart = _context.Carts
+                .Include(c => c.CartItems)
+                .FirstOrDefault(c => c.UserId == userId && c.IsActive);
+
+            int newItemQty = cart?.CartItems.FirstOrDefault(ci => ci.ProductId == request.ProductId)?.Quantity ?? 0;
+            int totalCartCount = cart?.CartItems.Sum(ci => ci.Quantity) ?? 0;
+
+            return Json(new { success = true, newQty = newItemQty, cartCount = totalCartCount });
+        }
+
+        // ================== GET ITEM QUANTITY ==================
+        [HttpGet("GetItemQty")]
+        public IActionResult GetItemQty(int productId)
+        {
+            int userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
+
+            var cart = _context.Carts
+                .Include(c => c.CartItems)
+                .FirstOrDefault(c => c.UserId == userId && c.IsActive);
+
+            if (cart == null)
+                return Json(0);
+
+            var item = cart.CartItems.FirstOrDefault(x => x.ProductId == productId);
+            return Json(item?.Quantity ?? 0);
+        }
+
+        // ================== REMOVE ==================
+        [HttpPost("Remove")]
+        public IActionResult Remove([FromBody] CartRequest request)
+        {
+            int userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
+            _cartService.Remove(userId, request.ProductId);
+
+            var cart = _context.Carts
+                .Include(c => c.CartItems)
+                .FirstOrDefault(c => c.UserId == userId && c.IsActive);
+
+            int totalCartCount = cart?.CartItems.Sum(ci => ci.Quantity) ?? 0;
+
+            return Json(new { success = true, cartCount = totalCartCount });
+        }
     }
 }
