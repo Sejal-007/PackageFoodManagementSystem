@@ -1,199 +1,150 @@
-﻿@* @{
-    ViewData["Title"] = "My Account";
-}
-
-<div class="container mt-4">
-    <div class="row">
-        <div class="col-md-3 border-end">
-            @Html.Partial("_AccountSidebar")
-        </div>
-
-        <div class="col-md-9 ps-md-5">
-            <div class="d-flex justify-content-between align-items-center mb-4">
-                <h2 class="fw-bold mb-0">Profile Details <span class="text-success">(Edit)</span></h2>
-                <span class="badge bg-light text-dark border p-2 rounded-pill">Member since Dec 2025</span>
-            </div>
-
-            <div class="card border-0 shadow-sm p-4" style="border-radius: 15px;">
-                <form id="profileForm">
-                    <div class="row g-3">
-                        <div class="col-md-6">
-                            <label class="form-label small fw-bold text-muted">FULL NAME</label>
-                            <div class="input-group">
-                                <span class="input-group-text bg-white"><i class="fa-regular fa-user text-success"></i></span>
-                                <input type="text" class="form-control border-start-0" value="Yayati Nehe">
-                            </div>
-                        </div>
-
-                        <div class="col-md-6">
-                            <label class="form-label small fw-bold text-muted">PHONE NUMBER</label>
-                            <div class="input-group">
-                                <span class="input-group-text bg-white text-muted">+91</span>
-                                <input type="text" class="form-control border-start-0" value="1234567">
-                            </div>
-                        </div>
-
-                        <div class="col-12 mt-4">
-                            <label class="form-label small fw-bold text-muted">EMAIL ADDRESS</label>
-                            <div class="input-group">
-                                <span class="input-group-text bg-white"><i class="fa-regular fa-envelope text-success"></i></span>
-                                <input type="email" class="form-control border-start-0" value="yayati@gmail.com">
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="mt-5 d-flex gap-2">
-                        <button type="button" class="btn btn-success px-4 rounded-pill fw-bold" id="btnUpdate">
-                            Update Profile
-                        </button>
-                        <button type="reset" class="btn btn-outline-secondary px-4 rounded-pill">Cancel</button>
-                    </div>
-                </form>
-            </div>
-
-            <div class="row mt-4 g-3 text-center">
-                <div class="col-md-4">
-                    <div class="p-3 bg-white border rounded-3 shadow-sm">
-                        <h4 class="fw-bold mb-0">12</h4>
-                        <small class="text-muted">Total Orders</small>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="p-3 bg-white border rounded-3 shadow-sm">
-                        <h4 class="fw-bold mb-0 text-success">₹450</h4>
-                        <small class="text-muted">Wallet Balance</small>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="p-3 bg-white border rounded-3 shadow-sm">
-                        <h4 class="fw-bold mb-0 text-warning">5</h4>
-                        <small class="text-muted">Smart Items</small>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
-<script>
-    // Interaction: Loading effect on button click
-    document.getElementById('btnUpdate').addEventListener('click', function() {
-        const btn = this;
-        const originalText = btn.innerHTML;
-
-        btn.disabled = true;
-        btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span> Updating...';
-
-        setTimeout(() => {
-            btn.innerHTML = '<i class="fa-solid fa-circle-check"></i> Updated Successfully!';
-            btn.className = "btn btn-primary px-4 rounded-pill fw-bold";
-
-            setTimeout(() => {
-                btn.innerHTML = originalText;
-                btn.className = "btn btn-success px-4 rounded-pill fw-bold";
-                btn.disabled = false;
-            }, 2000);
-        }, 1500);
-    });
-</script> *@
-
-
-
-
-
-
-
-
-@model PackageFoodManagementSystem.Repository.Models.UserAuthentication
+﻿@model PackageFoodManagementSystem.Repository.Models.UserAuthentication
 @{
     ViewData["Title"] = "My Account";
 }
 
-<div class="container mt-4">
+<style>
+    .profile-card {
+        background: rgba(255, 255, 255, 0.9);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(0,0,0,0.05);
+        transition: transform 0.3s ease;
+    }
+
+    .form-control:focus {
+        border-color: #198754;
+        box-shadow: 0 0 0 0.25rem rgba(25, 135, 84, 0.1);
+    }
+
+    .input-group-text {
+        border-right: none;
+    }
+
+    .form-control {
+        border-left: none;
+    }
+</style>
+
+<div class="container mt-5">
     <div class="row">
-        <div class="col-md-3 border-end">
-            @Html.Partial("_AccountSidebar")
+        <div class="col-md-3 mb-4">
+            <div class="p-3 bg-white rounded-4 shadow-sm">
+                @Html.Partial("_AccountSidebar")
+            </div>
         </div>
 
-        <div class="col-md-9 ps-md-5">
-            <div class="d-flex justify-content-between align-items-center mb-4">
-                <h2 class="fw-bold mb-0">Profile Details <span class="text-success"></span></h2>
-
+        <div class="col-md-9 ps-lg-5">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h4 class="fw-bold mb-0">Profile Settings</h4>
+                <button type="button" id="editToggle" class="btn btn-outline-success px-4 rounded-pill fw-bold shadow-sm">
+                    <i class="fa-solid fa-pen-to-square me-1"></i> Edit Mode
+                </button>
             </div>
 
-            <div class="card border-0 shadow-sm p-4" style="border-radius: 15px;">
+            <div class="card profile-card shadow-sm p-4 rounded-4">
                 <form id="profileForm">
-                    <div class="row g-3">
+                    <div class="row g-4">
                         <div class="col-md-6">
-                            <label class="form-label small fw-bold text-muted">FULL NAME</label>
+                            <label class="form-label small fw-bold text-uppercase tracking-wider text-muted">Full Name</label>
                             <div class="input-group">
-                                <span class="input-group-text bg-white"><i class="fa-regular fa-user text-success"></i></span>
-                                <input type="text" class="form-control border-start-0" value="@Model.Name">
+                                <span class="input-group-text bg-white border-end-0"><i class="fa-regular fa-user text-success"></i></span>
+                                <input type="text" name="Name" class="form-control border-start-0 ps-0 shadow-none bg-light" value="@ViewBag.FullName" id="inputName" readonly>
                             </div>
                         </div>
 
                         <div class="col-md-6">
-                            <label class="form-label small fw-bold text-muted">PHONE NUMBER</label>
+                            <label class="form-label small fw-bold text-uppercase tracking-wider text-muted">Phone Number</label>
                             <div class="input-group">
-                                <span class="input-group-text bg-white text-muted">+91</span>
-                                <input type="text" class="form-control border-start-0" value="@Model.MobileNumber">
+                                <span class="input-group-text bg-white border-end-0 text-muted fw-bold">+91</span>
+                                <input type="text" name="MobileNumber" class="form-control border-start-0 ps-0 shadow-none bg-light" value="@ViewBag.Phone" id="inputPhone" readonly>
                             </div>
                         </div>
 
-                        <div class="col-12 mt-4">
-                            <label class="form-label small fw-bold text-muted">EMAIL ADDRESS</label>
+                        <div class="col-12">
+                            <label class="form-label small fw-bold text-uppercase tracking-wider text-muted">Email Address</label>
                             <div class="input-group">
-                                <span class="input-group-text bg-white"><i class="fa-regular fa-envelope text-success"></i></span>
-                                <input type="email" class="form-control border-start-0" value="@Model.Email" readonly>
+                                <span class="input-group-text bg-white border-end-0"><i class="fa-regular fa-envelope text-success"></i></span>
+                                <input type="email" name="Email" class="form-control border-start-0 ps-0 shadow-none bg-light" value="@ViewBag.Email" id="inputEmail" readonly>
                             </div>
+                        </div>
+
+                        <div class="col-12 mt-4 text-end">
+                            <button type="button" id="btnUpdate" class="btn btn-success px-5 py-2 rounded-pill fw-bold shadow-sm d-none">
+                                Save Changes
+                            </button>
                         </div>
                     </div>
-
-
                 </form>
-            </div>
-
-            <div class="row mt-4 g-3 text-center">
-                <div class="col-md-4">
-                    <div class="p-3 bg-white border rounded-3 shadow-sm">
-                        <h4 class="fw-bold mb-0">12</h4>
-                        <small class="text-muted">Total Orders</small>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="p-3 bg-white border rounded-3 shadow-sm">
-                        <h4 class="fw-bold mb-0 text-success">₹@ViewBag.WalletBalance</h4>
-                        <small class="text-muted">Wallet Balance</small>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="p-3 bg-white border rounded-3 shadow-sm">
-                        <h4 class="fw-bold mb-0 text-warning">5</h4>
-                        <small class="text-muted">Smart Items</small>
-                    </div>
-                </div>
             </div>
         </div>
     </div>
 </div>
 
 <script>
-    document.getElementById('btnUpdate').addEventListener('click', function() {
-        const btn = this;
-        const originalText = btn.innerHTML;
+    document.addEventListener('DOMContentLoaded', () => {
+        const editToggle = document.getElementById('editToggle');
+        const updateBtn = document.getElementById('btnUpdate');
+        const inputs = document.querySelectorAll('#profileForm input');
 
-        btn.disabled = true;
-        btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span> Updating...';
+        if (editToggle) {
+            editToggle.addEventListener('click', () => {
+                // Check current state: if updateBtn is hidden, we are entering Edit Mode
+                const currentlyHidden = updateBtn.classList.contains('d-none');
 
-        setTimeout(() => {
-            btn.innerHTML = '<i class="fa-solid fa-circle-check"></i> Updated Successfully!';
-            btn.className = "btn btn-primary px-4 rounded-pill fw-bold";
+                if (currentlyHidden) {
+                    // ENTERING EDIT MODE
+                    updateBtn.classList.remove('d-none');
+                    editToggle.innerHTML = '<i class="fa-solid fa-xmark me-1"></i> Cancel';
+                    editToggle.classList.replace('btn-outline-success', 'btn-outline-danger');
 
-            setTimeout(() => {
-                btn.innerHTML = originalText;
-                btn.className = "btn btn-success px-4 rounded-pill fw-bold";
-                btn.disabled = false;
-            }, 2000);
-        }, 1500);
+                    inputs.forEach(input => {
+                        input.readOnly = false;
+                        input.classList.remove('bg-light');
+                    });
+                } else {
+                    // LEAVING EDIT MODE / CANCEL
+                    updateBtn.classList.add('d-none');
+                    editToggle.innerHTML = '<i class="fa-solid fa-pen-to-square me-1"></i> Edit Mode';
+                    editToggle.classList.replace('btn-outline-danger', 'btn-outline-success');
+
+                    inputs.forEach(input => {
+                        input.readOnly = true;
+                        input.classList.add('bg-light');
+                    });
+                }
+            });
+        }
+
+        if (updateBtn) {
+            updateBtn.addEventListener('click', function() {
+                const btn = this;
+                const originalContent = btn.innerHTML;
+
+                btn.disabled = true;
+                btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span> Saving...';
+
+                // Simulate Server Save
+                setTimeout(() => {
+                    btn.innerHTML = '<i class="fa-solid fa-check-double me-2"></i> Profile Updated';
+                    btn.className = "btn btn-primary px-5 py-2 rounded-pill fw-bold shadow-sm";
+
+                    setTimeout(() => {
+                        btn.innerHTML = originalContent;
+                        btn.className = "btn btn-success px-5 py-2 rounded-pill fw-bold shadow-sm d-none";
+                        btn.disabled = false;
+
+                        // Force back to View Mode
+                        if (editToggle) {
+                            editToggle.innerHTML = '<i class="fa-solid fa-pen-to-square me-1"></i> Edit Mode';
+                            editToggle.classList.replace('btn-outline-danger', 'btn-outline-success');
+                            inputs.forEach(input => {
+                                input.readOnly = true;
+                                input.classList.add('bg-light');
+                            });
+                        }
+                    }, 2000);
+                }, 1200);
+            });
+        }
     });
 </script>

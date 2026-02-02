@@ -45,7 +45,6 @@
  * jQuery: validations & submit
  * -------------------------- */
 $(function () {
-
     /* ========= Sign Up ========= */
     const strongPwdRegex = /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[\W_]).{12,}$/;
 
@@ -63,7 +62,6 @@ $(function () {
         ok ? clearError("#mobileError") : showError("#mobileError", "Enter a valid 10-digit mobile number.");
         return ok;
     }
-
 
     function validateEmail() {
         const ok = /^[^\s@]+@[^\s@]+\.com$/.test($("#email").val().trim());
@@ -115,22 +113,78 @@ $(function () {
         return ok;
     }
 
-    //function validateSigninPassword() {
-    //    const ok = $("#password").val().length >= 6;
-    //    ok ? clearError("#passwordError") : showError("#passwordError", "Password must be at least 6 characters.");
-    //    return ok;
-    //}
-
     $("#email").on("blur input", validateSigninEmail);
-    //$("#password").on("blur input", validateSigninPassword);
 
     $("form[asp-action='SignIn']").on("submit", function (e) {
         const okEmail = validateSigninEmail();
-        //const okPass = validateSigninPassword();
-        if (!okEmail || !okPass) {
+        if (!okEmail) {
             e.preventDefault();
             alert("Please fix the highlighted fields.");
         }
     });
-});
 
+    /* --------------------------
+     * Logout confirmation
+     * -------------------------- */
+    // Direct logout click confirmation
+    document.querySelectorAll(".logout-link").forEach(link => {
+        link.addEventListener("click", function (e) {
+            if (!confirm("Do you want to logout?")) {
+                e.preventDefault();
+            }
+        });
+    });
+
+    // Function to enable back/forward interception
+    function enableIntercept() {
+        const path = window.location.pathname.toLowerCase();
+
+        // Admin routes where back arrow should confirm logout
+        const adminRoutes = [
+            "/home/admindashboard",
+            "/home/users",
+            "/home/stores",
+            "/home/admininventory",
+            "/home/report"
+        ];
+
+        // Auth routes where forward arrow should confirm login
+        const authRoutes = [
+            "/home/logout",
+            "/home/signin"
+        ];
+
+        if (adminRoutes.includes(path)) {
+            // Intercept back navigation
+            history.pushState(null, "", location.href);
+            window.onpopstate = function () {
+                const confirmed = confirm("Do you want to logout?");
+                if (confirmed) {
+                    window.location.href = "/Home/Logout";
+                } else {
+                    history.pushState(null, "", location.href);
+                }
+            };
+        }
+
+        if (authRoutes.includes(path)) {
+            // Intercept forward navigation
+            history.pushState(null, "", location.href);
+            window.onpopstate = function () {
+                const confirmed = confirm("You need to Login");
+                if (confirmed) {
+                    window.location.href = "/Home/SignIn";
+                } else {
+                    history.pushState(null, "", location.href);
+                }
+            };
+        }
+    }
+
+    // Run once when DOM is ready
+    document.addEventListener("DOMContentLoaded", enableIntercept);
+
+    // Run again when page is restored from history (back/forward navigation)
+    window.addEventListener("pageshow", enableIntercept);
+
+});

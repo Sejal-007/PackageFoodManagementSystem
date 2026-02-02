@@ -13,7 +13,12 @@ namespace PackageFoodManagementSystem.Repository.Models
         public int CustomerId { get; set; } // Foreign Key
 
         [Required]
+        public string AddressType { get; set; }
+
+        [Required]
         public string StreetAddress { get; set; }
+
+        public string Landmark { get; set; }
 
         [Required]
         public string City { get; set; }

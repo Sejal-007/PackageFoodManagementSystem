@@ -44,6 +44,8 @@
             });
         }
 
+}
+
         /**
          * Event Listeners for Plus and Minus buttons
          */
@@ -73,7 +75,6 @@
 <div class="container mt-5">
     <div class="text-center mb-4">
         <h2 class="fw-bold">Our <span style="color: #FF6B00;">Menu</span></h2>
-
         <div class="d-flex flex-wrap justify-content-center gap-2 mt-3">
             <a asp-action="Index" asp-route-category=""
                class="btn @(string.IsNullOrEmpty(ViewBag.SelectedCategory) ? "btn-dark" : "btn-outline-dark") rounded-pill">All</a>
@@ -93,32 +94,79 @@
     </div>
 </div>
 
+
+    <div class="row">
+
+        @foreach (var item in Model)
+        {
+
+        }
+    </div>
+</div>
 <div class="container py-5">
+    <h1 class="text-center fw-bold mb-5"></h1>
+
     @if (ViewBag.CurrentCategory != null)
+
     {
         <div class="d-flex justify-content-between align-items-center mb-4">
             <h3>Showing: <span class="text-orange">@ViewBag.CurrentCategory</span></h3>
             <a asp-action="Index" class="btn btn-outline-secondary btn-sm">Show All Products</a>
         </div>
+
     }
 
+
+    @* The row uses g-4 for spacing. 6 items will naturally form 2 rows of 3 *@
     <div class="row g-4 justify-content-center">
+
         @foreach (var item in Model)
+
         {
+
             @if (item.IsActive)
+
             {
                 <div class="col-12 col-md-6 col-lg-3">
                     <div class="card h-100 border-0 shadow-sm mx-auto p-2" style="max-width: 280px; border-radius: 20px;">
+
+                    @* Added mx-auto and a max-width to make the card "Smaller" *@
+                    <div class="card h-100 border-0 shadow-sm mx-auto p-2"
+                         style="max-width: 280px; border-radius: 20px;"
+                         data-product-id="@item.ProductId"
+                         data-name="@item.ProductName"
+                         data-price="@item.Price">
 
                         <div class="overflow-hidden mb-2" style="height: 160px; border-radius: 15px;">
                             <img src="@(string.IsNullOrEmpty(item.ImageData) ? "/images/default-food.png" : item.ImageData)"
                                  class="w-100 h-100"
                                  style="object-fit: cover;"
                                  alt="@item.ProductName">
+
+                            @if (!string.IsNullOrEmpty(item.ImageData))
+
+                            {
+                                <img src="@item.ImageData"
+                                     class="w-100 h-100"
+                                     style="object-fit: cover;"
+                                     alt="@item.ProductName">
+
+                            }
+
+                            else
+
+                            {
+                                <img src="~/images/default-food.png"
+                                     class="w-100 h-100"
+                                     style="object-fit: cover;"
+                                     alt="No Image">
+
+                            }
                         </div>
 
                         <div class="card-body text-center p-2">
                             <small class="text-muted text-uppercase mb-1 d-block" style="font-size: 0.7rem;">
+
                                 @item.Category
                             </small>
                             <h6 class="fw-bold mb-1">@item.ProductName</h6>
@@ -158,7 +206,9 @@
                         </div>
                     </div>
                 </div>
+
             }
+
         }
     </div>
 </div>
@@ -188,6 +238,9 @@
         color: #FF6B00;
     }
 
+
+    /* Professional Hover Effect */
+
     .card {
         transition: all 0.3s ease;
     }
@@ -206,4 +259,5 @@
             background-color: #e66000;
             color: white;
         }
+</style>
 </style>

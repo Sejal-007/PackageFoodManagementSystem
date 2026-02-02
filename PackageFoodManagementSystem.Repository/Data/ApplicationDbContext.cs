@@ -20,12 +20,15 @@ namespace PackageFoodManagementSystem.Repository.Data
         public DbSet<Inventory> Inventories { get; set; }
         public DbSet<UserAuthentication> UserAuthentications { get; set; }
         public DbSet<Batch> Batches { get; set; }
+        public DbSet<Wallet> Wallets { get; set; }
 
         // Fixes CS1061 build errors in BatchController
         public DbSet<Category> Categories { get; set; }
 
         public DbSet<Cart> Carts { get; set; }
         public DbSet<CartItem> CartItems { get; set; }
+
+        public DbSet<OrderStatusHistory> OrderStatusHistories { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -46,6 +49,13 @@ namespace PackageFoodManagementSystem.Repository.Data
             modelBuilder.Entity<Product>()
                 .Property(p => p.Price)
                 .HasColumnType("decimal(18,2)");
+            modelBuilder.Entity<Bill>().ToTable("Bills");
+            modelBuilder.Entity<Payment>().ToTable("Payments");
+
+
+            // Optional: If 'UserAuthentications' also gives an error, 
+            // you can force its name here too:
+            // modelBuilder.Entity<UserAuthentication>().ToTable("UserAuthentications");
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)

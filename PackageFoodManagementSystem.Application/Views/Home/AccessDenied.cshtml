@@ -1,0 +1,32 @@
+﻿@{
+    ViewData["Title"] = "Access Denied";
+    Layout = null;
+}
+
+<style>
+    .centered-container {
+        display: flex;
+        justify-content: center;
+        align-items: top;
+        height: 10vh; /* full viewport height */
+    }
+</style>
+
+<div class="centered-container">
+    <div class="text-center">
+        <h1 class="text-danger">Access Denied</h1>
+        <p class="lead">
+            Sorry, you do not have permission to access this page.
+        </p>
+
+        <hr />
+
+        <p>
+            If you believe this is an error, please contact your administrator.
+        </p>
+
+        <a href="@Url.Action("Logout", "Home")" class="btn btn-primary mt-3">
+            Back to Home
+        </a>
+    </div>
+</div>

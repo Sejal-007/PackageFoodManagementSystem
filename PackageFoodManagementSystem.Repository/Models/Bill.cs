@@ -8,7 +8,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace PackageFoodManagementSystem.Repository.Models
 
 {
-
+    [Table("Bill")]
     public class Bill
 
     {
@@ -51,8 +51,8 @@ namespace PackageFoodManagementSystem.Repository.Models
 
         public Order Order { get; set; }
 
-        public Payment Payment { get; set; }
-        public decimal TotalAmount { get; set; }
+        public ICollection<Payment> Payments { get; set; }
+
     }
 
 }

@@ -142,4 +142,18 @@ namespace PackageFoodManagementSystem.Controllers
             return Json(new { success = true, cartCount = totalCartCount });
         }
     }
+
+    [HttpGet("GetTotalItems")]
+    public IActionResult GetTotalItems()
+    {
+        var claim = User.FindFirst(ClaimTypes.NameIdentifier);
+        if (claim == null) return Json(0);
+
+        int userId = int.Parse(claim.Value);
+        var totalCount = _context.CartItems
+            .Where(ci => ci.Cart.UserAuthenticationId == userId && ci.Cart.IsActive)
+            .Sum(ci => ci.Quantity);
+
+        return Json(totalCount);
+    }
 }

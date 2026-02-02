@@ -12,5 +12,6 @@ namespace PackageFoodManagementSystem.Services.Interfaces
         void PlaceOrder(Order order);
         void UpdateOrderStatus(int orderId, string status);
         void CancelOrder(int orderId);
+        int CreateOrder(int userId, string deliveryAddress);
     }
 }

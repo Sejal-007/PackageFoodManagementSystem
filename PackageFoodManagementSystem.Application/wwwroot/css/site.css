@@ -655,3 +655,22 @@ body {
     display: none;
     z-index: 999;
 }
+
+.loc-item {
+    transition: 0.2s;
+    border: 1px solid #eee !important;
+}
+
+    .loc-item:hover {
+        background-color: #f8f9fa;
+        border-color: #FF6B00 !important;
+    }
+
+#locationList::-webkit-scrollbar {
+    width: 6px;
+}
+
+#locationList::-webkit-scrollbar-thumb {
+    background: #eee;
+    border-radius: 10px;
+}

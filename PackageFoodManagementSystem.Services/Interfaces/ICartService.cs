@@ -18,5 +18,6 @@ namespace PackageFoodManagementSystem.Services.Interfaces
         void Remove(int userAuthId, int productId);
 
         Cart GetActiveCart(int userAuthId);
+        string? GetCartByUserId(int userId);
     }
 }
