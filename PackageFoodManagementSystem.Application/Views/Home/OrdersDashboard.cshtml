@@ -1,0 +1,156 @@
+﻿@model IEnumerable<PackageFoodManagementSystem.Repository.Models.Order>
+@{
+    ViewData["Title"] = "Orders Admin Dashboard";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<style>
+    .stat-card {
+        transition: transform 0.2s;
+        text-decoration: none !important;
+        color: inherit;
+    }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+        }
+
+    .badge-processing {
+        background-color: #fd7e14;
+    }
+
+    .badge-shipped {
+        background-color: #0d6efd;
+    }
+
+    .badge-delivered {
+        background-color: #198754;
+    }
+
+    .badge-placed {
+        background-color: #0dcaf0;
+    }
+</style>
+
+<div class="container-fluid px-4 mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="fw-bold text-dark">🛒 Orders Management</h2>
+        <div class="search-box">
+            <input type="text" id="orderSearch" class="form-control" placeholder="Search Order ID or Customer..." onkeyup="filterTable()">
+        </div>
+    </div>
+
+    <div class="row mb-5">
+        <div class="col-md-3">
+            <div class="card stat-card border-0 shadow-sm bg-white p-3 border-start border-4 border-info">
+                <h6 class="text-muted text-uppercase small">Today's Orders</h6>
+                <h2 class="fw-bold mb-0">@ViewBag.TodayOrders</h2>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card stat-card border-0 shadow-sm bg-white p-3 border-start border-4 border-warning">
+                <h6 class="text-muted text-uppercase small">Pending/Processing</h6>
+                <h2 class="fw-bold mb-0">@ViewBag.PendingOrders</h2>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card stat-card border-0 shadow-sm bg-white p-3 border-start border-4 border-success">
+                <h6 class="text-muted text-uppercase small">Completed</h6>
+                <h2 class="fw-bold mb-0">@ViewBag.CompletedOrders</h2>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card stat-card border-0 shadow-sm bg-white p-3 border-start border-4 border-danger">
+                <h6 class="text-muted text-uppercase small">Cancelled</h6>
+                <h2 class="fw-bold mb-0">@ViewBag.CancelledOrders</h2>
+            </div>
+        </div>
+    </div>
+
+    <div class="card border-0 shadow-sm">
+        <div class="card-body p-0">
+            <table class="table table-hover align-middle mb-0" id="ordersTable">
+                <thead class="table-light">
+                    <tr>
+                        <th class="ps-4">Order ID</th>
+                        <th>Customer Details</th>
+                        <th>Total Amount</th>
+                        <th>Current Status</th>
+                        <th>Order Date</th>
+                        <th class="text-center">Quick Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var order in Model)
+                    {
+                        <tr>
+                            <td class="ps-4 fw-bold">#@order.OrderID</td>
+                            <td>
+                                <div class="d-flex flex-column">
+                                    <span>@(order.Customer?.Name ?? "Guest Customer")</span>
+                                    <small class="text-muted">@order.Customer?.Email</small>
+                                </div>
+                            </td>
+                            <td class="fw-bold text-primary">₹@order.TotalAmount</td>
+                            <td>
+                                @{
+                                    var badgeClass = order.OrderStatus switch
+                                    {
+                                        "Processing" => "badge-processing",
+                                        "Shipped" => "badge-shipped",
+                                        "Delivered" => "badge-delivered",
+                                        _ => "badge-placed"
+                                    };
+                                }
+                                <span class="badge rounded-pill @badgeClass">@order.OrderStatus</span>
+                            </td>
+                            <td>@order.OrderDate?.ToString("dd MMM yyyy")</td>
+                            <td class="text-center">
+                                <div class="btn-group">
+                                    <form asp-controller="Home" asp-action="ProcessOrder" method="post" class="d-inline">
+                                        <input type="hidden" name="orderId" value="@order.OrderID" />
+
+                                        @if (order.OrderStatus == "Placed" || order.OrderStatus == "Confirmed")
+                                        {
+                                            <button name="status" value="Processing" class="btn btn-sm btn-outline-warning">Pack</button>
+                                        }
+                                        else if (order.OrderStatus == "Processing")
+                                        {
+                                            <button name="status" value="Shipped" class="btn btn-sm btn-outline-primary">Ship</button>
+                                        }
+                                        else if (order.OrderStatus == "Shipped")
+                                        {
+                                            <button name="status" value="Delivered" class="btn btn-sm btn-outline-success">Deliver</button>
+                                        }
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script>
+    function filterTable() {
+        var input, filter, table, tr, td, i, txtValue;
+        input = document.getElementById("orderSearch");
+        filter = input.value.toUpperCase();
+        table = document.getElementById("ordersTable");
+        tr = table.getElementsByTagName("tr");
+        for (i = 1; i < tr.length; i++) {
+            tr[i].style.display = "none";
+            td = tr[i].getElementsByTagName("td");
+            for(var j=0; j<td.length; j++) {
+                if (td[j]) {
+                    if (td[j].innerHTML.toUpperCase().indexOf(filter) > -1) {
+                        tr[i].style.display = "";
+                        break;
+                    }
+                }
+            }
+        }
+    }
+</script>

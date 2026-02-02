@@ -1,17 +1,12 @@
 ﻿using PackageFoodManagementSystem.Repository.Models;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
-namespace PackageFoodManagementSystem.Services.Interfaces
+public interface IOrderService
 {
-    public interface IOrderService
-    {
-        IEnumerable<Order> GetAllOrders();
-        Order GetOrderById(int orderId);
-        void PlaceOrder(Order order);
-        void UpdateOrderStatus(int orderId, string status);
-        void CancelOrder(int orderId);
-        int CreateOrder(int userId, string deliveryAddress);
-    }
+    IEnumerable<Order> GetAllOrders();
+    Order GetOrderById(int orderId);
+    void PlaceOrder(Order order);
+    // Add 'changedBy' to track who or what changed the status
+    void UpdateOrderStatus(int orderId, string status, string changedBy, string remarks = "");
+    void CancelOrder(int orderId);
+    int CreateOrder(int userId, string deliveryAddress);
 }

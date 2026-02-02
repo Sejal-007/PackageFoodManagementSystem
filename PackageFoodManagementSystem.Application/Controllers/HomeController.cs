@@ -1,14 +1,16 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using PackageFoodManagementSystem.Services.Helpers;
-using PackageFoodManagementSystem.Repository.Models;
-using PackageFoodManagementSystem.Services.Interfaces;
-using Microsoft.AspNetCore.Authentication;
+﻿using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
-using System.Security.Claims;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using Microsoft.Extensions.Configuration;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+using PackageFoodManagementSystem.Repository.Data;
+using PackageFoodManagementSystem.Repository.Models;
+using PackageFoodManagementSystem.Services.Helpers;
+using PackageFoodManagementSystem.Services.Interfaces;
+using System.Collections.Generic;
+using System.Security.Claims;
+using System.Threading.Tasks;
 
 namespace PackagedFoodManagementSystem.Controllers
 {
@@ -17,10 +19,14 @@ namespace PackagedFoodManagementSystem.Controllers
         private readonly IUserService _userService;
         private readonly IConfiguration _config; // for JWT
 
-        public HomeController(IUserService userService, IConfiguration config)
+        private readonly ApplicationDbContext _context;
+
+
+        public HomeController(IUserService userService, IConfiguration config, ApplicationDbContext context)
         {
             _userService = userService;
             _config = config;
+            _context = context;
         }
 
         [Authorize(Roles = "User")]
@@ -32,6 +38,74 @@ namespace PackagedFoodManagementSystem.Controllers
                 return RedirectToAction("Index");
             return View();
         }
+
+        public IActionResult OrdersDashboard()
+        {
+            // 1. Fetch all orders with Customer data included to avoid null names
+            var allOrders = _context.Orders
+                .Include(o => o.Customer)
+                .OrderByDescending(o => o.OrderDate)
+                .ToList() ?? new List<Order>(); // Ensure it's never null
+
+            // 2. Calculate Stats for the Cards
+            ViewBag.TodayOrders = allOrders.Count(o => o.OrderDate?.Date == DateTime.Today);
+            ViewBag.PendingOrders = allOrders.Count(o => o.OrderStatus == "Placed" || o.OrderStatus == "Processing");
+            ViewBag.CompletedOrders = allOrders.Count(o => o.OrderStatus == "Delivered");
+            ViewBag.CancelledOrders = allOrders.Count(o => o.OrderStatus == "Cancelled");
+
+            // 3. Return the list to the view
+            return View(allOrders);
+        }
+
+        public IActionResult Orders(string status)
+
+        {
+
+            var orders = _context.Orders
+
+                .Include(o => o.Customer)   // or Customer
+
+                .AsQueryable();
+
+            if (!string.IsNullOrEmpty(status))
+
+            {
+
+                if (status == "Today")
+
+                {
+
+                    var today = DateTime.Today;
+
+                    orders = orders.Where(o => o.OrderDate.HasValue &&
+                                               o.OrderDate.Value.Date == today);
+
+                }
+
+                else if (status == "Completed")
+
+                {
+
+                    orders = orders.Where(o =>
+
+                        o.OrderStatus == "Confirmed" || o.OrderStatus == "Delivered");
+
+                }
+
+                else
+
+                {
+
+                    orders = orders.Where(o => o.OrderStatus == status);
+
+                }
+
+            }
+
+            return View(orders.ToList());
+
+        }
+
 
         // --- SIGN IN (Cookie-based, unchanged behaviour) ---
         [HttpGet]
@@ -171,6 +245,18 @@ namespace PackagedFoodManagementSystem.Controllers
             return View();
         }
 
+        public IActionResult OrderStatus()
+        {
+            // Fetch the list directly. 
+            // This allows EF to map the OrderID, TotalAmount, and Status perfectly.
+            var allOrders = _context.Orders
+                .Where(o => o.OrderDate != null)
+                .OrderByDescending(o => o.OrderDate)
+                .ToList();
+
+            return View(allOrders);
+        }
+
 
         [HttpGet]
         public async Task<IActionResult> Logout()
@@ -184,6 +270,25 @@ namespace PackagedFoodManagementSystem.Controllers
             Response.Headers["Expires"] = "0";
 
             return RedirectToAction("SignIn", "Home");
+        }
+
+        [HttpPost]
+        public IActionResult ProcessOrder(int orderId, string status)
+        {
+            // 1. Find the order in the database
+            var order = _context.Orders.FirstOrDefault(o => o.OrderID == orderId);
+
+            if (order != null)
+            {
+                // 2. Update the status based on which button was clicked
+                order.OrderStatus = status;
+
+                // 3. Save changes to the database
+                _context.SaveChanges();
+            }
+
+            // 4. Redirect back to the dashboard to see the updated badge
+            return RedirectToAction("OrderStatus");
         }
 
 

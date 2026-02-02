@@ -1,5 +1,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using PackageFoodManagementSystem.Repository.Data;
 
 namespace PackageFoodManagementSystem.Application.Controllers
 {
@@ -7,17 +9,25 @@ namespace PackageFoodManagementSystem.Application.Controllers
     [Authorize(Roles = "StoreManager")]
     public class StoreManagerController : Controller
     {
-    //    [HttpPost]
-    //    public async Task<IActionResult> Create(Product product)
-    //    {
-    //        if (ModelState.IsValid)
-    //        {
-    //            _context.Add(product);
-    //            await _context.SaveChangesAsync();
-    //            return RedirectToAction("Index");
-    //        }
-    //        return View(product);
-    //    }
+        //    [HttpPost]
+        //    public async Task<IActionResult> Create(Product product)
+        //    {
+        //        if (ModelState.IsValid)
+        //        {
+        //            _context.Add(product);
+        //            await _context.SaveChangesAsync();
+        //            return RedirectToAction("Index");
+        //        }
+        //        return View(product);
+        //    }
+
+        private readonly ApplicationDbContext _context;
+
+
+        public StoreManagerController(ApplicationDbContext context)
+        {
+            _context = context;
+        }
 
         public IActionResult Home()
         {
@@ -29,14 +39,79 @@ namespace PackageFoodManagementSystem.Application.Controllers
             return View();
         }
 
-        public IActionResult Orders()
-        {
-            return View();
-        }
+
         public IActionResult AddProduct()
         {
             return View();
         }
+
+        public IActionResult OrdersDashboard()
+        {
+            var today = DateTime.Today;
+
+            ViewBag.TodayOrders = _context.Orders
+                .Count(o => o.OrderDate >= today);
+
+            ViewBag.PendingOrders = _context.Orders
+                .Count(o => o.OrderStatus == "Pending" || o.OrderStatus == "Placed");
+
+            ViewBag.CompletedOrders = _context.Orders
+                .Count(o => o.OrderStatus == "Confirmed" || o.OrderStatus == "Delivered");
+
+            ViewBag.CancelledOrders = _context.Orders
+                .Count(o => o.OrderStatus == "Cancelled");
+
+            return View();
+        }
+
+        public IActionResult Orders(string status)
+
+        {
+
+            var orders = _context.Orders
+
+                .Include(o => o.Customer)   // or Customer
+
+                .AsQueryable();
+
+            if (!string.IsNullOrEmpty(status))
+
+            {
+
+                if (status == "Today")
+
+                {
+
+                    var today = DateTime.Today;
+
+                    orders = orders.Where(o => o.OrderDate >= today);
+
+                }
+
+                else if (status == "Completed")
+
+                {
+
+                    orders = orders.Where(o =>
+
+                        o.OrderStatus == "Confirmed" || o.OrderStatus == "Delivered");
+
+                }
+
+                else
+
+                {
+
+                    orders = orders.Where(o => o.OrderStatus == status);
+
+                }
+
+            }
+
+            return View(orders.ToList());
+
+        }
+
         public IActionResult Inventory()
         {
             return View();

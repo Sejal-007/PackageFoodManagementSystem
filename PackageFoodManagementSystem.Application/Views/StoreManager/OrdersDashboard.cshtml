@@ -1,0 +1,42 @@
+﻿@{
+
+    ViewData["Title"] = "OrdersDashboard";
+
+    Layout = "~/Views/Shared/_StoreManagerlayout.cshtml";
+
+}
+
+<!-- Header -->
+<div class="topbar">
+    <h4>| Store Name</h4>
+    <input type="text" placeholder="Search" />
+    <div class="icons">
+        <a asp-controller="StoreManager" asp-action="Profile">
+            👤
+
+        </a>
+    </div>
+</div>
+
+<div class="page-container">
+    <h2 class="page-title">🛒 Orders Overview</h2>
+    <div class="order-stats">
+        <a asp-controller="StoreManager" asp-action="Orders" asp-route-status="Today" class="stat-card">
+            <h3>Today’s Orders</h3>
+            <p>@ViewBag.TodayOrders</p>
+        </a>
+        <a asp-controller="StoreManager" asp-action="Orders" asp-route-status="Pending" class="stat-card">
+            <h3>Pending Orders</h3>
+            <p>@ViewBag.PendingOrders</p>
+        </a>
+        <a asp-controller="StoreManager" asp-action="Orders" asp-route-status="Completed" class="stat-card">
+            <h3>Completed Orders</h3>
+            <p>@ViewBag.CompletedOrders</p>
+        </a>
+        <a asp-controller="StoreManager" asp-action="Orders" asp-route-status="Cancelled" class="stat-card">
+            <h3>Cancelled Orders</h3>
+            <p>@ViewBag.CancelledOrders</p>
+        </a>
+    </div>
+
+</div>

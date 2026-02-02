@@ -1,0 +1,117 @@
+﻿@model List<PackageFoodManagementSystem.Repository.Models.Order>
+@{
+    ViewData["Title"] = "Admin Command Center";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<div class="container-fluid px-4 py-3">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="fw-bold">🛒 Orders Overview</h2>
+        <div class="d-flex gap-2">
+            <input type="text" id="adminSearch" class="form-control" placeholder="Search orders..." onkeyup="searchTable()">
+            <button class="btn btn-primary">Search</button>
+        </div>
+    </div>
+
+    <div class="row g-3 mb-4">
+        <div class="col-md-3">
+            <div class="card shadow-sm border-0 border-start border-primary border-4 py-2">
+                <div class="card-body">
+                    <h6 class="text-muted small text-uppercase">Today's Orders</h6>
+                    <h3 class="fw-bold mb-0">@ViewBag.TodayOrders</h3>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card shadow-sm border-0 border-start border-warning border-4 py-2">
+                <div class="card-body">
+                    <h6 class="text-muted small text-uppercase">Pending Tasks</h6>
+                    <h3 class="fw-bold mb-0">@ViewBag.PendingOrders</h3>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card shadow-sm border-0 border-start border-success border-4 py-2">
+                <div class="card-body">
+                    <h6 class="text-muted small text-uppercase">Completed</h6>
+                    <h3 class="fw-bold mb-0">@ViewBag.CompletedOrders</h3>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card shadow-sm border-0 border-start border-danger border-4 py-2">
+                <div class="card-body">
+                    <h6 class="text-muted small text-uppercase">Cancelled</h6>
+                    <h3 class="fw-bold mb-0">@ViewBag.CancelledOrders</h3>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card shadow-sm border-0">
+        <div class="card-body p-0">
+            <table class="table table-hover align-middle mb-0" id="adminOrderTable">
+                <thead class="bg-light">
+                    <tr>
+                        <th class="ps-3">ID</th>
+                        <th>Customer / Email</th>
+                        <th>Status</th>
+                        <th>Total</th>
+                        <th>Date</th>
+                        <th class="text-center">Manage</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model != null && Model.Any())
+                    {
+                        foreach (var order in Model)
+                        {
+                            <tr>
+                                <td class="ps-3 fw-bold">#@order.OrderID</td>
+                                <td>
+                                    <div class="fw-bold">@(order.Customer?.Name ?? "Walk-in")</div>
+                                    <div class="text-muted small">@order.Customer?.Email</div>
+                                </td>
+                                <td>
+                                    @{
+                                        var statusClass = order.OrderStatus switch
+                                        {
+                                            "Processing" => "bg-warning text-dark",
+                                            "Shipped" => "bg-primary",
+                                            "Delivered" => "bg-success",
+                                            _ => "bg-info text-dark"
+                                        };
+                                    }
+                                    <span class="badge rounded-pill @statusClass">@order.OrderStatus</span>
+                                </td>
+                                <td class="fw-bold">₹@order.TotalAmount</td>
+                                <td>@order.OrderDate?.ToString("dd-MMM-yyyy")</td>
+                                <td class="text-center">
+                                    <form asp-action="ProcessOrder" method="post" class="d-inline">
+                                        <input type="hidden" name="orderId" value="@order.OrderID" />
+                                        @if (order.OrderStatus == "Placed" || order.OrderStatus == "Confirmed")
+                                        {
+                                            <button name="status" value="Processing" class="btn btn-sm btn-outline-warning">Pack</button>
+                                        }
+                                        else if (order.OrderStatus == "Processing")
+                                        {
+                                            <button name="status" value="Shipped" class="btn btn-sm btn-outline-primary">Ship</button>
+                                        }
+                                        else if (order.OrderStatus == "Shipped")
+                                        {
+                                            <button name="status" value="Delivered" class="btn btn-sm btn-outline-success">Deliver</button>
+                                        }
+                                    </form>
+                                </td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr><td colspan="6" class="text-center py-4">No orders found.</td></tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

@@ -126,20 +126,26 @@ namespace PackageFoodManagementSystem.Services.Implementations
 
         }
 
-        public void UpdateOrderStatus(int orderId, string status)
-
+        // Change 'string changedBy' to 'int changedByUserId'
+        public void UpdateOrderStatus(int orderId, string status, string changedBy, string remarks)
         {
-
-            var order = _orderRepository.GetOrderById(orderId);
-
+            var order = _context.Orders.FirstOrDefault(o => o.OrderID == orderId);
             if (order == null) return;
 
             order.OrderStatus = status;
+            order.LastUpdateOn = DateTime.Now;
 
-            _orderRepository.UpdateOrder(order);
+            var history = new OrderStatusHistory
+            {
+                OrderID = orderId,
+                Status = status,
+                ChangedOn = DateTime.Now,
+                ChangedBy = 1, // Use a number here because your DB column is an INT
+                Remarks = remarks
+            };
 
-            _orderRepository.Save();
-
+            _context.OrderStatusHistories.Add(history);
+            _context.SaveChanges();
         }
 
         public void CancelOrder(int orderId)
