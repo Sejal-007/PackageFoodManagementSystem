@@ -9,6 +9,7 @@
         transition: transform 0.2s;
         text-decoration: none !important;
         color: inherit;
+        cursor: pointer;
     }
 
         .stat-card:hover {
@@ -36,34 +37,34 @@
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h2 class="fw-bold text-dark">🛒 Orders Management</h2>
         <div class="search-box">
-            <input type="text" id="orderSearch" class="form-control" placeholder="Search Order ID or Customer..." onkeyup="filterTable()">
+            <input type="text" id="orderSearch" class="form-control" placeholder="Search ID or Name..." onkeyup="filterTable()">
         </div>
     </div>
 
     <div class="row mb-5">
         <div class="col-md-3">
-            <div class="card stat-card border-0 shadow-sm bg-white p-3 border-start border-4 border-info">
+            <a asp-action="OrdersDashboard" asp-route-status="Today" class="stat-card card border-0 shadow-sm p-3 border-start border-4 border-info">
                 <h6 class="text-muted text-uppercase small">Today's Orders</h6>
                 <h2 class="fw-bold mb-0">@ViewBag.TodayOrders</h2>
-            </div>
+            </a>
         </div>
         <div class="col-md-3">
-            <div class="card stat-card border-0 shadow-sm bg-white p-3 border-start border-4 border-warning">
+            <a asp-action="OrdersDashboard" asp-route-status="Pending" class="stat-card card border-0 shadow-sm p-3 border-start border-4 border-warning">
                 <h6 class="text-muted text-uppercase small">Pending/Processing</h6>
                 <h2 class="fw-bold mb-0">@ViewBag.PendingOrders</h2>
-            </div>
+            </a>
         </div>
         <div class="col-md-3">
-            <div class="card stat-card border-0 shadow-sm bg-white p-3 border-start border-4 border-success">
+            <a asp-action="OrdersDashboard" asp-route-status="Completed" class="stat-card card border-0 shadow-sm p-3 border-start border-4 border-success">
                 <h6 class="text-muted text-uppercase small">Completed</h6>
                 <h2 class="fw-bold mb-0">@ViewBag.CompletedOrders</h2>
-            </div>
+            </a>
         </div>
         <div class="col-md-3">
-            <div class="card stat-card border-0 shadow-sm bg-white p-3 border-start border-4 border-danger">
+            <a asp-action="OrdersDashboard" asp-route-status="Cancelled" class="stat-card card border-0 shadow-sm p-3 border-start border-4 border-danger">
                 <h6 class="text-muted text-uppercase small">Cancelled</h6>
                 <h2 class="fw-bold mb-0">@ViewBag.CancelledOrders</h2>
-            </div>
+            </a>
         </div>
     </div>
 
@@ -81,35 +82,43 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach (var order in Model)
+                    @if (Model != null && Model.Any())
                     {
-                        <tr>
-                            <td class="ps-4 fw-bold">#@order.OrderID</td>
-                            <td>
-                                <div class="d-flex flex-column">
-                                    <span>@(order.Customer?.Name ?? "Guest Customer")</span>
-                                    <small class="text-muted">@order.Customer?.Email</small>
-                                </div>
-                            </td>
-                            <td class="fw-bold text-primary">₹@order.TotalAmount</td>
-                            <td>
-                                @{
-                                    var badgeClass = order.OrderStatus switch
-                                    {
-                                        "Processing" => "badge-processing",
-                                        "Shipped" => "badge-shipped",
-                                        "Delivered" => "badge-delivered",
-                                        _ => "badge-placed"
-                                    };
-                                }
-                                <span class="badge rounded-pill @badgeClass">@order.OrderStatus</span>
-                            </td>
-                            <td>@order.OrderDate?.ToString("dd MMM yyyy")</td>
-                            <td class="text-center">
-                                <div class="btn-group">
-                                    <form asp-controller="Home" asp-action="ProcessOrder" method="post" class="d-inline">
+                        foreach (var order in Model)
+                        {
+                            <tr>
+                                <td class="ps-4 fw-bold">#@order.OrderID</td>
+                                <td>
+                                    <div class="d-flex flex-column">
+                                        @if (order.Customer != null)
+                                        {
+                                            <span class="fw-bold">@order.Customer.Name</span>
+                                            <small class="text-muted">@order.Customer.Email</small>
+                                        }
+                                        else
+                                        {
+                                            <span class="text-danger">Walk-in (ID: @order.CustomerId)</span>
+                                            <small class="text-muted italic">Record missing in Customer table</small>
+                                        }
+                                    </div>
+                                </td>
+                                <td class="fw-bold text-primary">₹@order.TotalAmount</td>
+                                <td>
+                                    @{
+                                        var badgeClass = order.OrderStatus switch
+                                        {
+                                            "Processing" => "badge-processing",
+                                            "Shipped" => "badge-shipped",
+                                            "Delivered" => "badge-delivered",
+                                            _ => "badge-placed"
+                                        };
+                                    }
+                                    <span class="badge rounded-pill @badgeClass">@order.OrderStatus</span>
+                                </td>
+                                <td>@order.OrderDate?.ToString("dd MMM yyyy")</td>
+                                <td class="text-center">
+                                    <form asp-controller="Home" asp-action="ProcessOrder" method="post">
                                         <input type="hidden" name="orderId" value="@order.OrderID" />
-
                                         @if (order.OrderStatus == "Placed" || order.OrderStatus == "Confirmed")
                                         {
                                             <button name="status" value="Processing" class="btn btn-sm btn-outline-warning">Pack</button>
@@ -123,9 +132,13 @@
                                             <button name="status" value="Delivered" class="btn btn-sm btn-outline-success">Deliver</button>
                                         }
                                     </form>
-                                </div>
-                            </td>
-                        </tr>
+                                </td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr><td colspan="6" class="text-center p-5 text-muted">No orders found for this category.</td></tr>
                     }
                 </tbody>
             </table>
@@ -135,22 +148,20 @@
 
 <script>
     function filterTable() {
-        var input, filter, table, tr, td, i, txtValue;
-        input = document.getElementById("orderSearch");
-        filter = input.value.toUpperCase();
-        table = document.getElementById("ordersTable");
-        tr = table.getElementsByTagName("tr");
-        for (i = 1; i < tr.length; i++) {
-            tr[i].style.display = "none";
-            td = tr[i].getElementsByTagName("td");
-            for(var j=0; j<td.length; j++) {
-                if (td[j]) {
-                    if (td[j].innerHTML.toUpperCase().indexOf(filter) > -1) {
-                        tr[i].style.display = "";
-                        break;
-                    }
+        var input = document.getElementById("orderSearch");
+        var filter = input.value.toUpperCase();
+        var table = document.getElementById("ordersTable");
+        var tr = table.getElementsByTagName("tr");
+        for (var i = 1; i < tr.length; i++) {
+            var rowVisible = false;
+            var td = tr[i].getElementsByTagName("td");
+            for (var j = 0; j < td.length; j++) {
+                if (td[j] && td[j].innerText.toUpperCase().indexOf(filter) > -1) {
+                    rowVisible = true;
+                    break;
                 }
             }
+            tr[i].style.display = rowVisible ? "" : "none";
         }
     }
 </script>

@@ -17,8 +17,8 @@ namespace PackageFoodManagementSystem.Repository.Models
         [Required]
         public int CustomerId { get; set; }
 
-        public Customer? Customer { get; set; } // Navigation Property: Marked as nullable
-
+        [ForeignKey("CustomerId")]
+        public virtual Customer Customer { get; set; }
         [Required]
         public int CreatedByUserID { get; set; }
 

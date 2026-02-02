@@ -42,8 +42,8 @@ namespace PackageFoodManagementSystem.Repository.Data
             // Force EF to use the singular name 'Customer' to match your SQL Server
             modelBuilder.Entity<Customer>().ToTable("Customer");
 
-            modelBuilder.Entity<Bill>().ToTable("Bills");
-            modelBuilder.Entity<Payment>().ToTable("Payments");
+            modelBuilder.Entity<Bill>().ToTable("Bill");
+            modelBuilder.Entity<Payment>().ToTable("Payment");
 
 
             // Optional: If 'UserAuthentications' also gives an error, 

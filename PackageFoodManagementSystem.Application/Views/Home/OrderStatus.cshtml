@@ -4,14 +4,7 @@
     Layout = "~/Views/Shared/_AdminLayout.cshtml";
 }
 
-<div class="container-fluid px-4 py-3">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2 class="fw-bold">🛒 Orders Overview</h2>
-        <div class="d-flex gap-2">
-            <input type="text" id="adminSearch" class="form-control" placeholder="Search orders..." onkeyup="searchTable()">
-            <button class="btn btn-primary">Search</button>
-        </div>
-    </div>
+
 
     <div class="row g-3 mb-4">
         <div class="col-md-3">
@@ -68,10 +61,23 @@
                         {
                             <tr>
                                 <td class="ps-3 fw-bold">#@order.OrderID</td>
-                                <td>
-                                    <div class="fw-bold">@(order.Customer?.Name ?? "Walk-in")</div>
-                                    <div class="text-muted small">@order.Customer?.Email</div>
-                                </td>
+                            <td>
+                                <div class="fw-bold">
+                                    @if (order.Customer != null)
+                                    {
+                                        // This pulls 'Name' from the Customer table via the relationship
+                                        @order.Customer.Name
+                                    }
+                                    else
+                                    {
+                                        // This shows if the ID in the Order table doesn't exist in the Customer table
+                                        <span class="text-danger">ID: @order.CustomerId (Not Found)</span>
+                                    }
+                                </div>
+                                <div class="text-muted small">
+                                    @(order.Customer?.Email ?? "No email linked")
+                                </div>
+                            </td>
                                 <td>
                                     @{
                                         var statusClass = order.OrderStatus switch

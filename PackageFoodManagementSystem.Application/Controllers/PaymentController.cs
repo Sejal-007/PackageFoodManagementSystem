@@ -24,7 +24,6 @@ namespace PackagedFoodFrontend.Controllers
         private readonly ApplicationDbContext _context;
         private readonly IOrderService _orderService; // Add this line
 
-        public PaymentController(ApplicationDbContext context)
 
         public PaymentController(ApplicationDbContext context, IOrderService orderService)
         {
@@ -47,12 +46,7 @@ namespace PackagedFoodFrontend.Controllers
 
         }
 
-        // ✅ Confirm Payment
-       [HttpPost]
-public IActionResult Confirm(int orderId, string paymentMethod)
-{
-    var order = _context.Orders.FirstOrDefault(o => o.OrderID == orderId);
-    if (order == null) return BadRequest("Invalid Order.");
+ 
         // ✅ Confirm Payment
         [HttpPost]
         public IActionResult Confirm(int orderId, string paymentMethod)
@@ -67,7 +61,7 @@ public IActionResult Confirm(int orderId, string paymentMethod)
     var bill = _context.Bills.FirstOrDefault(b => b.OrderID == orderId);
     if (bill == null) return BadRequest("Bill not found.");
             // 2. Validate Bill exists (required for Payment record)
-            var bill = _context.Bills.FirstOrDefault(b => b.OrderID == orderId);
+            var Bill = _context.Bills.FirstOrDefault(b => b.OrderID == orderId);
             if (bill == null)
             {
                 return BadRequest("Bill not found for this order.");
@@ -76,7 +70,7 @@ public IActionResult Confirm(int orderId, string paymentMethod)
     string paymentStatus = (paymentMethod == "COD") ? "Pending" : "Success";
     string orderStatus = (paymentMethod == "COD") ? "Placed" : "Confirmed";
             // 3. Set Logic: COD stays 'Placed', Online Payments become 'Confirmed'
-            string paymentStatus = (paymentMethod == "COD") ? "Pending" : "Success";
+            string PaymentStatus = (paymentMethod == "COD") ? "Pending" : "Success";
             string nextOrderStatus = (paymentMethod == "COD") ? "Placed" : "Confirmed";
 
     // Create the payment record
@@ -91,7 +85,7 @@ public IActionResult Confirm(int orderId, string paymentMethod)
         // REMOVE 'AmountPaid' here if it is causing the error
     };
             // 4. Create and Save Payment Record
-            var payment = new Payment
+            var Payment = new Payment
             {
                 BillID = bill.BillID,
                 OrderID = orderId,
