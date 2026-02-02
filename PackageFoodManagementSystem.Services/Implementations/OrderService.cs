@@ -62,21 +62,15 @@ namespace PackageFoodManagementSystem.Services.Implementations
                 throw new Exception("Cart is empty");
 
             var order = new Order
-
             {
-
                 CustomerId = userId,
-
+                CreatedByUserID = userId, // ADD THIS LINE: It was missing!
                 DeliveryAddress = address,
-
                 OrderStatus = "PendingPayment",
-
                 OrderDate = DateTime.Now
-
             };
 
             _context.Orders.Add(order);
-
             _context.SaveChanges();
 
             foreach (var item in cart.CartItems)

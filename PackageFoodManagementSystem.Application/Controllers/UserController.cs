@@ -58,7 +58,40 @@ namespace PackagedFoodFrontend.Controllers
 
         public IActionResult MyBasket() => View(GetUserFromSession());
         public IActionResult SmartBasket() => View(GetUserFromSession());
-        public IActionResult MyOrders() => View();
+        public async Task<IActionResult> MyOrders()
+        {
+            // 1. Get the logged-in User ID from Session
+            int? userId = HttpContext.Session.GetInt32("UserId");
+
+            if (userId == null)
+                return RedirectToAction("SignIn", "Home");
+
+            // 2. Fetch orders from DB where CreatedByUserID matches
+            var orders = await _context.Orders
+            .Where(o => o.CustomerId == userId.Value || o.CreatedByUserID == userId.Value)
+            .OrderByDescending(o => o.OrderDate)
+            .ToListAsync();
+
+            // 3. Pass the list to the view
+            return View(orders);
+        }
+
+        [HttpPost]
+        public IActionResult CancelOrder(int orderId)
+        {
+            try
+            {
+                // Use the OrderService to update the status in the backend
+                var orderService = (IOrderService)HttpContext.RequestServices.GetService(typeof(IOrderService));
+                orderService.CancelOrder(orderId); // This updates DB to "Cancelled"
+
+                return Json(new { success = true, message = "Order cancelled successfully." });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = ex.Message });
+            }
+        }
         public IActionResult PastOrders() => View();
 
         public IActionResult Payment() => View();

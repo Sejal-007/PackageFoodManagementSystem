@@ -82,14 +82,40 @@ namespace PackageFoodManagementSystem.Application.Controllers
 
         }
 
-
         [HttpPost]
         public IActionResult PlaceOrder(string deliveryAddress)
         {
-            int userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
+            int userId = int.Parse(User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier).Value);
+
+            // 1. Create the Order
             var orderId = _orderService.CreateOrder(userId, deliveryAddress);
 
-            return RedirectToAction("Payment", "Payment", new { orderId });
+            // 2. Create the Bill immediately so Payment page finds it
+            var existingBill = _context.Bills.FirstOrDefault(b => b.OrderID == orderId);
+            if (existingBill == null)
+            {
+                // Calculate total from Cart/OrderItems
+                var subtotal = _context.OrderItems
+                    .Where(oi => oi.OrderID == orderId)
+                    .Sum(oi => oi.Quantity * oi.UnitPrice);
+
+                var newBill = new Bill
+                {
+                    OrderID = orderId,
+                    BillDate = DateTime.Now,
+                    SubtotalAmount = subtotal,
+                    TaxAmount = 0,
+                    DiscountAmount = 0,
+                    FinalAmount = subtotal, // Matches your DB column 'FinalAmount'
+                    BillingStatus = "Unpaid"
+                };
+
+                _context.Bills.Add(newBill);
+                _context.SaveChanges();
+            }
+
+            // 3. Redirect to Payment
+            return RedirectToAction("Payment", "Payment", new { orderId = orderId });
         }
 
         public IActionResult Success()

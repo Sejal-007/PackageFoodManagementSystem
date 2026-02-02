@@ -1,36 +1,129 @@
-﻿@{
-
-    ViewData["Title"] = "My Profile";
-
-}
-@{ViewData["Title"] = "Dashboard";
-
+﻿@using Microsoft.AspNetCore.Http
+@{
     Layout = "~/Views/Shared/_StoreManagerlayout.cshtml";
-
+    var userName = Context.Session.GetString("UserName") ?? "Store Manager";
+    var userEmail = Context.Session.GetString("UserEmail") ?? "manager@store.com";
+    var userPhone = Context.Session.GetString("UserPhone") ?? "1234567890";
 }
-<div class="page-container">
-    <h2 class="page-title">👤 Store Manager Profile</h2>
-    <div class="profile-card">
-        <div class="profile-row">
-            <label>Name</label>
-            <span>Sunil Karad</span>
+
+<style>
+    /* Centers the card in the middle of the available screen space */
+    .profile-page-wrapper {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 80vh;
+        animation: fadeIn 0.8s ease-in-out;
+    }
+
+    .glass-card {
+        background: #fff;
+        border-radius: 20px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        width: 100%;
+        max-width: 500px;
+        overflow: hidden;
+        transition: transform 0.3s ease;
+    }
+
+        .glass-card:hover {
+            transform: translateY(-5px);
+        }
+
+    .profile-header {
+        background: #FF7E5F; /* Modern Coral Gradient */
+        background: linear-gradient(135deg, #FF7E5F 0%, #FEB47B 100%);
+        color: white;
+        padding: 40px 20px;
+        text-align: center;
+    }
+
+    .profile-avatar {
+        width: 90px;
+        height: 90px;
+        background: white;
+        color: #FF7E5F;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 40px;
+        margin: 0 auto 15px;
+    }
+
+    .profile-header h3 {
+        margin: 10px 0 5px;
+        font-size: 24px;
+    }
+
+    .profile-header p {
+        margin: 0;
+        opacity: 0.9;
+        font-size: 14px;
+    }
+
+    .profile-body {
+        padding: 30px;
+    }
+
+    .info-group {
+        display: flex;
+        justify-content: space-between;
+        padding: 15px 0;
+        border-bottom: 1px solid #f0f0f0;
+    }
+
+        .info-group:last-child {
+            border-bottom: none;
+        }
+
+    .label {
+        font-weight: 700;
+        color: #444;
+        font-size: 14px;
+    }
+
+    .value {
+        color: #666;
+        font-size: 14px;
+    }
+
+    @@keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: scale(0.95);
+        }
+
+        to {
+            opacity: 1;
+            transform: scale(1);
+        }
+    }
+</style>
+
+<div class="profile-page-wrapper">
+    <div class="glass-card">
+        <div class="profile-header">
+            <div class="profile-avatar">
+                <i class="fa fa-user"></i>
+            </div>
+            <h3>@userName</h3>
+            <p>Store Manager</p>
         </div>
-        <div class="profile-row">
-            <label>Email</label>
-            <span>sunilkarad123@gmail.com</span>
+
+        <div class="profile-body">
+            <div class="info-group">
+                <span class="label">Email</span>
+                <span class="value">@userEmail</span>
+            </div>
+            <div class="info-group">
+                <span class="label">Phone</span>
+                <span class="value">@userPhone</span>
+            </div>
+            <div class="info-group">
+                <span class="label">Store Name</span>
+                <span class="value">Alwayzzz Fresh</span>
+            </div>
         </div>
-        <div class="profile-row">
-            <label>Phone</label>
-            <span>+91 9876543210</span>
-        </div>
-        <div class="profile-row">
-            <label>Store Name</label>
-            <span>Sunil Super Store</span>
-        </div>
-        <div class="profile-row">
-            <label>Role</label>
-            <span>Store Manager</span>
-        </div>
-        <button class="btn-primary">✏ Edit Profile</button>
     </div>
 </div>

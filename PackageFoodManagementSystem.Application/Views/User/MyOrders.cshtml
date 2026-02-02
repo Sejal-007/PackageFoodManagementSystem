@@ -34,6 +34,14 @@
                                     @order.OrderStatus
                                 </span>
                                 <div class="fw-bold mt-1">₹@order.TotalAmount</div>
+
+                                @* SHOW CANCEL BUTTON ONLY IF NOT ALREADY CANCELLED OR DISPATCHED *@
+                                @if (order.OrderStatus != "Cancelled" && order.OrderStatus != "Dispatched")
+                                {
+                                    <button class="btn btn-sm btn-outline-danger mt-2" onclick="confirmCancel(@order.OrderID)">
+                                        Cancel Order
+                                    </button>
+                                }
                             </div>
                         </div>
                     </div>
@@ -42,3 +50,38 @@
         </div>
     </div>
 </div>
+
+@* SCRIPTS FOR POPUP AND AJAX *@
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<script>
+    function confirmCancel(orderId) {
+        Swal.fire({
+            title: 'Are you sure?',
+            text: "Do you really want to cancel this order?",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: 'Yes, cancel it!'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.ajax({
+                    url: '/User/CancelOrder',
+                    type: 'POST',
+                    data: { orderId: orderId },
+                    success: function (response) {
+                        if (response.success) {
+                            Swal.fire('Cancelled!', response.message, 'success').then(() => {
+                                location.reload(); // Refresh to show updated status
+                            });
+                        } else {
+                            Swal.fire('Error!', response.message, 'error');
+                        }
+                    }
+                });
+            }
+        });
+    }
+</script>
