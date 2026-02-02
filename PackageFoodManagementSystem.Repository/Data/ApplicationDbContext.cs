@@ -42,6 +42,10 @@ namespace PackageFoodManagementSystem.Repository.Data
             // Force EF to use the singular name 'Customer' to match your SQL Server
             modelBuilder.Entity<Customer>().ToTable("Customer");
 
+            modelBuilder.Entity<Bill>().ToTable("Bills");
+            modelBuilder.Entity<Payment>().ToTable("Payments");
+
+
             // Optional: If 'UserAuthentications' also gives an error, 
             // you can force its name here too:
             // modelBuilder.Entity<UserAuthentication>().ToTable("UserAuthentications");
@@ -52,6 +56,8 @@ namespace PackageFoodManagementSystem.Repository.Data
             // This tells EF to ignore the "Pending Changes" warning and just run the update
             optionsBuilder.ConfigureWarnings(w => w.Ignore(Microsoft.EntityFrameworkCore.Diagnostics.RelationalEventId.PendingModelChangesWarning));
         }
+
+        
 
     }
 
