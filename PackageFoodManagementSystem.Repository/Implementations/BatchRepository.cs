@@ -19,16 +19,15 @@ namespace PackageFoodManagementSystem.Repository.Implementations
 
         public async Task<IEnumerable<Batch>> GetAllBatchesAsync()
         {
-            // Includes the Product details so you can see the Product Name in the list
+            // Removed .Include(b => b.Product) as Batch does not have a Product navigation property
             return await _context.Batches
-                .Include(b => b.Product)
                 .ToListAsync();
         }
 
         public async Task<Batch?> GetBatchByIdAsync(int id)
         {
+            // Removed .Include(b => b.Product) as Batch does not have a Product navigation property
             return await _context.Batches
-                .Include(b => b.Product)
                 .FirstOrDefaultAsync(b => b.BatchId == id);
         }
 

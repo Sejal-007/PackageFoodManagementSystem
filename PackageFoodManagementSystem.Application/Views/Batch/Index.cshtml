@@ -33,7 +33,10 @@
                     {
                         <tr>
                             <td class="ps-4 fw-bold">#@item.BatchId</td>
-                            <td>@(item.Product?.ProductName ?? "N/A") (ID: @item.ProductId)</td>
+                            <td>
+                                @* FIX: Use ProductId only, since ProductName property does not exist on Batch *@
+                                (ID: @item.ProductId)
+                            </td>
                             <td>@item.ManufactureDate.ToString("dd MMM yyyy")</td>
                             <td>@item.ExpiryDate.ToString("dd MMM yyyy")</td>
                             <td>

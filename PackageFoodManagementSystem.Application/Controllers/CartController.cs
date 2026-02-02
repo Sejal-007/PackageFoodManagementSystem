@@ -99,17 +99,31 @@ namespace PackageFoodManagementSystem.Controllers
         [HttpGet("GetItemQty")]
         public IActionResult GetItemQty(int productId)
         {
-            int userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
+            try
+            {
+                var userIdString = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
 
-            var cart = _context.Carts
-                .Include(c => c.CartItems)
-                .FirstOrDefault(c => c.UserId == userId && c.IsActive);
+                if (int.TryParse(userIdString, out int userId))
+                {
+                    var cart = _context.Carts
+                        .Include(c => c.CartItems)
+                        .FirstOrDefault(c => c.UserId == userId && c.IsActive);
 
-            if (cart == null)
-                return Json(0);
+                    if (cart != null)
+                    {
+                        var item = cart.CartItems.FirstOrDefault(ci => ci.ProductId == productId);
+                        return Json(new { qty = item?.Quantity ?? 0 });
+                    }
+                }
 
-            var item = cart.CartItems.FirstOrDefault(x => x.ProductId == productId);
-            return Json(item?.Quantity ?? 0);
+                // Return 0 if user is not found, cart is null, or item is not in cart
+                return Json(new { qty = 0 });
+            }
+            catch (Exception)
+            {
+                // Final return path for any unexpected errors (e.g., DB connection issues)
+                return Json(new { qty = 0 });
+            }
         }
 
         // ================== REMOVE ==================

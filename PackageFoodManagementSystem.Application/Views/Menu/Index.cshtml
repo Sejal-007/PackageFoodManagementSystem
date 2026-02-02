@@ -5,48 +5,67 @@
     <script src="~/js/menu.js"></script>
 
     <script>
-                function updateCart(productId, action, quantityElement) {
+        /**
+         * core function to handle AJAX cart updates
+         */
+        function updateCart(productId, action, quantityElement) {
             $.ajax({
-                url: `/Cart/${action}`, // Ensure this points to your [Route("Cart")]
+                url: '/Cart/' + action,
                 type: 'POST',
-                // This header is required for [FromBody] to work correctly
+                // Critical for [FromBody] binding in C#
                 contentType: 'application/json; charset=utf-8',
-                // Data must be a JSON string and key name must match your DTO property
+                // Ensures data is sent as a proper JSON string
                 data: JSON.stringify({ productId: parseInt(productId) }),
                 success: function (response) {
                     if (response.success) {
-                        // Update product card quantity
+                        // 1. Update the quantity number on the product card
                         quantityElement.text(response.newQty);
-                        // Update navbar badge
-                        $('#cart-badge').text(response.cartCount).show();
+
+                        // 2. Update the navbar cart badge count
+                        const badge = $('#cart-badge');
+                        badge.text(response.cartCount);
+
+                        // 3. Toggle visibility: show badge if count > 0, otherwise hide it
+                        if (response.cartCount > 0) {
+                            badge.css('display', 'inline-block');
+                        } else {
+                            badge.css('display', 'none');
+                        }
                     }
                 },
                 error: function (xhr) {
-                    // Handle 401 Unauthorized if not logged in
-                    if(xhr.status === 401) {
-                        alert("Please log in first.");
+                    // Better error feedback based on status
+                    if (xhr.status === 401) {
+                        alert("Please log in first to manage your cart.");
                     } else {
-                        alert("An error occurred.");
+                        alert("Something went wrong. Please check your connection or login status.");
                     }
                 }
             });
         }
 
-        // Button click handlers
-        $(document).on('click', '.btn-plus', function () {
-            const productId = $(this).data('id');
-            const qtySpan = $(`#qty-${productId}`);
-            updateCart(productId, 'Add', qtySpan);
-        });
+        /**
+         * Event Listeners for Plus and Minus buttons
+         */
+        $(document).ready(function () {
+            // Handle Plus Button Click
+            $(document).on('click', '.btn-plus', function () {
+                const productId = $(this).data('id');
+                const qtySpan = $(`#qty-${productId}`);
+                updateCart(productId, 'Add', qtySpan);
+            });
 
-        $(document).on('click', '.btn-minus', function () {
-            const productId = $(this).data('id');
-            const qtySpan = $(`#qty-${productId}`);
-            const currentQty = parseInt(qtySpan.text());
+            // Handle Minus Button Click
+            $(document).on('click', '.btn-minus', function () {
+                const productId = $(this).data('id');
+                const qtySpan = $(`#qty-${productId}`);
+                const currentQty = parseInt(qtySpan.text());
 
-            if (currentQty > 0) {
-                updateCart(productId, 'Decrease', qtySpan);
-            }
+                // Prevent sending requests if the quantity is already 0
+                if (currentQty > 0) {
+                    updateCart(productId, 'Decrease', qtySpan);
+                }
+            });
         });
     </script>
 }

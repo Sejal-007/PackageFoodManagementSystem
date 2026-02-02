@@ -20,6 +20,10 @@ namespace PackageFoodManagementSystem.Repository.Data
         public DbSet<Inventory> Inventories { get; set; }
         public DbSet<UserAuthentication> UserAuthentications { get; set; }
         public DbSet<Batch> Batches { get; set; }
+
+        // Fixes CS1061 build errors in BatchController
+        public DbSet<Category> Categories { get; set; }
+
         public DbSet<Cart> Carts { get; set; }
         public DbSet<CartItem> CartItems { get; set; }
 
@@ -28,10 +32,15 @@ namespace PackageFoodManagementSystem.Repository.Data
             base.OnModelCreating(modelBuilder);
 
             // Mapping C# Models to Singular SQL Table Names
-            modelBuilder.Entity<Batch>().ToTable("Batch"); // Fixes 'Invalid object name Batches'
+            // Map to the exact table name to avoid 'Invalid Object Name' errors
+            modelBuilder.Entity<Batch>().ToTable("Batch");
             modelBuilder.Entity<Customer>().ToTable("Customer");
-            modelBuilder.Entity<Cart>().ToTable("Cart"); // Fixes CartController crash
+            modelBuilder.Entity<Cart>().ToTable("Cart");
             modelBuilder.Entity<CartItem>().ToTable("CartItem");
+
+            // Explicitly mapping Category to ensure the schema matches your SQL table
+            modelBuilder.Entity<Category>().HasKey(c => c.CategoryId);
+            modelBuilder.Entity<Category>().ToTable("Categories");
 
             // Setting Decimal Precision for Price
             modelBuilder.Entity<Product>()

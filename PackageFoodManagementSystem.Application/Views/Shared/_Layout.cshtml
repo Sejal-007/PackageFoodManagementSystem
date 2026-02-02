@@ -43,8 +43,9 @@
                 <li class="nav-item me-4">
                     <a class="nav-link position-relative" asp-controller="Cart" asp-action="MyBasket">
                         <i class="fa-solid fa-cart-shopping fa-lg" style="color: #ff6347;"></i>
-                        <span id="cart-badge" class="badge bg-danger rounded-pill position-absolute top-0 start-100 translate-middle"
-                              style="@(ViewBag.CartCount > 0 ? "display:block;" : "display:none;") font-size: 0.7rem;">
+                        <span id="cart-badge"
+                              class="badge bg-danger rounded-pill position-absolute top-0 start-100 translate-middle"
+                              style="@(ViewBag.CartCount > 0 ? "display:inline-block;" : "display:none;") font-size: 0.7rem;">
                             @(ViewBag.CartCount ?? 0)
                         </span>
                     </a>
