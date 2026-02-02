@@ -36,7 +36,10 @@
                                 <div class="fw-bold mt-1">₹@order.TotalAmount</div>
 
                                 @* SHOW CANCEL BUTTON ONLY IF NOT ALREADY CANCELLED OR DISPATCHED *@
-                                @if (order.OrderStatus != "Cancelled" && order.OrderStatus != "Dispatched")
+                                @* Update the logic to hide the button for Shipped and Delivered *@
+                                @if (order.OrderStatus != "Cancelled" &&
+                                                        order.OrderStatus != "Shipped" &&
+                                                        order.OrderStatus != "Delivered")
                                 {
                                     <button class="btn btn-sm btn-outline-danger mt-2" onclick="confirmCancel(@order.OrderID)">
                                         Cancel Order

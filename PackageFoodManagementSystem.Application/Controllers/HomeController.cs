@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using PackageFoodManagementSystem.DTOs;
 using PackageFoodManagementSystem.Repository.Data;
 using PackageFoodManagementSystem.Repository.Models;
 using PackageFoodManagementSystem.Services.Helpers;
@@ -317,6 +318,49 @@ namespace PackagedFoodManagementSystem.Controllers
             return RedirectToAction("OrdersDashboard");
         }
 
+        public IActionResult Report()
+        {
+            var reportData = new AdminReportDto
+            {
+                // 1. Calculate Lifetime Revenue from all non-cancelled orders
+                LifetimeRevenue = _context.Orders
+                    .Where(o => o.OrderStatus != "Cancelled")
+                    .Sum(o => o.TotalAmount),
+
+                // 2. Count total registered customers
+                TotalCustomers = _context.Customers.Count(),
+
+                // 3. Count orders that are not yet Delivered or Cancelled
+                TotalActiveOrders = _context.Orders
+                    .Count(o => o.OrderStatus == "Confirmed" || o.OrderStatus == "Processing"),
+
+                // 4. Join Orders and Customers to find big spenders
+                TopCustomers = _context.Orders
+                    .Where(o => o.OrderStatus != "Cancelled")
+                    .GroupBy(o => o.CustomerId)
+                    .Select(g => new TopCustomerDto
+                    {
+                        // We find the customer name/email using the ID from the group
+                        Name = _context.Customers
+                            .Where(c => c.CustomerId == g.Key)
+                            .Select(c => c.Name)
+                            .FirstOrDefault() ?? "Unknown",
+
+                        Email = _context.Customers
+                            .Where(c => c.CustomerId == g.Key)
+                            .Select(c => c.Email)
+                            .FirstOrDefault() ?? "N/A",
+
+                        OrderCount = g.Count(),
+                        TotalSpent = g.Sum(o => o.TotalAmount)
+                    })
+                    .OrderByDescending(x => x.TotalSpent)
+                    .Take(5) // Just show the top 5
+                    .ToList()
+            };
+
+            return View(reportData);
+        }
 
     }
 }

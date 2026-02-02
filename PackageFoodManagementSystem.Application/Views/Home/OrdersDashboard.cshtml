@@ -78,7 +78,6 @@
                         <th>Total Amount</th>
                         <th>Current Status</th>
                         <th>Order Date</th>
-                        <th class="text-center">Quick Actions</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -116,23 +115,7 @@
                                     <span class="badge rounded-pill @badgeClass">@order.OrderStatus</span>
                                 </td>
                                 <td>@order.OrderDate?.ToString("dd MMM yyyy")</td>
-                                <td class="text-center">
-                                    <form asp-controller="Home" asp-action="ProcessOrder" method="post">
-                                        <input type="hidden" name="orderId" value="@order.OrderID" />
-                                        @if (order.OrderStatus == "Placed" || order.OrderStatus == "Confirmed")
-                                        {
-                                            <button name="status" value="Processing" class="btn btn-sm btn-outline-warning">Pack</button>
-                                        }
-                                        else if (order.OrderStatus == "Processing")
-                                        {
-                                            <button name="status" value="Shipped" class="btn btn-sm btn-outline-primary">Ship</button>
-                                        }
-                                        else if (order.OrderStatus == "Shipped")
-                                        {
-                                            <button name="status" value="Delivered" class="btn btn-sm btn-outline-success">Deliver</button>
-                                        }
-                                    </form>
-                                </td>
+                               
                             </tr>
                         }
                     }

@@ -36,15 +36,9 @@
                 📊 Inventory
             </a>
         </li>
+        
         <li>
-            <a asp-controller="StoreManager" asp-action="Compliance"
-               class="@(currentAction == "Compliance" ? "active" : "")">
-
-                ✔ Compliance
-            </a>
-        </li>
-        <li>
-            <a asp-controller="StoreManager1" asp-action="Report"
+            <a asp-controller="StoreManager" asp-action="Reports"
                class="@(currentAction == "Reports" ? "active" : "")">
 
                 📑 Reports

@@ -1,18 +1,81 @@
-﻿@{
+﻿@model PackageFoodManagementSystem.DTOs.StoreReportDto
+
+@{
     ViewData["Title"] = "Reports";
-
     Layout = "~/Views/Shared/_StoreManagerlayout.cshtml";
-
 }
 
-<!-- Header -->
-<div class="topbar">
-    <h4>| Store Name</h4>
-    <input type="text" placeholder="Search" />
-    <div class="icons">
-        <a asp-controller="StoreManager" asp-action="Profile">
-            👤
+<div class="container-fluid py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="fw-bold text-dark">📊 Store Performance Report</h2>
+        <span class="badge bg-primary px-3 py-2">Last 30 Days</span>
+    </div>
 
-        </a>
+    <div class="row mb-4">
+        <div class="col-md-6 col-lg-3">
+            <div class="card border-0 shadow-sm border-start border-primary border-4">
+                <div class="card-body">
+                    <h6 class="text-muted mb-1">Total Revenue</h6>
+                    <h3 class="fw-bold mb-0">₹@Model.TotalRevenue</h3>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 col-lg-3">
+            <div class="card border-0 shadow-sm border-start border-success border-4">
+                <div class="card-body">
+                    <h6 class="text-muted mb-1">Total Orders</h6>
+                    <h3 class="fw-bold mb-0">@Model.TotalOrders</h3>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card border-0 shadow-sm rounded-3">
+        <div class="card-header bg-white border-bottom py-3">
+            <h5 class="card-title mb-0 fw-bold text-secondary">🔥 Top Selling Products</h5>
+        </div>
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="bg-light">
+                        <tr>
+                            <th class="ps-4">Product Name</th>
+                            <th class="text-center">Units Sold</th>
+                            <th class="text-end pe-4">Total Revenue</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model.TopProducts)
+                        {
+                            <tr>
+                                <td class="ps-4 fw-medium">@item.ProductName</td>
+                                <td class="text-center">
+                                    <span class="badge rounded-pill bg-info text-dark">@item.QuantitySold</span>
+                                </td>
+                                <td class="text-end pe-4 fw-bold text-success">₹@item.Revenue</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
     </div>
 </div>
+
+<style>
+    .card {
+        transition: transform 0.2s ease;
+    }
+
+        .card:hover {
+            transform: translateY(-5px);
+        }
+
+    .table thead th {
+        font-size: 0.85rem;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        color: #6c757d;
+        border: none;
+    }
+</style>

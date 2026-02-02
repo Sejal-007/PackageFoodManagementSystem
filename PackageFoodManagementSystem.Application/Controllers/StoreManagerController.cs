@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PackageFoodManagementSystem.Repository.Data;
+using PackageFoodManagementSystem.DTOs;
 
 namespace PackageFoodManagementSystem.Application.Controllers
 {
@@ -118,7 +119,33 @@ namespace PackageFoodManagementSystem.Application.Controllers
         }
         public IActionResult Reports()
         {
-            return View();
+            var thirtyDaysAgo = DateTime.Now.AddDays(-30);
+
+            // Use 'StoreReportDto' instead of 'StoreReportViewModel'
+            var reportData = new StoreReportDto
+            {
+                TotalRevenue = _context.Orders
+                    .Where(o => o.OrderDate >= thirtyDaysAgo && o.OrderStatus != "Cancelled")
+                    .Sum(o => o.TotalAmount),
+
+                TotalOrders = _context.Orders
+                    .Count(o => o.OrderDate >= thirtyDaysAgo),
+
+                TopProducts = _context.OrderItems
+                    .Include(oi => oi.Product)
+                    .GroupBy(oi => oi.Product.ProductName) // Verified 'Name' from your SQL screenshot
+                    .Select(g => new TopProductDto
+                    {
+                        ProductName = g.Key,
+                        QuantitySold = g.Sum(x => x.Quantity),
+                        Revenue = g.Sum(x => x.Subtotal)
+                    })
+                    .OrderByDescending(x => x.QuantitySold)
+                    .Take(5)
+                    .ToList()
+            };
+
+            return View(reportData);
         }
         public IActionResult Compliance()
         {
