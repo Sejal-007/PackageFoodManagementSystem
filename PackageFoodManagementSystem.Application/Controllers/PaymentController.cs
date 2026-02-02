@@ -1,85 +1,95 @@
-﻿
-
-
-
-
-
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
+
+using PackageFoodManagementSystem.Repository.Data;
+
+using PackageFoodManagementSystem.Repository.Models;
+
 using System;
-using System.Collections.Generic;
+
 using System.Linq;
 
 namespace PackagedFoodFrontend.Controllers
+
 {
+
+    [Authorize]
+
     public class PaymentController : Controller
+
     {
-        // Simulated database for orders
-        private static List<OrderModel> _orderHistory = new List<OrderModel>();
 
-        [HttpGet]
-        public IActionResult Checkout() => View();
+        private readonly ApplicationDbContext _context;
 
-        [HttpPost]
-        public IActionResult Confirm(string method, string amount)
+        public PaymentController(ApplicationDbContext context)
+
         {
-            if (string.IsNullOrEmpty(method))
-            {
-                ModelState.AddModelError("", "Please select a payment method.");
-                return View("Checkout");
-            }
 
-            // 1. Create the order based on login and current payment
-            var newOrder = new OrderModel
-            {
-                OrderId = "#" + new Random().Next(10000, 99999),
-                UserName = User.Identity.Name ?? "yayati", // Uses logged-in name
-                Amount = amount ?? "0.00",
-                Method = method,
-                Date = DateTime.Now,
-                Status = "Delivered"
-            };
+            _context = context;
 
-            // 2. Save order to history
-            _orderHistory.Add(newOrder);
-
-            // 3. Pass data to Success page
-            TempData["PaymentMethod"] = method;
-            TempData["OrderTotal"] = amount;
-
-            return RedirectToAction("Success");
         }
+
+        public IActionResult Payment(int orderId)
+
+        {
+
+            if (orderId == 0)
+                return BadRequest("OrdeeId missing from request");
+
+            ViewBag.OrderId = orderId;
+
+            return View();
+
+        }
+
+        // ✅ Confirm Payment
+       [HttpPost]
+public IActionResult Confirm(int orderId, string paymentMethod)
+{
+    var order = _context.Orders.FirstOrDefault(o => o.OrderID == orderId);
+    if (order == null) return BadRequest("Invalid Order.");
+
+    var bill = _context.Bills.FirstOrDefault(b => b.OrderID == orderId);
+    if (bill == null) return BadRequest("Bill not found.");
+
+    string paymentStatus = (paymentMethod == "COD") ? "Pending" : "Success";
+    string orderStatus = (paymentMethod == "COD") ? "Placed" : "Confirmed";
+
+    // Create the payment record
+    var payment = new Payment
+    {
+        BillID = bill.BillID,
+        OrderID = orderId,
+        PaymentMethod = paymentMethod,
+        PaymentStatus = paymentStatus,
+        PaymentDate = DateTime.Now,
+        TransactionReference = Guid.NewGuid().ToString()
+        // REMOVE 'AmountPaid' here if it is causing the error
+    };
+
+    _context.Payments.Add(payment);
+    
+    // Update statuses
+    order.OrderStatus = orderStatus;
+    if (paymentStatus == "Success")
+    {
+        bill.BillingStatus = "Paid";
+    }
+
+    _context.SaveChanges(); 
+
+    return RedirectToAction("Success");
+}
 
         public IActionResult Success()
+
         {
-            if (TempData["PaymentMethod"] == null)
-            {
-                return RedirectToAction("Checkout");
-            }
+
             return View();
+
         }
 
-        [HttpGet]
-        public IActionResult PastOrders()
-        {
-            var currentUser = User.Identity.Name ?? "yayati";
-            // Filter list to show only current user's orders
-            var userOrders = _orderHistory
-                .Where(o => o.UserName == currentUser)
-                .OrderByDescending(o => o.Date)
-                .ToList();
-
-            return View(userOrders);
-        }
     }
 
-    // Simple model for the order
-    public class OrderModel
-    {
-        public string OrderId { get; set; }
-        public string UserName { get; set; }
-        public string Amount { get; set; }
-        public string Method { get; set; }
-        public DateTime Date { get; set; }
-        public string Status { get; set; }
-    }
 }

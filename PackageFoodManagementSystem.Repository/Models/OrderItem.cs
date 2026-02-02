@@ -28,6 +28,7 @@ namespace PackageFoodManagementSystem.Repository.Models
         [Required]
 
         public int ProductId { get; set; }
+        public Product Product { get; set; }
 
         // Foreign Key to Batch Management
 
@@ -49,12 +50,16 @@ namespace PackageFoodManagementSystem.Repository.Models
 
         public DateTime ExpiryDate { get; set; }
 
+        public string? ProductNameSnapshot { get; set; }
+
+        public DateTime CreatedOn { get; set; } = DateTime.Now;
+        public bool IsCancelled { get; set; }
+
         // Navigation Properties
 
         [ForeignKey("OrderID")]
 
         public Order Order { get; set; }
-
     }
 
 }

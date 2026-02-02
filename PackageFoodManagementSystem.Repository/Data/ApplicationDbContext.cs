@@ -33,12 +33,18 @@ namespace PackageFoodManagementSystem.Repository.Data
 
         public DbSet<CartItem> CartItems { get; set; }
 
+        public DbSet<OrderStatusHistory> OrderStatusHistories { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
 
             // Force EF to use the singular name 'Customer' to match your SQL Server
             modelBuilder.Entity<Customer>().ToTable("Customer");
+
+            modelBuilder.Entity<Bill>().ToTable("Bills");
+            modelBuilder.Entity<Payment>().ToTable("Payments");
+
 
             // Optional: If 'UserAuthentications' also gives an error, 
             // you can force its name here too:
@@ -50,6 +56,8 @@ namespace PackageFoodManagementSystem.Repository.Data
             // This tells EF to ignore the "Pending Changes" warning and just run the update
             optionsBuilder.ConfigureWarnings(w => w.Ignore(Microsoft.EntityFrameworkCore.Diagnostics.RelationalEventId.PendingModelChangesWarning));
         }
+
+        
 
     }
 

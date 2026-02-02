@@ -6,12 +6,16 @@ using System.ComponentModel.DataAnnotations.Schema;
 // Unified Namespace
 namespace PackageFoodManagementSystem.Repository.Models
 {
+    [Table("Payment")]
     public class Payment
     {
         [Key]
         public int PaymentID { get; set; }
 
         [Required]
+
+        public int OrderID { get; set; }
+
         public int BillID { get; set; }
 
         [Required]
@@ -26,6 +30,14 @@ namespace PackageFoodManagementSystem.Repository.Models
         public required string TransactionReference { get; set; }
 
         public DateTime PaymentDate { get; set; }
+
+        [ForeignKey("OrderID")]
+
+        public Order Order { get; set; }
+
+        public decimal AmountPaid { get; set; }
+
+        public string? GatewayResponse { get; set; }
 
         // Navigation Property: Marked as nullable to satisfy compiler
         [ForeignKey("BillID")]

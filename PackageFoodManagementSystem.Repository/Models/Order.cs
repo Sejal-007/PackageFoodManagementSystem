@@ -32,6 +32,14 @@ namespace PackageFoodManagementSystem.Repository.Models
 
         public DateTime LastUpdateOn { get; set; }
 
+        public string? OrderNumber { get; set; }
+
+        public string? PaymentStatus { get; set; }
+
+        public string? ExpectedDeliveryDate { get; set; }
+
+        public bool IsDeleted { get; set; } 
+
         // Initialized as a concrete List to avoid "cannot create instance of interface" error
         public virtual ICollection<OrderItem> OrderItems { get; set; } = new List<OrderItem>();
 
