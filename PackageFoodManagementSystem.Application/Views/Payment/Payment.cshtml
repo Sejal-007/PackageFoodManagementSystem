@@ -1,4 +1,5 @@
-﻿@{
+﻿@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@{
     ViewData["Title"] = "Payment";
 }
 
@@ -14,11 +15,11 @@
                         <i class="fa fa-shield-alt text-white"></i>
                     </div>
                     <h3 class="fw-bold">Finalize <span class="text-orange">Payment</span></h3>
-                    <p class="text-muted">Order Reference: <span class="fw-bold text-dark">#@ViewBag.OrderId</span></p>
+                    <p class="text-muted">Order Reference: <span class="fw-bold text-dark">#@(ViewBag.OrderId)</span></p>
                 </div>
 
-                <form id="paymentForm" method="post" action="/Payment/Confirm">
-                    <input type="hidden" name="orderId" value="@ViewBag.OrderId" />
+                <form id="paymentForm" method="post" asp-controller="Payment" asp-action="Confirm">
+                    <input type="hidden" name="orderId" value="@(ViewBag.OrderId)" />
 
                     <div class="text-start mb-4">
                         <label class="form-label small fw-bold text-muted text-uppercase">Choose Payment Method</label>
@@ -34,7 +35,7 @@
 
                     <div id="upiDetails" class="payment-details text-start mb-4" style="display: none;">
                         <label class="form-label small fw-bold text-muted text-uppercase">Enter UPI ID</label>
-                        <input type="text" id="upiInput" name="upiId" class="form-control border-0 bg-light p-3" placeholder="username@bank" style="border-radius: 15px;">
+                        <input type="text" id="upiInput" name="upiId" class="form-control border-0 bg-light p-3" placeholder="username@@bank" style="border-radius: 15px;">
                         <div class="text-danger small mt-1" id="upiError"></div>
                     </div>
 
@@ -62,7 +63,7 @@
                             <small id="infoText" class="text-dark">Please ensure someone is available at the address to receive the delivery.</small>
                         </div>
                     </div>
-
+-
                     <button type="submit" id="submitBtn" class="btn btn-confirm btn-lg w-100 py-3 shadow-sm">
                         Confirm & Place Order
                     </button>
@@ -71,12 +72,6 @@
                         <i class="fa fa-arrow-left me-1"></i> Back to Checkout
                     </a>
                 </form>
-            </div>
-
-            <div class="text-center mt-4">
-                <p class="text-muted small">
-                    <i class="fa fa-lock me-1"></i> SSL Encrypted & Secure Checkout
-                </p>
             </div>
         </div>
     </div>
@@ -105,7 +100,6 @@
     .form-select:focus, .form-control:focus {
         box-shadow: 0 0 0 0.25rem rgba(255, 107, 0, 0.15);
         border: 1px solid #FF6B00 !important;
-        outline: none;
         background-color: #fff !important;
     }
 
@@ -131,7 +125,6 @@
 </style>
 
 <script>
-    // 1. Initialize Masks (Prevents typing letters and formats numbers)
     const cardMask = IMask(document.getElementById('cardNumber'), { mask: '0000 0000 0000 0000' });
     const expiryMask = IMask(document.getElementById('expiry'), { mask: '00/00' });
     const cvvMask = IMask(document.getElementById('cvv'), { mask: '000' });
@@ -141,7 +134,6 @@
     const cardDiv = document.getElementById('cardDetails');
     const infoText = document.getElementById('infoText');
 
-    // 2. Toggle Visibility
     select.addEventListener('change', function () {
         upiDiv.style.display = this.value === 'UPI' ? 'block' : 'none';
         cardDiv.style.display = this.value === 'Card' ? 'block' : 'none';
@@ -149,23 +141,15 @@
         if(this.value === 'UPI') infoText.innerText = "Enter your UPI ID to receive a payment request.";
         else if(this.value === 'Card') infoText.innerText = "Your card details are protected by SSL encryption.";
         else infoText.innerText = "Please ensure someone is available at the address to receive the delivery.";
-
-        // Clear errors when switching
-        document.getElementById('upiError').innerText = "";
-        document.getElementById('cardError').innerText = "";
     });
 
-    // 3. Validation Logic
     document.getElementById('paymentForm').addEventListener('submit', function (e) {
         let isValid = true;
         const method = select.value;
 
-        // Clear errors
-        document.getElementById('upiError').innerText = "";
-        document.getElementById('cardError').innerText = "";
-
         if (method === 'UPI') {
             const upi = document.getElementById('upiInput').value;
+            // Use @@ to prevent Razor compiler errors in the script block
             if (!upi.includes('@@')) {
                 document.getElementById('upiError').innerText = "Please enter a valid UPI ID (e.g. name@@bank)";
                 isValid = false;
@@ -174,34 +158,8 @@
 
         if (method === 'Card') {
             const cardNo = cardMask.unmaskedValue;
-            const exp = expiryMask.unmaskedValue; // Raw digits: MMYY
-            const cvv = cvvMask.unmaskedValue;
-            const errorDiv = document.getElementById('cardError');
-
             if (cardNo.length < 16) {
-                errorDiv.innerText = "Card number must be 16 digits.";
-                isValid = false;
-            } else if (exp.length < 4) {
-                errorDiv.innerText = "Incomplete expiry date.";
-                isValid = false;
-            } else {
-                const month = parseInt(exp.substring(0, 2));
-                const year = parseInt("20" + exp.substring(2, 4));
-                const now = new Date();
-                const currentMonth = now.getMonth() + 1;
-                const currentYear = now.getFullYear();
-
-                if (month < 1 || month > 12) {
-                    errorDiv.innerText = "Invalid Month (01-12).";
-                    isValid = false;
-                } else if (year < currentYear || (year === currentYear && month < currentMonth)) {
-                    errorDiv.innerText = "This card has expired.";
-                    isValid = false;
-                }
-            }
-
-            if (isValid && cvv.length < 3) {
-                errorDiv.innerText = "Invalid CVV.";
+                document.getElementById('cardError').innerText = "Card number must be 16 digits.";
                 isValid = false;
             }
         }
@@ -209,56 +167,9 @@
         if (!isValid) {
             e.preventDefault();
         } else {
-            // Change button text to show it's working
             const btn = document.getElementById('submitBtn');
             btn.innerHTML = '<i class="fa fa-spinner fa-spin me-2"></i> Placing Order...';
             btn.classList.add('disabled');
         }
     });
 </script>
-
-<style>
-    body {
-        background-color: #fcfcfc;
-    }
-
-    .text-orange {
-        color: #FF6B00;
-    }
-
-    .payment-icon-circle {
-        width: 70px;
-        height: 70px;
-        background-color: #FF6B00;
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 30px;
-    }
-
-    .form-select:focus {
-        box-shadow: 0 0 0 0.25rem rgba(255, 107, 0, 0.15);
-        border: 1px solid #FF6B00 !important;
-    }
-
-    .bg-orange-light {
-        background-color: rgba(255, 107, 0, 0.08);
-    }
-
-    .btn-confirm {
-        background-color: #FF6B00;
-        color: white;
-        border-radius: 15px;
-        font-weight: bold;
-        border: none;
-        transition: all 0.3s ease;
-    }
-
-        .btn-confirm:hover {
-            background-color: #e66000;
-            color: white;
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(255, 107, 0, 0.3);
-        }
-</style>
