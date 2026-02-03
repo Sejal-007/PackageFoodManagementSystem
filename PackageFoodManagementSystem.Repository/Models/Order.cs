@@ -12,11 +12,13 @@ namespace PackageFoodManagementSystem.Repository.Models
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int OrderID { get; set; }
         [Required]
-        public DateTime OrderDate { get; set; } = DateTime.Now;
+        public DateTime? OrderDate { get; set; } = DateTime.Now;
 
         [Required]
         public int CustomerId { get; set; }
 
+        [ForeignKey("CustomerId")]
+        public virtual Customer Customer { get; set; }
         [Required]
         public int CreatedByUserID { get; set; }
 
@@ -36,7 +38,7 @@ namespace PackageFoodManagementSystem.Repository.Models
 
         public string? PaymentStatus { get; set; }
 
-        public string? ExpectedDeliveryDate { get; set; }
+        public DateTime? ExpectedDeliveryDate { get; set; }
 
         public bool IsDeleted { get; set; } 
 

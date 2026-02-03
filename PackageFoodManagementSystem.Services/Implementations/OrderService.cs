@@ -33,7 +33,9 @@ namespace PackageFoodManagementSystem.Services.Implementations
 
         {
 
-            return _orderRepository.GetAllOrders();
+            return _context.Orders
+                               .Include(o => o.Customer)
+                               .ToList();
 
         }
 
@@ -49,22 +51,24 @@ namespace PackageFoodManagementSystem.Services.Implementations
 
         {
 
+            var customer = _context.Customers.FirstOrDefault(c => c.UserId == userId);
+
+            if (customer == null)
+                throw new Exception("Customer profile not found for this user.");
+
             var cart = _context.Carts
-
-                .Include(c => c.CartItems)
-
-                .ThenInclude(ci => ci.Product)
-
-                .FirstOrDefault(c => c.UserAuthenticationId == userId && c.IsActive);
+        .Include(c => c.CartItems)
+        .ThenInclude(ci => ci.Product)
+        .FirstOrDefault(c => c.UserAuthenticationId == userId && c.IsActive);
 
             if (cart == null || !cart.CartItems.Any())
-
                 throw new Exception("Cart is empty");
 
             var order = new Order
             {
-                CustomerId = userId,
-                CreatedByUserID = userId, // ADD THIS LINE: It was missing!
+                // 2. USE the ID from the Customer table, not the Login ID
+                CustomerId = customer.CustomerId,
+                CreatedByUserID = userId,
                 DeliveryAddress = address,
                 OrderStatus = "PendingPayment",
                 OrderDate = DateTime.Now
@@ -120,20 +124,26 @@ namespace PackageFoodManagementSystem.Services.Implementations
 
         }
 
-        public void UpdateOrderStatus(int orderId, string status)
-
+        // Change 'string changedBy' to 'int changedByUserId'
+        public void UpdateOrderStatus(int orderId, string status, string changedBy, string remarks)
         {
-
-            var order = _orderRepository.GetOrderById(orderId);
-
+            var order = _context.Orders.FirstOrDefault(o => o.OrderID == orderId);
             if (order == null) return;
 
             order.OrderStatus = status;
+            order.LastUpdateOn = DateTime.Now;
 
-            _orderRepository.UpdateOrder(order);
+            var history = new OrderStatusHistory
+            {
+                OrderID = orderId,
+                Status = status,
+                ChangedOn = DateTime.Now,
+                ChangedBy = 1, // Use a number here because your DB column is an INT
+                Remarks = remarks
+            };
 
-            _orderRepository.Save();
-
+            _context.OrderStatusHistories.Add(history);
+            _context.SaveChanges();
         }
 
         public void CancelOrder(int orderId)

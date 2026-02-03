@@ -1,6 +1,9 @@
 ﻿@{
+
     ViewBag.Title = "Sign Up";
+
     Layout = "~/Views/Shared/_Layout1.cshtml";
+
 }
 
 <section class="page-hero"
@@ -58,15 +61,22 @@
         </form>
     </div>
 </section>
+
 @if (TempData["SuccessMessage"] != null)
+
 {
     <script>
+
         alert('@TempData["SuccessMessage"]');
     </script>
+
 }
+
 @if (TempData["ErrorMessage"] != null)
+
 {
     <script> alert('@TempData["ErrorMessage"]'); </script>
+
 }
 
 

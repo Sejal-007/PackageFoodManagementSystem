@@ -20,7 +20,9 @@ public class CartController : Controller
         _cartService = cartService;
     }
 
+    // ================== CART PAGE ==================
     [HttpGet("MyBasket")]
+    [ResponseCache(NoStore = true, Location = ResponseCacheLocation.None)]
     public IActionResult MyBasket()
     {
         int userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);

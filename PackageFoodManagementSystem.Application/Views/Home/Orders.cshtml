@@ -8,6 +8,7 @@
             <th>Email</th>
             <th>Status</th>
             <th>Date</th>
+            <th>Action</th>
         </tr>
     </thead>
     <tbody>
@@ -20,8 +21,18 @@
                 <td>@order.Customer?.Name</td>
                 <td>@order.Customer?.Email</td>
                 <td>@order.OrderStatus</td>
-                <td>@order.OrderDate </td>
-                
+                <td>@order.OrderDate == DateTime.Minvalue
+                    ? "-"
+                    :order.OrderDate.ToString("dd-MMM-yyyy")</td>
+                <td>
+                    <a asp-controller="Home"
+                       asp-action="OrderDetails"
+                       asp-route-id="@order.OrderID"
+                       class="btn btn-sm btn-primary">
+
+                        View
+                    </a>
+                </td>
             </tr>
 
         }

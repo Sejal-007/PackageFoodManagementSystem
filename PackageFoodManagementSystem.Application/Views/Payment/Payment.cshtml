@@ -156,13 +156,39 @@
             }
         }
 
-        if (method === 'Card') {
-            const cardNo = cardMask.unmaskedValue;
-            if (cardNo.length < 16) {
-                document.getElementById('cardError').innerText = "Card number must be 16 digits.";
+            if (method === 'Card') {
+        const cardNo = cardMask.unmaskedValue;
+        const expiryVal = document.getElementById('expiry').value; // Get MM/YY string
+        const cardError = document.getElementById('cardError');
+        cardError.innerText = ""; // Clear previous errors
+
+        // 1. Check Card Number Length
+        if (cardNo.length < 16) {
+            cardError.innerText = "Card number must be 16 digits.";
+            isValid = false;
+        }
+        // 2. Check Expiry Date Logic
+        else if (expiryVal.length === 5) {
+            const [month, year] = expiryVal.split('/').map(num => parseInt(num, 10));
+
+            // Get current date details
+            const now = new Date();
+            const currentMonth = now.getMonth() + 1; // getMonth() is 0-indexed
+            const currentYear = parseInt(now.getFullYear().toString().slice(-2), 10); // Get last 2 digits (e.g., 26)
+
+            if (month < 1 || month > 12) {
+                cardError.innerText = "Invalid month (must be 01-12).";
                 isValid = false;
             }
+            else if (year < currentYear || (year === currentYear && month < currentMonth)) {
+                cardError.innerText = "This card has already expired.";
+                isValid = false;
+            }
+        } else {
+            cardError.innerText = "Please enter expiry date in MM/YY format.";
+            isValid = false;
         }
+    }
 
         if (!isValid) {
             e.preventDefault();
