@@ -7,65 +7,67 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 });
 
-function increase(btn) {
-    const card = btn.closest('.card');
-    const qtySpan = card.querySelector('.qty');
-    const productId = card.getAttribute('data-product-id');
+function updateQty(productId, change, btn) {
+    const url = change > 0 ? '/Cart/Add' : '/Cart/Decrease';
 
+    // Disable button to prevent rapid double-clicks
     btn.disabled = true;
 
-    fetch(`/Cart/Add?productId=${productId}`, { method: 'POST' })
-        .then(res => {
-            if (res.ok) {
-                // Use a fallback to 0 to prevent NaN
-                let currentVal = parseInt(qtySpan.innerText) || 0;
-                qtySpan.innerText = currentVal + 1;
+    fetch(`${url}?productId=${productId}`, {
+        method: 'POST',
+        headers: { 'X-Requested-With': 'XMLHttpRequest' }
+    })
+        .then(response => {
+            if (!response.ok) throw new Error("Server error");
+            return response.json();
+        })
+        .then(data => {
+            if (data.success) {
+                // TARGETED UPDATE: Only update spans for this specific product
+                document.querySelectorAll(`.qty[data-product-id="${productId}"]`).forEach(span => {
+                    span.innerText = data.newQty;
+                });
 
-                if (typeof window.updateCartBadge === 'function') {
-                    window.updateCartBadge();
+                // Reload if on Basket page to update totals and summary
+                if (window.location.pathname.includes("MyBasket")) {
+                    location.reload();
                 }
+
+                // Update Global Cart Badge
+                const badge = document.getElementById('cart-badge');
+                if (badge) badge.innerText = data.cartCount;
             }
         })
+        .catch(err => console.error('Error:', err))
         .finally(() => btn.disabled = false);
 }
 
-function decrease(btn) {
-    const card = btn.closest('.card');
-    const qtySpan = card.querySelector('.qty');
+function increase(btn) {
+    const card = btn.closest('[data-product-id]');
     const productId = card.getAttribute('data-product-id');
+    updateQty(productId, 1, btn);
+}
 
-    btn.disabled = true;
+function decrease(btn) {
+    const card = btn.closest('[data-product-id]');
+    const productId = card.getAttribute('data-product-id');
+    const qtySpan = card.querySelector('.qty');
 
-    fetch(`/Cart/Decrease?productId=${productId}`, { method: 'POST' })
-        .then(res => {
-            if (res.ok) {
-                let q = parseInt(qtySpan.innerText) || 0;
-                if (q > 0) {
-                    qtySpan.innerText = q - 1;
-                    if (typeof window.updateCartBadge === 'function') {
-                        window.updateCartBadge();
-                    }
-                }
-            }
-        })
-        .finally(() => btn.disabled = false);
+    // Allow decrease if qty > 0 or if we are in the basket
+    if (parseInt(qtySpan.innerText) > 0 || window.location.pathname.includes("MyBasket")) {
+        updateQty(productId, -1, btn);
+    }
 }
 
 function refreshQty(productId) {
     return fetch(`/Cart/GetItemQty?productId=${productId}`)
         .then(res => res.json())
         .then(data => {
-            const el = document.querySelector(`.card[data-product-id="${productId}"] .qty`);
+            const el = document.querySelector(`.qty[data-product-id="${productId}"]`);
             if (el) {
-                // DEBUG: This will show you exactly what your server is sending
-                console.log(`Product ${productId} data:`, data);
-
-                // This logic handles BOTH a single number OR an object
                 if (typeof data === 'object' && data !== null) {
-                    // Try common property names like qty, quantity, or count
                     el.innerText = data.qty ?? data.quantity ?? data.count ?? 0;
                 } else {
-                    // If it's just a plain number/string
                     el.innerText = data;
                 }
             }
