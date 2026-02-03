@@ -13,14 +13,17 @@ function increase(btn) {
     const productId = card.getAttribute('data-product-id');
 
     btn.disabled = true;
+
     fetch(`/Cart/Add?productId=${productId}`, { method: 'POST' })
         .then(res => {
             if (res.ok) {
-                // 1. Update the local number next to button
-                qtySpan.innerText = parseInt(qtySpan.innerText) + 1;
+                // Use a fallback to 0 to prevent NaN
+                let currentVal = parseInt(qtySpan.innerText) || 0;
+                qtySpan.innerText = currentVal + 1;
 
-                // 2. FORCE the Navbar to update from the DB
-                window.updateCartBadge();
+                if (typeof window.updateCartBadge === 'function') {
+                    window.updateCartBadge();
+                }
             }
         })
         .finally(() => btn.disabled = false);
@@ -33,18 +36,14 @@ function decrease(btn) {
 
     btn.disabled = true;
 
-    fetch(`/Cart/Decrease?productId=${productId}`, {
-        method: 'POST'
-    })
+    fetch(`/Cart/Decrease?productId=${productId}`, { method: 'POST' })
         .then(res => {
             if (res.ok) {
-                let q = parseInt(qtySpan.innerText);
+                let q = parseInt(qtySpan.innerText) || 0;
                 if (q > 0) {
                     qtySpan.innerText = q - 1;
-
-                    // Sync the Navbar Badge instantly
-                    if (typeof updateCartBadge === 'function') {
-                        updateCartBadge();
+                    if (typeof window.updateCartBadge === 'function') {
+                        window.updateCartBadge();
                     }
                 }
             }
@@ -55,8 +54,21 @@ function decrease(btn) {
 function refreshQty(productId) {
     return fetch(`/Cart/GetItemQty?productId=${productId}`)
         .then(res => res.json())
-        .then(qty => {
+        .then(data => {
             const el = document.querySelector(`.card[data-product-id="${productId}"] .qty`);
-            if (el) el.innerText = qty;
-        });
+            if (el) {
+                // DEBUG: This will show you exactly what your server is sending
+                console.log(`Product ${productId} data:`, data);
+
+                // This logic handles BOTH a single number OR an object
+                if (typeof data === 'object' && data !== null) {
+                    // Try common property names like qty, quantity, or count
+                    el.innerText = data.qty ?? data.quantity ?? data.count ?? 0;
+                } else {
+                    // If it's just a plain number/string
+                    el.innerText = data;
+                }
+            }
+        })
+        .catch(err => console.error("Error fetching quantity:", err));
 }

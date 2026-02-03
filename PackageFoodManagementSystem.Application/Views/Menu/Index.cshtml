@@ -1,143 +1,142 @@
 ﻿@model IEnumerable<PackageFoodManagementSystem.Repository.Models.Product>
 
-@{
-    ViewData["Title"] = "Menu";
+@section Scripts {
+    <script src="~/js/menu.js"></script>
+
 }
 
 <div class="container mt-5">
     <div class="text-center mb-4">
         <h2 class="fw-bold">Our <span style="color: #FF6B00;">Menu</span></h2>
         <div class="d-flex flex-wrap justify-content-center gap-2 mt-3">
-            <a asp-action="Index" asp-route-category="" class="btn @(string.IsNullOrEmpty(ViewBag.SelectedCategory) ? "btn-dark" : "btn-outline-dark") rounded-pill">All</a>
-            <a asp-action="Index" asp-route-category="Vegetables and Fruits" class="btn @(ViewBag.SelectedCategory == "Vegetables and Fruits" ? "btn-warning" : "btn-outline-secondary") rounded-pill">Veg & Fruits</a>
-            <a asp-action="Index" asp-route-category="Dairy and Eggs" class="btn @(ViewBag.SelectedCategory == "Dairy and Eggs" ? "btn-warning" : "btn-outline-secondary") rounded-pill">Dairy & Eggs</a>
-            <a asp-action="Index" asp-route-category="Snacks and Drinks" class="btn @(ViewBag.SelectedCategory == "Snacks and Drinks" ? "btn-warning" : "btn-outline-secondary") rounded-pill">Snacks & Drinks</a>
-            <a asp-action="Index" asp-route-category="Meat and Seafoods" class="btn @(ViewBag.SelectedCategory == "Meat and Seafoods" ? "btn-warning" : "btn-outline-secondary") rounded-pill">Meat & Fish</a>
+            <a asp-action="Index" asp-route-category=""
+               class="btn @(string.IsNullOrEmpty(ViewBag.SelectedCategory) ? "btn-dark" : "btn-outline-dark") rounded-pill">All</a>
+
+            <a asp-action="Index" asp-route-category="Vegetables and Fruits"
+               class="btn @(ViewBag.SelectedCategory == "Vegetables and Fruits" ? "btn-warning" : "btn-outline-secondary") rounded-pill">Veg & Fruits</a>
+
+            <a asp-action="Index" asp-route-category="Dairy and Eggs"
+               class="btn @(ViewBag.SelectedCategory == "Dairy and Eggs" ? "btn-warning" : "btn-outline-secondary") rounded-pill">Dairy & Eggs</a>
+
+            <a asp-action="Index" asp-route-category="Snacks and Drinks"
+               class="btn @(ViewBag.SelectedCategory == "Snacks and Drinks" ? "btn-warning" : "btn-outline-secondary") rounded-pill">Snacks & Drinks</a>
+
+            <a asp-action="Index" asp-route-category="Meat and Seafoods"
+               class="btn @(ViewBag.SelectedCategory == "Meat and Seafoods" ? "btn-warning" : "btn-outline-secondary") rounded-pill">Meat & Fish</a>
         </div>
     </div>
 
+    <div class="row">
+
+        @foreach (var item in Model)
+
+        {
+
+        }
+    </div>
+</div>
+<div class="container py-5">
+    <h1 class="text-center fw-bold mb-5"></h1>
+
     @if (ViewBag.CurrentCategory != null)
+
     {
         <div class="d-flex justify-content-between align-items-center mb-4">
             <h3>Showing: <span class="text-orange">@ViewBag.CurrentCategory</span></h3>
             <a asp-action="Index" class="btn btn-outline-secondary btn-sm">Show All Products</a>
         </div>
+
     }
 
+    @* The row uses g-4 for spacing. 6 items will naturally form 2 rows of 3 *@
     <div class="row g-4 justify-content-center">
+
         @foreach (var item in Model)
+
         {
-            if (item.IsActive)
+
+            @if (item.IsActive)
+
             {
                 <div class="col-12 col-md-6 col-lg-3">
-                    <div class="card h-100 border-0 shadow-sm mx-auto p-2" style="max-width: 280px; border-radius: 20px;">
+
+                    @* Added mx-auto and a max-width to make the card "Smaller" *@
+                    <div class="card h-100 border-0 shadow-sm mx-auto p-2"
+                         style="max-width: 280px; border-radius: 20px;"
+                         data-product-id="@item.ProductId"
+                         data-name="@item.ProductName"
+                         data-price="@item.Price">
+
                         <div class="overflow-hidden mb-2" style="height: 160px; border-radius: 15px;">
-                            <img src="@(string.IsNullOrEmpty(item.ImageData) ? "/images/default-food.png" : item.ImageData)" class="w-100 h-100" style="object-fit: cover;" alt="@item.ProductName">
+
+                            @if (!string.IsNullOrEmpty(item.ImageData))
+
+                            {
+                                <img src="@item.ImageData"
+                                     class="w-100 h-100"
+                                     style="object-fit: cover;"
+                                     alt="@item.ProductName">
+
+                            }
+
+                            else
+
+                            {
+                                <img src="~/images/default-food.png"
+                                     class="w-100 h-100"
+                                     style="object-fit: cover;"
+                                     alt="No Image">
+
+                            }
                         </div>
+
                         <div class="card-body text-center p-2">
-                            <small class="text-muted text-uppercase mb-1 d-block" style="font-size: 0.7rem;">@item.Category</small>
+                            <small class="text-muted text-uppercase mb-1 d-block" style="font-size: 0.7rem;">
+
+                                @item.Category
+                            </small>
                             <h6 class="fw-bold mb-1">@item.ProductName</h6>
-                            <p class="text-success fw-bold mb-2">₹@item.Price</p>
 
-                            <button class="btn btn-orange text-white mb-2 w-100 rounded-pill"
-                                    data-bs-toggle="modal" data-bs-target="#productModal"
-                                    data-name="@item.ProductName" data-price="@item.Price"
-                                    data-image="@(string.IsNullOrEmpty(item.ImageData) ? "/images/default-food.png" : item.ImageData)">
-                                View Details
-                            </button>
+                            @* Price Centered *@
+                            <p class="text-success fw-bold mb-3">₹@item.Price</p>
 
-                            <div class="d-flex justify-content-center">
-                                <div class="d-flex align-items-center bg-light rounded-pill px-2 py-1 border">
-                                    <button class="btn btn-sm text-success p-0 btn-minus" data-id="@item.ProductId"><i class="fa fa-minus-circle fa-lg"></i></button>
-                                    <span class="mx-3 fw-bold qty" id="qty-@item.ProductId">0</span>
-                                    <button class="btn btn-sm text-success p-0 btn-plus" data-id="@item.ProductId"><i class="fa fa-plus-circle fa-lg"></i></button>
+                            <div class="d-flex justify-content-center mb-2">
+                                <div class="d-flex align-items-center bg-light rounded-pill p-1 border">
+                                    <button class="btn btn-sm btn-success rounded-circle d-flex align-items-center justify-content-center"
+                                            style="width: 28px; height: 28px;"
+                                            onclick="decrease(this)">
+                                        <i class="fa fa-minus small" style="font-size: 10px;"></i>
+                                    </button>
+
+                                    <span class="qty fw-bold px-3" data-product-id="@item.ProductId">0</span>
+                                    <button class="btn btn-sm btn-success rounded-circle d-flex align-items-center justify-content-center"
+                                            style="width: 28px; height: 28px;"
+                                            onclick="increase(this)">
+                                        <i class="fa fa-plus small" style="font-size: 10px;"></i>
+                                    </button>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
+
             }
+
         }
     </div>
 </div>
-
-@* Modal *@
-<div class="modal fade" id="productModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content border-0 shadow" style="border-radius: 15px;">
-            <div class="modal-header border-0 pb-0">
-                <h5 class="modal-title fw-bold" id="modalProductName"></h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body text-center">
-                <img id="modalProductImage" src="" class="img-fluid rounded mb-3 shadow-sm" style="max-height: 250px; width: 100%; object-fit: cover; border-radius: 15px;">
-                <h4 id="modalProductPrice" class="fw-bold text-orange"></h4>
-            </div>
-        </div>
-    </div>
-</div>
-
-@section Scripts {
-    <script>
-        $(document).ready(function () {
-            // Cart Update Logic
-            function updateCart(productId, action, qtyElement) {
-                $.ajax({
-                    url: '/Cart/' + action,
-                    type: 'POST',
-                    contentType: 'application/json',
-                    data: JSON.stringify({ productId: parseInt(productId) }),
-                    success: function (res) {
-                        if (res.success) {
-                            qtyElement.text(res.newQty);
-                            $('#cart-badge').text(res.cartCount).show();
-                        }
-                    }
-                });
-            }
-
-            $('.btn-plus').click(function () {
-                let id = $(this).data('id');
-                updateCart(id, 'Add', $('#qty-' + id));
-            });
-
-            $('.btn-minus').click(function () {
-                let id = $(this).data('id');
-                let span = $('#qty-' + id);
-                if (parseInt(span.text()) > 0) {
-                    updateCart(id, 'Decrease', span);
-                }
-            });
-
-            // Modal Logic
-            $('#productModal').on('show.bs.modal', function (event) {
-                var button = $(event.relatedTarget);
-                $(this).find('#modalProductName').text(button.data('name'));
-                $(this).find('#modalProductPrice').text('₹' + button.data('price'));
-                $(this).find('#modalProductImage').attr('src', button.data('image'));
-            });
-        });
-    </script>
-}
 
 <style>
-    .text-orange {
-        color: #FF6B00;
+
+    /* Professional Hover Effect */
+
+    .card {
+        transition: all 0.3s ease;
     }
 
-    .card:hover {
-        transform: translateY(-5px);
-        transition: 0.3s;
-        box-shadow: 0 10px 20px rgba(0,0,0,0.1) !important;
-    }
-
-    .btn-orange {
-        background-color: #FF6B00;
-        border: none;
-    }
-
-        .btn-orange:hover {
-            background-color: #e66000;
-            color: white;
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1) !important;
         }
 </style>
+

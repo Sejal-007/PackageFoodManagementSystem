@@ -1,27 +1,38 @@
 ﻿@model PackageFoodManagementSystem.Repository.Models.Cart
 
 @{
+
     ViewData["Title"] = "My Basket";
+
     decimal subtotal = Model?.CartItems?.Sum(i => i.Quantity * i.Product.Price) ?? 0;
+
     // Set to 0 to ensure free delivery
+
     decimal deliveryFee = 0;
+
 }
 
 @section Scripts {
     <script src="~/js/menu.js"></script>
+
 }
 
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
 
 <div class="container my-5" id="cartContainer">
+
     @if (Model == null || Model.CartItems == null || !Model.CartItems.Any())
+
     {
         <div id="empty-basket" class="text-center py-5">
             <h2 class="fw-800">Your basket is <span class="text-warning">empty</span></h2>
             <a href="/Menu/Index" class="btn btn-outline-dark px-5 rounded-pill mt-3">Start Shopping</a>
         </div>
+
     }
+
     else
+
     {
         <div class="row g-4">
             <div class="col-lg-8">
@@ -31,6 +42,7 @@
                 </div>
 
                 @foreach (var item in Model.CartItems)
+
                 {
                     <div class="basket-item card mb-3 p-3 shadow-sm d-flex flex-row align-items-center border-0" data-id="@item.ProductId">
                         <img src="@item.Product.ImageData" class="rounded-3 me-3" style="width:80px; height:80px; object-fit:cover;">
@@ -53,6 +65,7 @@
                             </button>
                         </div>
                     </div>
+
                 }
             </div>
 
@@ -73,49 +86,77 @@
                         <span class="h3 fw-800 text-dark mb-0">₹@subtotal</span>
                     </div>
                     <a href="/Order/Checkout" class="btn btn-dark w-100 py-3 rounded-pill fw-800 shadow">
+
                         Proceed to Checkout <i class="fa-solid fa-arrow-right ms-2"></i>
                     </a>
                 </div>
             </div>
         </div>
+
     }
 </div>
 
 <script>
+
     function updateQty(productId, change) {
+
         const url = change > 0 ? '/Cart/Add' : '/Cart/Decrease';
+
         fetch(`${url}?productId=${productId}`, {
+
             method: 'POST',
+
             credentials: 'include'
+
         })
+
         .then(res => {
+
             if (!res.ok) throw new Error("Server error");
+
             location.reload();
+
         })
+
         .catch(err => console.error(err));
+
     }
 
     function increase(btn) {
+
         const productId = btn.closest('.basket-item').dataset.id;
+
         updateQty(productId, 1);
+
     }
 
     function decrease(btn) {
+
         const productId = btn.closest('.basket-item').dataset.id;
+
         updateQty(productId, -1);
+
     }
 
     async function removeDirect(pId) {
+
         await fetch('/Cart/Remove', {
+
             method: 'POST',
+
             headers: { 'Content-Type': 'application/json' },
+
             body: JSON.stringify({ productId: pId })
+
         });
+
         location.reload();
+
     }
 </script>
 
 <style>
+
     body {
         background: #f8fafc;
         font-family: 'Plus Jakarta Sans', sans-serif;

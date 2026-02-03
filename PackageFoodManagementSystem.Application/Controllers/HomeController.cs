@@ -28,8 +28,7 @@ namespace PackagedFoodManagementSystem.Controllers
         private readonly ApplicationDbContext _context;
 
 
-        public HomeController(IUserService userService, IConfiguration config, ApplicationDbContext context)
-        public HomeController(IUserService userService, IConfiguration config, ApplicationDbContext db)
+        public HomeController(IUserService userService, IConfiguration config, ApplicationDbContext context, ApplicationDbContext db)
         {
             _userService = userService;
             _config = config;
@@ -137,8 +136,7 @@ namespace PackagedFoodManagementSystem.Controllers
             return View(users);
         }
 
-            return View(allOrders);
-        }
+       
 
 
 
@@ -223,7 +221,6 @@ namespace PackagedFoodManagementSystem.Controllers
         public IActionResult ContactUs() => View();
         public IActionResult AccessDenied() => View();
         public IActionResult AdminInventory() => View();
-        public IActionResult Report() => View();
         public IActionResult Stores() => View();
     }
 }
