@@ -1,15 +1,19 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using PackageFoodManagementSystem.Repository.Data; 
+using PackageFoodManagementSystem.Repository.Models;
+using Microsoft.EntityFrameworkCore;
 using PackageFoodManagementSystem.Repository.Data;
 using PackageFoodManagementSystem.DTOs;
 
 namespace PackageFoodManagementSystem.Application.Controllers
 {
-
     [Authorize(Roles = "StoreManager")]
     public class StoreManagerController : Controller
     {
+        // Resolved CS0103: Context is now defined at the class level
+        private readonly ApplicationDbContext _context;
         //    [HttpPost]
         //    public async Task<IActionResult> Create(Product product)
         //    {
@@ -22,6 +26,8 @@ namespace PackageFoodManagementSystem.Application.Controllers
         //        return View(product);
         //    }
 
+        // Dependency Injection via Constructor
+        public StoreManagerController(ApplicationDbContext context)
         private readonly ApplicationDbContext _context;
 
 
@@ -32,14 +38,30 @@ namespace PackageFoodManagementSystem.Application.Controllers
 
         public IActionResult Home()
         {
-            return View();
+            _context = context;
         }
 
-        public IActionResult Profile()
+        // --- Standard Navigation Actions ---
+        public IActionResult Home() => View();
+        public IActionResult Orders() => View();
+        public IActionResult Inventory() => View();
+        public IActionResult Settings() => View(); // This loads image_2d7569.png
+
+        // --- Edit Profile Logic ---
+
+        [HttpGet]
+        public async Task<IActionResult> EditProfile(int id)
         {
-            return View();
+            // Fetch the specific record from the database
+            var data = await _context.Products.FindAsync(id); 
+            if (data == null) return NotFound();
+
+            return View(data);
         }
 
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Edit(Product product)
 
         public IActionResult AddProduct()
         {
@@ -119,6 +141,17 @@ namespace PackageFoodManagementSystem.Application.Controllers
         }
         public IActionResult Reports()
         {
+            if (ModelState.IsValid)
+            {
+                // _context is now available for the update operation
+                _context.Update(product);
+                await _context.SaveChangesAsync();
+                
+                // Redirect back to the Settings dashboard
+                return RedirectToAction("Settings");
+            }
+            // If validation fails, stay on the edit page
+            return View("EditProfile", product);
             var thirtyDaysAgo = DateTime.Now.AddDays(-30);
 
             // Use 'StoreReportDto' instead of 'StoreReportViewModel'
