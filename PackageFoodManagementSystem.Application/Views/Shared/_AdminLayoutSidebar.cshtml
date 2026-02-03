@@ -1,4 +1,9 @@
-﻿
+﻿@{
+
+    var currentAction = ViewContext.RouteData.Values["action"]?.ToString();
+
+}
+
 <div class="store-sidebar">
     <h2>Admin</h2>
     <ul class="sidebar-menu">
@@ -18,6 +23,19 @@
             <a asp-controller="Home" asp-action="Stores">
 
                 📦 StoreManagers
+            </a>
+        </li>
+        <li>
+            <a asp-controller="Home" asp-action="OrderStatus">
+
+                🛒 OrderStatus
+            </a>
+        </li>
+        <li>
+            <a asp-controller="Home" asp-action="OrdersDashboard"
+               class="@(currentAction == "OrdersDashboard" ? "active" : "")">
+
+                🛒 Orders
             </a>
         </li>
         <li>

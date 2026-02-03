@@ -1,0 +1,68 @@
+﻿@model PackageFoodManagementSystem.DTOs.AdminReportDto
+
+@{
+    ViewData["Title"] = "Admin Reports";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<div class="container-fluid py-4" style="background-color: #f8f9fc;">
+    <h2 class="fw-bold text-dark mb-4">📈 Business Analytics</h2>
+
+    <div class="row g-3 mb-4">
+        <div class="col-md-4">
+            <div class="card border-0 shadow-sm bg-primary text-white">
+                <div class="card-body p-4">
+                    <h6 class="text-white-50">Lifetime Revenue</h6>
+                    <h2 class="fw-bold">₹@Model.LifetimeRevenue</h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card border-0 shadow-sm bg-dark text-white">
+                <div class="card-body p-4">
+                    <h6 class="text-white-50">Total Registered Customers</h6>
+                    <h2 class="fw-bold">@Model.TotalCustomers</h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card border-0 shadow-sm bg-info text-white">
+                <div class="card-body p-4">
+                    <h6 class="text-white-50">Active/Pending Orders</h6>
+                    <h2 class="fw-bold">@Model.TotalActiveOrders</h2>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card border-0 shadow-sm">
+        <div class="card-header bg-white py-3">
+            <h5 class="mb-0 fw-bold"><i class="fas fa-crown text-warning me-2"></i>Top Spending Customers</h5>
+        </div>
+        <div class="card-body p-0">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th class="ps-4">Customer</th>
+                        <th>Email</th>
+                        <th class="text-center">Total Orders</th>
+                        <th class="text-end pe-4">Total Revenue</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var cust in Model.TopCustomers)
+                    {
+                        <tr>
+                            <td class="ps-4">
+                                <div class="fw-bold">@cust.Name</div>
+                            </td>
+                            <td class="text-muted">@cust.Email</td>
+                            <td class="text-center"><span class="badge bg-light text-dark border">@cust.OrderCount</span></td>
+                            <td class="text-end pe-4 fw-bold text-primary">₹@cust.TotalSpent</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

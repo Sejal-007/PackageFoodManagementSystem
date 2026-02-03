@@ -1,11 +1,16 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using PackageFoodManagementSystem.Services.Helpers;
-using PackageFoodManagementSystem.Repository.Models;
-using PackageFoodManagementSystem.Services.Interfaces;
-using Microsoft.AspNetCore.Authentication;
+﻿using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
-using System.Security.Claims;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+using PackageFoodManagementSystem.DTOs;
+using PackageFoodManagementSystem.Repository.Data;
+using PackageFoodManagementSystem.Repository.Models;
+using PackageFoodManagementSystem.Services.Helpers;
+using PackageFoodManagementSystem.Services.Interfaces;
 using System.Collections.Generic;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
 using Microsoft.AspNetCore.Authorization;
@@ -20,10 +25,15 @@ namespace PackagedFoodManagementSystem.Controllers
         private readonly IConfiguration _config;
         private readonly ApplicationDbContext _db;
 
+        private readonly ApplicationDbContext _context;
+
+
+        public HomeController(IUserService userService, IConfiguration config, ApplicationDbContext context)
         public HomeController(IUserService userService, IConfiguration config, ApplicationDbContext db)
         {
             _userService = userService;
             _config = config;
+            _context = context;
             _db = db;
         }
 
@@ -127,6 +137,11 @@ namespace PackagedFoodManagementSystem.Controllers
             return View(users);
         }
 
+            return View(allOrders);
+        }
+
+
+
         [HttpGet]
         public async Task<IActionResult> Logout()
         {
@@ -139,6 +154,69 @@ namespace PackagedFoodManagementSystem.Controllers
             Response.Headers["Expires"] = "0";
 
             return RedirectToAction("SignIn", "Home");
+        }
+
+        [HttpPost]
+        public IActionResult ProcessOrder(int orderId, string status)
+        {
+            // 1. Find the order in the database
+            var order = _context.Orders.FirstOrDefault(o => o.OrderID == orderId);
+
+            if (order != null)
+            {
+                // 2. Update the status based on which button was clicked
+                order.OrderStatus = status;
+
+                // 3. Save changes to the database
+                _context.SaveChanges();
+            }
+
+            // 4. Redirect back to the dashboard to see the updated badge
+            return RedirectToAction("OrdersDashboard");
+        }
+
+        public IActionResult Report()
+        {
+            var reportData = new AdminReportDto
+            {
+                // 1. Calculate Lifetime Revenue from all non-cancelled orders
+                LifetimeRevenue = _context.Orders
+                    .Where(o => o.OrderStatus != "Cancelled")
+                    .Sum(o => o.TotalAmount),
+
+                // 2. Count total registered customers
+                TotalCustomers = _context.Customers.Count(),
+
+                // 3. Count orders that are not yet Delivered or Cancelled
+                TotalActiveOrders = _context.Orders
+                    .Count(o => o.OrderStatus == "Confirmed" || o.OrderStatus == "Processing"),
+
+                // 4. Join Orders and Customers to find big spenders
+                TopCustomers = _context.Orders
+                    .Where(o => o.OrderStatus != "Cancelled")
+                    .GroupBy(o => o.CustomerId)
+                    .Select(g => new TopCustomerDto
+                    {
+                        // We find the customer name/email using the ID from the group
+                        Name = _context.Customers
+                            .Where(c => c.CustomerId == g.Key)
+                            .Select(c => c.Name)
+                            .FirstOrDefault() ?? "Unknown",
+
+                        Email = _context.Customers
+                            .Where(c => c.CustomerId == g.Key)
+                            .Select(c => c.Email)
+                            .FirstOrDefault() ?? "N/A",
+
+                        OrderCount = g.Count(),
+                        TotalSpent = g.Sum(o => o.TotalAmount)
+                    })
+                    .OrderByDescending(x => x.TotalSpent)
+                    .Take(5) // Just show the top 5
+                    .ToList()
+            };
+
+            return View(reportData);
         }
 
         public IActionResult AboutUs() => View();

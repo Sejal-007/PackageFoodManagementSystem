@@ -1,44 +1,183 @@
-﻿@{
+﻿@using Microsoft.AspNetCore.Http
+@{
     ViewData["Title"] = "Settings";
-
     Layout = "~/Views/Shared/_StoreManagerlayout.cshtml";
-
 }
-<!-- Header -->
+
+<style>
+    /* Your Original Dashboard Styles */
+    .topbar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 15px;
+        background: white;
+    }
+
+    .page-container {
+        padding: 20px;
+    }
+
+    .settings-cards {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 20px;
+    }
+
+    .settings-card {
+        background: white;
+        padding: 20px;
+        border-radius: 12px;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }
+
+    /* Interactive Popup Styles */
+    #settingsModal {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0,0,0,0.5);
+        backdrop-filter: blur(5px);
+        z-index: 1000;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .glass-card-popup {
+        background: white;
+        width: 90%;
+        max-width: 450px;
+        border-radius: 20px;
+        overflow: hidden;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+    }
+
+    .popup-header {
+        background: linear-gradient(135deg, #FF7E5F 0%, #FEB47B 100%);
+        color: white;
+        padding: 25px;
+        text-align: center;
+    }
+
+    .popup-body {
+        padding: 25px;
+    }
+
+    .field-group {
+        margin-bottom: 15px;
+    }
+
+        .field-group label {
+            display: block;
+            font-weight: bold;
+            font-size: 13px;
+            margin-bottom: 5px;
+        }
+
+        .field-group input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+        }
+
+    .save-profile-btn {
+        width: 100%;
+        padding: 12px;
+        background: #FF7E5F;
+        color: white;
+        border: none;
+        border-radius: 10px;
+        font-weight: bold;
+        cursor: pointer;
+    }
+</style>
+
 <div class="topbar">
     <h4>| Store Name</h4>
     <input type="text" placeholder="Search" />
     <div class="icons">
-        <a asp-controller="StoreManager" asp-action="Profile">
-            👤
-
-        </a>
+        <a asp-controller="StoreManager" asp-action="Profile">👤</a>
     </div>
 </div>
-
 
 <div class="page-container">
     <h2 class="page-title">⚙ Store Manager Settings</h2>
     <div class="settings-cards">
+
         <div class="settings-card">
             <h3>👤 Account Settings</h3>
             <p>Update profile information and password</p>
-            <button class="btn-primary">Edit Profile</button>
+            <a asp-controller="StoreManager" asp-action="EditProfile" class="btn btn-primary"
+               style="background-color: #ff6a3d; color: white; border: none; padding: 10px 20px; text-decoration: none; border-radius: 5px; display: inline-block;">
+                Edit Profile
+            </a>
         </div>
+        
         <div class="settings-card">
             <h3>🔔 Notifications</h3>
             <p>Manage alerts for orders and inventory</p>
-            <button class="btn-secondary">Configure</button>
+            <button class="btn-secondary" onclick="showPopup('notifications')">Configure</button>
         </div>
+
         <div class="settings-card">
             <h3>🕒 Store Timings</h3>
             <p>Set store opening and closing hours</p>
-            <button class="btn-secondary">Update Timings</button>
+            <button class="btn-secondary" onclick="showPopup('timings')">Update Timings</button>
         </div>
+
         <div class="settings-card">
             <h3>🔐 Security</h3>
             <p>Change password and login settings</p>
-            <button class="btn-secondary">Security Settings</button>
+            <button class="btn-secondary" onclick="showPopup('security')">Security Settings</button>
         </div>
     </div>
 </div>
+
+<div id="settingsModal" onclick="hidePopup()">
+    <div class="glass-card-popup" onclick="event.stopPropagation()">
+        <div class="popup-header">
+            <h3 id="popTitle">Settings</h3>
+        </div>
+        <div class="popup-body" id="popBody">
+        </div>
+    </div>
+</div>
+
+<script>
+    function showPopup(mode) {
+        const modal = document.getElementById('settingsModal');
+        const title = document.getElementById('popTitle');
+        const body = document.getElementById('popBody');
+        modal.style.display = 'flex';
+
+        if(mode === 'notifications') {
+            title.innerHTML = "🔔 Notifications";
+            body.innerHTML = `
+                <div class='field-group'><label><input type='checkbox' checked> Email Alerts for Orders</label></div>
+                <div class='field-group'><label><input type='checkbox' checked> Low Inventory Alerts</label></div>
+                <button class='save-profile-btn' onclick='hidePopup()'>Save Preferences</button>`;
+        }
+        else if(mode === 'timings') {
+            title.innerHTML = "🕒 Store Timings";
+            body.innerHTML = `
+                <div class='field-group'><label>Open Time</label><input type='time' value='09:00'></div>
+                <div class='field-group'><label>Close Time</label><input type='time' value='21:00'></div>
+                <button class='save-profile-btn' onclick='hidePopup()'>Update Hours</button>`;
+        }
+        else if(mode === 'security') {
+            title.innerHTML = "🔐 Security Settings";
+            body.innerHTML = `
+                <div class='field-group'><label>Current Password</label><input type='password' placeholder='••••••'></div>
+                <div class='field-group'><label>New Password</label><input type='password' placeholder='Enter new password'></div>
+                <button class='save-profile-btn' onclick='hidePopup()'>Change Password</button>`;
+        }
+    }
+
+    function hidePopup() {
+        document.getElementById('settingsModal').style.display = 'none';
+    }
+</script>
