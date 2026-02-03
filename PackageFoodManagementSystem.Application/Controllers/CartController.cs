@@ -43,9 +43,7 @@ namespace PackageFoodManagementSystem.Controllers
                 };
             }
 
-            // Set ViewBag so the Layout can render the initial badge count
             ViewBag.CartCount = cart.CartItems.Sum(ci => ci.Quantity);
-
             return View("MyBasket", cart);
         }
 
@@ -53,20 +51,17 @@ namespace PackageFoodManagementSystem.Controllers
         [HttpPost("Add")]
         public IActionResult Add([FromBody] CartRequest request)
         {
-            // Defensive check to prevent NullReferenceException
             if (request == null || request.ProductId <= 0)
             {
                 return BadRequest(new { success = false, message = "Invalid data received." });
             }
 
-            // Safely parse user ID
-            var userIdClaim = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier);
+            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
             if (userIdClaim == null) return Unauthorized();
             int userId = int.Parse(userIdClaim.Value);
 
             _cartService.AddItem(userId, request.ProductId);
 
-            // Refresh cart data for response
             var cart = _context.Carts
                 .Include(c => c.CartItems)
                 .FirstOrDefault(c => c.UserId == userId && c.IsActive);
@@ -101,8 +96,7 @@ namespace PackageFoodManagementSystem.Controllers
         {
             try
             {
-                var userIdString = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
-
+                var userIdString = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
                 if (int.TryParse(userIdString, out int userId))
                 {
                     var cart = _context.Carts
@@ -115,13 +109,10 @@ namespace PackageFoodManagementSystem.Controllers
                         return Json(new { qty = item?.Quantity ?? 0 });
                     }
                 }
-
-                // Return 0 if user is not found, cart is null, or item is not in cart
                 return Json(new { qty = 0 });
             }
             catch (Exception)
             {
-                // Final return path for any unexpected errors (e.g., DB connection issues)
                 return Json(new { qty = 0 });
             }
         }
@@ -141,19 +132,20 @@ namespace PackageFoodManagementSystem.Controllers
 
             return Json(new { success = true, cartCount = totalCartCount });
         }
-    }
 
-    [HttpGet("GetTotalItems")]
-    public IActionResult GetTotalItems()
-    {
-        var claim = User.FindFirst(ClaimTypes.NameIdentifier);
-        if (claim == null) return Json(0);
+        // MOVED INSIDE THE CLASS TO FIX CS1519/CS1513 ERRORS
+        [HttpGet("GetTotalItems")]
+        public IActionResult GetTotalItems()
+        {
+            var claim = User.FindFirst(ClaimTypes.NameIdentifier);
+            if (claim == null) return Json(0);
 
-        int userId = int.Parse(claim.Value);
-        var totalCount = _context.CartItems
-            .Where(ci => ci.Cart.UserAuthenticationId == userId && ci.Cart.IsActive)
-            .Sum(ci => ci.Quantity);
+            int userId = int.Parse(claim.Value);
+            var totalCount = _context.CartItems
+                .Where(ci => ci.Cart.UserId == userId && ci.Cart.IsActive)
+                .Sum(ci => ci.Quantity);
 
-        return Json(totalCount);
-    }
-}
+            return Json(totalCount);
+        }
+    } // End of Class
+} // End of Namespace

@@ -31,12 +31,11 @@
             font-size: 0.7rem;
         }
 
-            .btn-orange:hover {
-                background-color: #e66000;
-                color: white;
-            }
+        .btn-orange:hover {
+            background-color: #e66000;
+            color: white;
+        }
 
-        /* Header & Location Styles */
         .location-box {
             border-left: 1px solid #eee;
             padding: 5px 15px;
@@ -57,7 +56,6 @@
             border-radius: 8px;
         }
 
-        /* User Popup Styles */
         #userPopup {
             position: fixed;
             top: 75px;
@@ -99,7 +97,6 @@
                     color: var(--brand-orange);
                 }
 
-        /* Footer Styles */
         .footer-links li {
             margin-bottom: 12px;
         }
@@ -154,12 +151,6 @@
                         </div>
                     </div>
                 </div>
-    <header class="app-header">
-        <nav class="navbar navbar-expand-lg px-4 py-3 shadow-sm bg-white">
-            <div class="d-flex align-items-center">
-                <img src="~/images/applogo.png" class="app-logo me-2" style="width:50px;" alt="Logo">
-                <span class="brand fw-bold text-orange" style="font-size: 24px;">ALWAYZZZ FRESH</span>
-            </div>
 
                 <ul class="navbar-nav ms-auto align-items-center">
                     <li class="nav-item me-3"><a class="nav-link fw-semibold" asp-controller="Home" asp-action="Index">Home</a></li>
@@ -180,31 +171,10 @@
                     </li>
                 </ul>
             </div>
-            <ul class="navbar-nav ms-auto align-items-center">
-                <li class="nav-item me-3"><a class="nav-link fw-semibold" asp-controller="Home" asp-action="Index">Home</a></li>
-                <li class="nav-item me-3"><a class="nav-link fw-semibold" asp-controller="Menu" asp-action="Index">Explore</a></li>
-
-                @* --- FIXED CART ICON SECTION --- *@
-                <li class="nav-item me-4">
-                    <a class="nav-link position-relative" asp-controller="Cart" asp-action="MyBasket">
-                        <i class="fa-solid fa-cart-shopping fa-lg" style="color: #ff6347;"></i>
-                        <span id="cart-badge"
-                              class="badge bg-danger rounded-pill position-absolute top-0 start-100 translate-middle"
-                              style="@(ViewBag.CartCount > 0 ? "display:inline-block;" : "display:none;") font-size: 0.7rem;">
-                            @(ViewBag.CartCount ?? 0)
-                        </span>
-                    </a>
-                </li>
-
-                <li class="nav-item">
-                    <a class="nav-link" style="cursor: pointer;" onclick="openUserMenu()">
-                        <i class="fa-solid fa-user-circle fa-2x" style="color: #ff6347;"></i>
-                    </a>
-                </li>
-            </ul>
         </nav>
     </header>
 
+    @* --- Modals & Overlays --- *@
     <div class="modal fade" id="locationModal" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered modal-lg">
             <div class="modal-content" style="border-radius: 20px;">
@@ -251,14 +221,10 @@
                 {
                     <a asp-controller="Home" asp-action="SignIn"
                        style="text-decoration: none; color: inherit; display: block; padding: 5px 0;">
-                        <i class="fa-solid fa-right-from-bracket"></i> Login
-                    <a href="/Home/SignIn" style="text-decoration: none; color: inherit;">
                         <i class="fa-solid fa-right-to-bracket"></i> Login
                     </a>
                 }
             </li>
-
-
         </ul>
     </div>
 
@@ -266,7 +232,7 @@
         @RenderBody()
     </main>
 
-    <footer class="bg-dark text-white pt-5 pb-3 mt-5">
+    <footer class="bg-dark text-white pt-5 pb-3 mt-auto">
         <div class="container">
             <div class="row gy-4 mb-5">
                 <div class="col-lg-4">
@@ -316,13 +282,6 @@
                     </div>
                 </div>
             </div>
-    <main class="flex-grow-1">
-        @RenderBody()
-    </main>
-
-    <footer class="mt-auto bg-dark text-white py-4">
-        <div class="container text-center">
-            <p>&copy; 2026 - ALWAYZZZ FRESH</p>
         </div>
     </footer>
 
@@ -330,8 +289,6 @@
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script>
         // CART LOGIC
-                // Replace the script block in your _Layout.cshtml with this:
-                       // Ensure this is NOT inside another function. It must be at the top level.
         function updateCartBadge() {
             fetch('/Cart/GetTotalItems')
                 .then(res => res.json())
@@ -345,8 +302,6 @@
                 .catch(err => console.warn("Badge sync error:", err));
         }
 
-        // Only the INITIAL call goes inside the listener
-        document.addEventListener("DOMContentLoaded", updateCartBadge);
         // USER MENU LOGIC
         function openUserMenu() {
             document.getElementById('userPopup').style.display = 'block';
@@ -357,7 +312,7 @@
             document.getElementById('popupOverlay').style.display = 'none';
         }
 
-        // LOCATION LOGIC (Teammate's API logic)
+        // LOCATION LOGIC
         let searchTimeout;
         function searchPlaces() {
             const query = document.getElementById('locSearch').value;
@@ -391,6 +346,7 @@
 
         async function detectLocation() {
             const display = document.getElementById('displayLocation');
+            const originalText = display.innerText;
             display.innerText = "Detecting...";
             if (navigator.geolocation) {
                 navigator.geolocation.getCurrentPosition(async (pos) => {
@@ -400,7 +356,10 @@
                         const city = data.address.city || data.address.town || data.address.village || data.address.state || "India";
                         confirmLocation(city);
                     } catch { confirmLocation("India"); }
-                }, () => { alert("Please enable location permissions"); });
+                }, () => {
+                    alert("Please enable location permissions");
+                    display.innerText = originalText;
+                });
             }
         }
 
@@ -418,9 +377,6 @@
             const saved = localStorage.getItem("user_loc");
             if (saved) document.getElementById('displayLocation').innerText = saved;
         });
-    </script>
-        function openUserMenu() { $('#userPopup, #popupOverlay').addClass('show'); }
-        function closeUserMenu() { $('#userPopup, #popupOverlay').removeClass('show'); }
     </script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
