@@ -1,0 +1,117 @@
+﻿@using Microsoft.AspNetCore.Http
+@{
+    Layout = "~/Views/Shared/_StoreManagerlayout.cshtml";
+    var userName = Context.Session.GetString("UserName") ?? "Store Manager";
+    var userEmail = Context.Session.GetString("UserEmail") ?? "manager@store.com";
+    var userPhone = Context.Session.GetString("UserPhone") ?? "1234567890";
+}
+
+<style>
+    .profile-page-wrapper {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 80vh;
+        animation: fadeIn 0.8s ease-in-out;
+    }
+
+    .glass-card {
+        background: #fff;
+        border-radius: 20px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        width: 100%;
+        max-width: 500px;
+        overflow: hidden;
+    }
+
+    .profile-header {
+        /* Matches the Coral gradient in your reference */
+        background: linear-gradient(135deg, #FF7E5F 0%, #FEB47B 100%);
+        color: white;
+        padding: 40px 20px;
+        text-align: center;
+    }
+
+    .profile-avatar {
+        width: 90px;
+        height: 90px;
+        background: white;
+        color: #FF7E5F;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 40px;
+        margin: 0 auto 15px;
+    }
+
+    .profile-body {
+        padding: 30px;
+    }
+
+    .edit-input-group {
+        margin-bottom: 20px;
+        border-bottom: 1px solid #eee;
+    }
+
+        .edit-input-group label {
+            font-weight: 700;
+            color: #444;
+            font-size: 12px;
+            display: block;
+            text-transform: uppercase;
+        }
+
+    .edit-field {
+        width: 100%;
+        border: none;
+        outline: none;
+        padding: 10px 0;
+        color: #666;
+        background: transparent;
+    }
+
+    .save-profile-btn {
+        background: #FF7E5F;
+        color: white;
+        border: none;
+        width: 100%;
+        padding: 15px;
+        border-radius: 12px;
+        font-weight: bold;
+        cursor: pointer;
+    }
+</style>
+
+<div class="profile-page-wrapper">
+    <div class="glass-card">
+        <div class="profile-header">
+            <div class="profile-avatar"><i class="fa fa-user"></i></div>
+            <h3>Edit Profile</h3>
+            <p>@userName</p>
+        </div>
+
+        <div class="profile-body">
+            @* FIX: Added action and method *@
+            <form asp-action="EditProfile" asp-controller="StoreManager" method="post">
+               
+                <div class="edit-input-group">
+                    <label>Email Address</label>
+                    <input asp-for="@userEmail" class="edit-field" type="email" />
+                </div>
+
+                <div class="edit-input-group">
+                    <label>Phone Number</label>
+                    <input asp-for="@userPhone" class="edit-field" />
+                </div>
+
+                <div class="edit-input-group" style="opacity: 0.5;">
+                    <label>Store Name</label>
+                    <input type="text" class="edit-field" value="Alwayzzz Fresh" readonly />
+                </div>
+
+                <button type="submit" class="save-profile-btn">SAVE CHANGES</button>
+            </form>
+        </div>
+    </div>
+</div>
