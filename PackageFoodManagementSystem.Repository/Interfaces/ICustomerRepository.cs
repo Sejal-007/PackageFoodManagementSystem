@@ -13,5 +13,6 @@ namespace PackageFoodManagementSystem.Repository.Interfaces
         Task AddAsync(Customer customer);
         Task UpdateAsync(Customer customer);
         Task DeleteAsync(int id);
+
     }
 }

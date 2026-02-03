@@ -1,57 +1,56 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using PackageFoodManagementSystem.Repository.Data; 
+using PackageFoodManagementSystem.Repository.Models;
 
 namespace PackageFoodManagementSystem.Application.Controllers
 {
-
     [Authorize(Roles = "StoreManager")]
     public class StoreManagerController : Controller
     {
-    //    [HttpPost]
-    //    public async Task<IActionResult> Create(Product product)
-    //    {
-    //        if (ModelState.IsValid)
-    //        {
-    //            _context.Add(product);
-    //            await _context.SaveChangesAsync();
-    //            return RedirectToAction("Index");
-    //        }
-    //        return View(product);
-    //    }
+        // Resolved CS0103: Context is now defined at the class level
+        private readonly ApplicationDbContext _context;
 
-        public IActionResult Home()
+        // Dependency Injection via Constructor
+        public StoreManagerController(ApplicationDbContext context)
         {
-            return View();
+            _context = context;
         }
 
-        public IActionResult Profile()
+        // --- Standard Navigation Actions ---
+        public IActionResult Home() => View();
+        public IActionResult Orders() => View();
+        public IActionResult Inventory() => View();
+        public IActionResult Settings() => View(); // This loads image_2d7569.png
+
+        // --- Edit Profile Logic ---
+
+        [HttpGet]
+        public async Task<IActionResult> EditProfile(int id)
         {
-            return View();
+            // Fetch the specific record from the database
+            var data = await _context.Products.FindAsync(id); 
+            if (data == null) return NotFound();
+
+            return View(data);
         }
 
-        public IActionResult Orders()
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Edit(Product product)
         {
-            return View();
-        }
-        public IActionResult AddProduct()
-        {
-            return View();
-        }
-        public IActionResult Inventory()
-        {
-            return View();
-        }
-        public IActionResult Reports()
-        {
-            return View();
-        }
-        public IActionResult Compliance()
-        {
-            return View();
-        }
-        public IActionResult Settings()
-        {
-            return View();
+            if (ModelState.IsValid)
+            {
+                // _context is now available for the update operation
+                _context.Update(product);
+                await _context.SaveChangesAsync();
+                
+                // Redirect back to the Settings dashboard
+                return RedirectToAction("Settings");
+            }
+            // If validation fails, stay on the edit page
+            return View("EditProfile", product);
         }
     }
 }
