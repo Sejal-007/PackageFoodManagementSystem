@@ -97,8 +97,6 @@ namespace PackageFoodManagementSystem.Services.Implementations
         private readonly IUserRepository _userRepository;
         private readonly ICustomerRepository _customerRepository;
 
-        public UserService(IUserRepository userRepository, ICustomerRepository customerRepository)
-        private readonly ICustomerRepository _customerRepository;
 
         public UserService(IUserRepository userRepository, ICustomerRepository customerRepository)
 
@@ -145,22 +143,11 @@ namespace PackageFoodManagementSystem.Services.Implementations
             await _userRepository.SaveChangesAsync(cancellationToken);
 
             // 3. Create the Customer record linked to that ID
-            var customer = new Customer
-            {
-                Name = name,
-                Email = email,
-                Phone = mobileNumber,
-                Status = "Active",
-                UserId = user.Id // Link to the ID we just created
-            };
-
-            // 4. IMPORTANT FIX: Add the customer
-            await _customerRepository.AddAsync(customer);
+            
 
             // 5. CRITICAL STEP: 
             // If _customerRepository uses a different context, you MUST call Save on it.
             // If they share the same context, this call will push the customer to the DB.
-            await _userRepository.SaveChangesAsync(cancellationToken);
 
             return user.Id;
         }
@@ -185,33 +172,6 @@ namespace PackageFoodManagementSystem.Services.Implementations
 
         // --- UPDATED DELETE METHOD TO PREVENT SQL ERROR ---
 
-        public async Task DeleteUserAsync(int id, CancellationToken cancellationToken = default)
-
-        {
-
-            // 1. Find the customer linked to this UserId
-
-            var allCustomers = await _customerRepository.GetAllAsync();
-
-            var customer = allCustomers.FirstOrDefault(c => c.UserId == id);
-
-            // 2. Delete Customer first to satisfy Foreign Key constraint
-
-            if (customer != null)
-
-            {
-
-                await _customerRepository.DeleteAsync(customer.CustomerId);
-
-            }
-
-            // 3. Now delete the Authentication record
-
-            await _userRepository.DeleteAsync(id, cancellationToken);
-
-            await _userRepository.SaveChangesAsync(cancellationToken);
-
-        }
 
         public Task<UserAuthentication?> GetUserByEmailAsync(string email, CancellationToken cancellationToken = default)
 
@@ -248,4 +208,4 @@ namespace PackageFoodManagementSystem.Services.Implementations
     }
 }
 
-}
+

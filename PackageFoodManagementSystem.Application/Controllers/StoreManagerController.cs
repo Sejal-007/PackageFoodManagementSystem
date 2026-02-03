@@ -27,19 +27,14 @@ namespace PackageFoodManagementSystem.Application.Controllers
         //    }
 
         // Dependency Injection via Constructor
-        public StoreManagerController(ApplicationDbContext context)
-        private readonly ApplicationDbContext _context;
-
+        
 
         public StoreManagerController(ApplicationDbContext context)
         {
             _context = context;
         }
 
-        public IActionResult Home()
-        {
-            _context = context;
-        }
+        
 
         // --- Standard Navigation Actions ---
         public IActionResult Home() => View();
@@ -184,9 +179,6 @@ namespace PackageFoodManagementSystem.Application.Controllers
         {
             return View();
         }
-        public IActionResult Settings()
-        {
-            return View();
-        }
+       
     }
 }
