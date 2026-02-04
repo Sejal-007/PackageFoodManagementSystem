@@ -1,0 +1,46 @@
+﻿@model PackageFoodManagementSystem.Repository.Models.Product
+
+<div class="container mt-5 pt-5">
+    <div class="row shadow-lg p-4 rounded-4 bg-white">
+        <div class="col-md-5">
+            <img src="@Model.ImageData" class="img-fluid rounded-3" alt="@Model.ProductName">
+        </div>
+
+        <div class="col-md-7">
+            <h2 class="fw-bold">@Model.ProductName</h2>
+            <span class="badge bg-success mb-3">@Model.Category</span>
+            <h3 class="text-orange fw-bold">₹@Model.Price</h3>
+            <hr />
+
+            <h5 class="fw-bold"><i class="fa-solid fa-circle-info me-2"></i>Batch Information</h5>
+
+            @if (Model.Batches != null && Model.Batches.Any())
+
+            {
+
+                // We show the latest batch added by your friend
+
+                var currentBatch = Model.Batches.OrderByDescending(b => b.ManufactureDate).First();
+                <div class="p-3 border rounded bg-light">
+                    <p><strong>Batch ID:</strong> #@currentBatch.BatchId</p>
+                    <p><strong>Manufactured:</strong> @currentBatch.ManufactureDate.ToString("dd MMM yyyy")</p>
+                    <p class="text-danger"><strong>Best Before:</strong> @currentBatch.ExpiryDate.ToString("dd MMM yyyy")</p>
+                    <p><strong>Available Stock:</strong> @currentBatch.Quantity units</p>
+                </div>
+
+            }
+
+            else
+
+            {
+                <div class="alert alert-warning">No batch data available for this product yet.</div>
+
+            }
+
+            <div class="mt-4">
+                <a asp-action="Index" class="btn btn-outline-dark px-4">Back to Menu</a>
+                <button class="btn btn-orange px-4 text-white ms-2">Add to Cart</button>
+            </div>
+        </div>
+    </div>
+</div>

@@ -16,7 +16,6 @@ namespace PackageFoodManagementSystem.Repository.Models
 
         public int OrderID { get; set; }
 
-        [Required]
         public int BillID { get; set; }
 
         [Required]
@@ -36,7 +35,7 @@ namespace PackageFoodManagementSystem.Repository.Models
 
         public Order Order { get; set; }
 
-        public string? AmountPaid { get; set; }
+        public decimal AmountPaid { get; set; }
 
         public string? GatewayResponse { get; set; }
 

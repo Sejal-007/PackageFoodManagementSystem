@@ -1,9 +1,9 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
-namespace PackageFoodManagementSystem.Application.Views.Order
+namespace PackageFoodManagementSystem.Application.Views.StoreManager
 {
-    public class SuccessModel : PageModel
+    public class OrdersModel : PageModel
     {
         public void OnGet()
         {

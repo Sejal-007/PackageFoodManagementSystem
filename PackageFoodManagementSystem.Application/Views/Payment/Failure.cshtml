@@ -1,0 +1,23 @@
+﻿@{
+    ViewData["Title"] = "Payment Failed";
+}
+
+<div class="container py-5 text-center">
+    <div class="card border-0 shadow-lg p-5 mx-auto" style="max-width: 500px; border-radius: 25px;">
+        <div class="mb-4">
+            <div class="bg-danger text-white rounded-circle mx-auto d-flex align-items-center justify-content-center shadow" style="width: 90px; height: 90px; font-size: 45px;">
+                <i class="fa fa-times-circle"></i>
+            </div>
+        </div>
+
+        <h2 class="fw-bold mb-3">Payment <span class="text-danger">Failed</span></h2>
+        <p class="text-muted mb-4">We couldn't process the transaction for Order <strong>#@ViewBag.OrderId</strong>. Please check your card details or try a different method.</p>
+
+        <div class="d-grid gap-2">
+            <a asp-action="Payment" asp-route-orderId="@ViewBag.OrderId" class="btn btn-dark py-3 fw-bold rounded-3">
+                <i class="fa fa-redo me-2"></i> Try Again
+            </a>
+            <a href="/" class="btn btn-outline-secondary py-2 border-0">Cancel and go to Home</a>
+        </div>
+    </div>
+</div>

@@ -4,28 +4,22 @@
 <link rel="stylesheet" href="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.css" />
 
 <style>
-    /* CRITICAL: The map will not show without a defined height */
     #map {
-        height: 500px;
+        height: 450px;
         width: 100%;
-        border-radius: 1.25rem;
+        border-radius: 1rem;
         z-index: 1;
-    }
-
-    .leaflet-container {
-        height: 100%;
-        width: 100%;
     }
 </style>
 
 <div class="container mt-5">
     <div class="row justify-content-center">
-        <div class="col-md-5 mb-4 mb-md-0">
+        <div class="col-md-11">
+            <div asp-validation-summary="All" class="text-danger mb-3"></div>
+        </div>
+
+        <div class="col-md-5 mb-4">
             <div id="map" class="shadow-sm border"></div>
-            <p class="text-muted small mt-2">
-                <i class="fa-solid fa-location-dot me-1"></i>
-                Search, drag the marker, or <b>click anywhere</b> on the map.
-            </p>
         </div>
 
         <div class="col-md-6 shadow-sm p-4 bg-white rounded-4 border">
@@ -37,10 +31,9 @@
                 <div class="d-flex gap-2 mb-4">
                     <input type="radio" class="btn-check" asp-for="AddressType" id="home" value="Home" checked>
                     <label class="btn btn-outline-success btn-sm rounded-pill px-4" for="home">🏠 Home</label>
+
                     <input type="radio" class="btn-check" asp-for="AddressType" id="work" value="Work">
                     <label class="btn btn-outline-success btn-sm rounded-pill px-4" for="work">🏢 Work</label>
-                    <input type="radio" class="btn-check" asp-for="AddressType" id="hotel" value="Hotel">
-                    <label class="btn btn-outline-success btn-sm rounded-pill px-4" for="hotel">🏨 Hotel</label>
                 </div>
 
                 <div class="mb-3">
@@ -75,41 +68,11 @@
 @section Scripts {
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script src="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.js"></script>
-
     <script>
         document.addEventListener("DOMContentLoaded", function() {
-            // 1. Initialize Map
             var map = L.map('map').setView([12.8231, 80.2209], 13);
             L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
-
-            // 2. Fix for blank map tiles on initial load
-            setTimeout(function(){ map.invalidateSize(); }, 400);
-
-            // 3. Add Draggable Marker
             var marker = L.marker([12.8231, 80.2209], { draggable: true }).addTo(map);
-
-            // 4. Add Search Bar
-            var geocoder = L.Control.geocoder({
-                defaultMarkGeocode: false,
-                placeholder: "Search for area..."
-            })
-            .on('markgeocode', function(e) {
-                var center = e.geocode.center;
-                map.setView(center, 16);
-                updateMarkerAndForm(center.lat, center.lng);
-            })
-            .addTo(map);
-
-            // 5. Click on map
-            map.on('click', function(e) {
-                updateMarkerAndForm(e.latlng.lat, e.latlng.lng);
-            });
-
-            // 6. Drag marker
-            marker.on('dragend', function(e) {
-                var latlng = marker.getLatLng();
-                updateMarkerAndForm(latlng.lat, latlng.lng);
-            });
 
             function updateMarkerAndForm(lat, lng) {
                 marker.setLatLng([lat, lng]);
@@ -117,21 +80,15 @@
                     .then(res => res.json())
                     .then(data => {
                         if(data.address) {
-                            const road = data.address.road || data.address.suburb || data.display_name.split(',')[0];
-                            const city = data.address.city || data.address.town || data.address.village || "";
-                            const postCode = data.address.postcode || "";
-
-                            document.getElementById('StreetAddress').value = road;
-                            document.getElementById('City').value = city;
-                            document.getElementById('PostalCode').value = postCode;
+                            document.getElementById('StreetAddress').value = data.address.road || data.address.suburb || "";
+                            document.getElementById('City').value = data.address.city || data.address.town || "";
+                            document.getElementById('PostalCode').value = data.address.postcode || "";
                             document.getElementById('Landmark').value = data.address.neighbourhood || "";
                         }
-                    })
-                    .catch(err => console.log("Geocoding failed: ", err));
+                    });
             }
+            map.on('click', e => updateMarkerAndForm(e.latlng.lat, e.latlng.lng));
+            marker.on('dragend', () => updateMarkerAndForm(marker.getLatLng().lat, marker.getLatLng().lng));
         });
     </script>
-    @{
-        await Html.RenderPartialAsync("_ValidationScriptsPartial");
-    }
 }

@@ -18,7 +18,7 @@ namespace PackageFoodManagementSystem.Repository.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    BatchNumber = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    //BatchNumber = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     ExpiryDate = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
@@ -124,3 +124,5 @@ namespace PackageFoodManagementSystem.Repository.Migrations
         }
     }
 }
+
+

@@ -1,0 +1,150 @@
+﻿@model IEnumerable<PackageFoodManagementSystem.Repository.Models.Order>
+@{
+    ViewData["Title"] = "Orders Admin Dashboard";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<style>
+    .stat-card {
+        transition: transform 0.2s;
+        text-decoration: none !important;
+        color: inherit;
+        cursor: pointer;
+    }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+        }
+
+    .badge-processing {
+        background-color: #fd7e14;
+    }
+
+    .badge-shipped {
+        background-color: #0d6efd;
+    }
+
+    .badge-delivered {
+        background-color: #198754;
+    }
+
+    .badge-placed {
+        background-color: #0dcaf0;
+    }
+</style>
+
+<div class="container-fluid px-4 mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="fw-bold text-dark">🛒 Orders Management</h2>
+        <div class="search-box">
+            <input type="text" id="orderSearch" class="form-control" placeholder="Search ID or Name..." onkeyup="filterTable()">
+        </div>
+    </div>
+
+    <div class="row mb-5">
+        <div class="col-md-3">
+            <a asp-action="OrdersDashboard" asp-route-status="Today" class="stat-card card border-0 shadow-sm p-3 border-start border-4 border-info">
+                <h6 class="text-muted text-uppercase small">Today's Orders</h6>
+                <h2 class="fw-bold mb-0">@ViewBag.TodayOrders</h2>
+            </a>
+        </div>
+        <div class="col-md-3">
+            <a asp-action="OrdersDashboard" asp-route-status="Pending" class="stat-card card border-0 shadow-sm p-3 border-start border-4 border-warning">
+                <h6 class="text-muted text-uppercase small">Pending/Processing</h6>
+                <h2 class="fw-bold mb-0">@ViewBag.PendingOrders</h2>
+            </a>
+        </div>
+        <div class="col-md-3">
+            <a asp-action="OrdersDashboard" asp-route-status="Completed" class="stat-card card border-0 shadow-sm p-3 border-start border-4 border-success">
+                <h6 class="text-muted text-uppercase small">Completed</h6>
+                <h2 class="fw-bold mb-0">@ViewBag.CompletedOrders</h2>
+            </a>
+        </div>
+        <div class="col-md-3">
+            <a asp-action="OrdersDashboard" asp-route-status="Cancelled" class="stat-card card border-0 shadow-sm p-3 border-start border-4 border-danger">
+                <h6 class="text-muted text-uppercase small">Cancelled</h6>
+                <h2 class="fw-bold mb-0">@ViewBag.CancelledOrders</h2>
+            </a>
+        </div>
+    </div>
+
+    <div class="card border-0 shadow-sm">
+        <div class="card-body p-0">
+            <table class="table table-hover align-middle mb-0" id="ordersTable">
+                <thead class="table-light">
+                    <tr>
+                        <th class="ps-4">Order ID</th>
+                        <th>Customer Details</th>
+                        <th>Total Amount</th>
+                        <th>Current Status</th>
+                        <th>Order Date</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model != null && Model.Any())
+                    {
+                        foreach (var order in Model)
+                        {
+                            <tr>
+                                <td class="ps-4 fw-bold">#@order.OrderID</td>
+                                <td>
+                                    <div class="d-flex flex-column">
+                                        @if (order.Customer != null)
+                                        {
+                                            <span class="fw-bold">@order.Customer.Name</span>
+                                            <small class="text-muted">@order.Customer.Email</small>
+                                        }
+                                        else
+                                        {
+                                            <span class="text-danger">Walk-in (ID: @order.CustomerId)</span>
+                                            <small class="text-muted italic">Record missing in Customer table</small>
+                                        }
+                                    </div>
+                                </td>
+                                <td class="fw-bold text-primary">₹@order.TotalAmount</td>
+                                <td>
+                                    @{
+                                        var badgeClass = order.OrderStatus switch
+                                        {
+                                            "Processing" => "badge-processing",
+                                            "Shipped" => "badge-shipped",
+                                            "Delivered" => "badge-delivered",
+                                            _ => "badge-placed"
+                                        };
+                                    }
+                                    <span class="badge rounded-pill @badgeClass">@order.OrderStatus</span>
+                                </td>
+                                <td>@order.OrderDate?.ToString("dd MMM yyyy")</td>
+                               
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr><td colspan="6" class="text-center p-5 text-muted">No orders found for this category.</td></tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script>
+    function filterTable() {
+        var input = document.getElementById("orderSearch");
+        var filter = input.value.toUpperCase();
+        var table = document.getElementById("ordersTable");
+        var tr = table.getElementsByTagName("tr");
+        for (var i = 1; i < tr.length; i++) {
+            var rowVisible = false;
+            var td = tr[i].getElementsByTagName("td");
+            for (var j = 0; j < td.length; j++) {
+                if (td[j] && td[j].innerText.toUpperCase().indexOf(filter) > -1) {
+                    rowVisible = true;
+                    break;
+                }
+            }
+            tr[i].style.display = rowVisible ? "" : "none";
+        }
+    }
+</script>

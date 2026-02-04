@@ -54,6 +54,13 @@ builder.Services.AddAuthentication(options =>
 });
 
 // 4. Dependency Injection (DI) Registrations
+
+// Batches - Fixed "Unable to resolve service" for IBatchService
+builder.Services.AddScoped<IBatchRepository, BatchRepository>();
+builder.Services.AddScoped<IBatchService, BatchService>();
+
+// User & Customer
+// 4. Dependency Injection (DI) Registrations
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<ICustomerRepository, CustomerRepository>();
@@ -66,13 +73,17 @@ builder.Services.AddScoped<IPaymentRepository, PaymentRepository>();
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
 builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddScoped<ICartService, CartService>();
+
+// Cart - Added missing Repository registration to fix CartController crash
+//builder.Services.AddScoped<ICartRepository, CartRepository>();
+builder.Services.AddScoped<ICartService, CartService>();
 builder.Services.AddScoped<ICustomerAddressRepository, CustomerAddressRepository>();
 builder.Services.AddScoped<ICustomerAddressService, CustomerAddressService>();
 
 builder.Services.AddControllersWithViews();
 
 var app = builder.Build();
-
+    
 // 5. Configure the HTTP request pipeline
 if (!app.Environment.IsDevelopment())
 {
@@ -82,7 +93,6 @@ if (!app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
-
 app.UseRouting();
 
 // ✅ CRITICAL ORDER: Session must come before Authentication

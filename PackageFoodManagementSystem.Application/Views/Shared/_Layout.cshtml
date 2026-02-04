@@ -27,18 +27,15 @@
             cursor: pointer;
         }
 
-        .btn-orange {
-            background-color: var(--brand-orange);
-            border: none;
+        #cart-badge {
+            font-size: 0.7rem;
+        }
+
+        .btn-orange:hover {
+            background-color: #e66000;
             color: white;
         }
 
-            .btn-orange:hover {
-                background-color: #e66000;
-                color: white;
-            }
-
-        /* Header & Location Styles */
         .location-box {
             border-left: 1px solid #eee;
             padding: 5px 15px;
@@ -59,7 +56,6 @@
             border-radius: 8px;
         }
 
-        /* User Popup Styles */
         #userPopup {
             position: fixed;
             top: 75px;
@@ -101,7 +97,6 @@
                     color: var(--brand-orange);
                 }
 
-        /* Footer Styles */
         .footer-links li {
             margin-bottom: 12px;
         }
@@ -163,7 +158,10 @@
                     <li class="nav-item me-4">
                         <a class="nav-link position-relative" asp-controller="Cart" asp-action="MyBasket">
                             <i class="fa-solid fa-cart-shopping fa-lg text-orange"></i>
-                            <span id="cart-count" class="badge bg-danger rounded-circle position-absolute top-0 start-100 translate-middle" style="display: none; font-size: 0.7rem;">0</span>
+                            <span id="cart-count" class="badge bg-danger rounded-circle position-absolute top-0 start-100 translate-middle"
+                                  style="display: none; font-size: 0.7rem; min-width: 18px; height: 18px;">
+                                0
+                            </span>
                         </a>
                     </li>
                     <li class="nav-item">
@@ -176,6 +174,7 @@
         </nav>
     </header>
 
+    @* --- Modals & Overlays --- *@
     <div class="modal fade" id="locationModal" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered modal-lg">
             <div class="modal-content" style="border-radius: 20px;">
@@ -222,12 +221,10 @@
                 {
                     <a asp-controller="Home" asp-action="SignIn"
                        style="text-decoration: none; color: inherit; display: block; padding: 5px 0;">
-                        <i class="fa-solid fa-right-from-bracket"></i> Login
+                        <i class="fa-solid fa-right-to-bracket"></i> Login
                     </a>
                 }
             </li>
-
-
         </ul>
     </div>
 
@@ -235,7 +232,7 @@
         @RenderBody()
     </main>
 
-    <footer class="bg-dark text-white pt-5 pb-3 mt-5">
+    <footer class="bg-dark text-white pt-5 pb-3 mt-auto">
         <div class="container">
             <div class="row gy-4 mb-5">
                 <div class="col-lg-4">
@@ -290,22 +287,19 @@
 
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="~/js/site.js" asp-append-version="true"></script>
-
     <script>
         // CART LOGIC
         function updateCartBadge() {
-            const cart = JSON.parse(localStorage.getItem("myCart")) || [];
-            const totalItems = cart.reduce((sum, item) => sum + parseInt(item.qty || 0), 0);
-            const badge = document.getElementById("cart-count");
-            if (badge) {
-                if (totalItems > 0) {
-                    badge.innerText = totalItems;
-                    badge.style.display = "block";
-                } else {
-                    badge.style.display = "none";
-                }
-            }
+            fetch('/Cart/GetTotalItems')
+                .then(res => res.json())
+                .then(count => {
+                    const badge = document.getElementById("cart-count");
+                    if (badge) {
+                        badge.innerText = count;
+                        badge.style.display = count > 0 ? "block" : "none";
+                    }
+                })
+                .catch(err => console.warn("Badge sync error:", err));
         }
 
         // USER MENU LOGIC
@@ -318,7 +312,7 @@
             document.getElementById('popupOverlay').style.display = 'none';
         }
 
-        // LOCATION LOGIC (Teammate's API logic)
+        // LOCATION LOGIC
         let searchTimeout;
         function searchPlaces() {
             const query = document.getElementById('locSearch').value;
@@ -352,6 +346,7 @@
 
         async function detectLocation() {
             const display = document.getElementById('displayLocation');
+            const originalText = display.innerText;
             display.innerText = "Detecting...";
             if (navigator.geolocation) {
                 navigator.geolocation.getCurrentPosition(async (pos) => {
@@ -361,7 +356,10 @@
                         const city = data.address.city || data.address.town || data.address.village || data.address.state || "India";
                         confirmLocation(city);
                     } catch { confirmLocation("India"); }
-                }, () => { alert("Please enable location permissions"); });
+                }, () => {
+                    alert("Please enable location permissions");
+                    display.innerText = originalText;
+                });
             }
         }
 

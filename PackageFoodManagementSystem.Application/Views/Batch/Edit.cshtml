@@ -1,0 +1,45 @@
+﻿@model PackageFoodManagementSystem.Repository.Models.Batch
+
+@{
+    ViewData["Title"] = "Edit Batch";
+    Layout = "_StoreManagerLayout";
+}
+
+<div class="container d-flex justify-content-center mt-5">
+    <div class="card shadow" style="width: 100%; max-width: 450px; border-radius: 15px;">
+        <div class="card-body p-4">
+            <h2 class="text-center fw-bold">Edit Batch</h2>
+            <form asp-action="Edit" method="post">
+                @Html.AntiForgeryToken()
+                <input type="hidden" asp-for="BatchId" />
+
+                <div class="mb-3">
+                    <label asp-for="ProductId" class="form-label fw-bold">Product</label>
+                    <select asp-for="ProductId" class="form-select" asp-items="ViewBag.Products"></select>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="ManufactureDate" class="form-label fw-bold">Manufacture Date</label>
+                    <input asp-for="ManufactureDate" type="date" class="form-control" />
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="ExpiryDate" class="form-label fw-bold">Expiry Date</label>
+                    <input asp-for="ExpiryDate" type="date" class="form-control" />
+                </div>
+
+                <div class="mb-4">
+                    <label asp-for="Quantity" class="form-label fw-bold">Quantity</label>
+                    <input asp-for="Quantity" type="number" class="form-control" />
+                </div>
+
+                <div class="d-grid gap-2">
+                    <button type="submit" class="btn btn-primary fw-bold" style="background-color: #007bff; border: none;">
+                        Save Changes
+                    </button>
+                    <a asp-action="Index" class="btn btn-link text-decoration-none text-muted text-center">Cancel</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

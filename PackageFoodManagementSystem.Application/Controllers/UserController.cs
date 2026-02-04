@@ -58,7 +58,40 @@ namespace PackagedFoodFrontend.Controllers
 
         public IActionResult MyBasket() => View(GetUserFromSession());
         public IActionResult SmartBasket() => View(GetUserFromSession());
-        public IActionResult MyOrders() => View();
+        public async Task<IActionResult> MyOrders()
+        {
+            // 1. Get the logged-in User ID from Session
+            int? userId = HttpContext.Session.GetInt32("UserId");
+
+            if (userId == null)
+                return RedirectToAction("SignIn", "Home");
+
+            // 2. Fetch orders from DB where CreatedByUserID matches
+            var orders = await _context.Orders
+            .Where(o => o.CustomerId == userId.Value || o.CreatedByUserID == userId.Value)
+            .OrderByDescending(o => o.OrderDate)
+            .ToListAsync();
+
+            // 3. Pass the list to the view
+            return View(orders);
+        }
+
+        [HttpPost]
+        public IActionResult CancelOrder(int orderId)
+        {
+            try
+            {
+                // Use the OrderService to update the status in the backend
+                var orderService = (IOrderService)HttpContext.RequestServices.GetService(typeof(IOrderService));
+                orderService.CancelOrder(orderId); // This updates DB to "Cancelled"
+
+                return Json(new { success = true, message = "Order cancelled successfully." });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = ex.Message });
+            }
+        }
         public IActionResult PastOrders() => View();
 
         public IActionResult Payment() => View();
@@ -120,11 +153,18 @@ namespace PackagedFoodFrontend.Controllers
 
         public async Task<IActionResult> DeliveryAddress()
         {
-            int? userId = HttpContext.Session.GetInt32("UserId");
-            if (userId == null) return RedirectToAction("SignIn", "Home");
+            int? sessionUserId = HttpContext.Session.GetInt32("UserId");
+            if (sessionUserId == null) return RedirectToAction("SignIn", "Home");
 
+            // 1. Get the real CustomerId linked to this UserId
+            var customer = await _context.Customers
+                                         .FirstOrDefaultAsync(c => c.UserId == sessionUserId.Value);
+
+            if (customer == null) return View(new List<CustomerAddress>());
+
+            // 2. Fetch addresses using the correct CustomerId (e.g., 2 or 3)
             var allAddresses = await _addressService.GetAllAsync();
-            var userAddresses = allAddresses.Where(x => x.CustomerId == userId).ToList();
+            var userAddresses = allAddresses.Where(x => x.CustomerId == customer.CustomerId).ToList();
 
             return View(userAddresses);
         }
@@ -138,48 +178,50 @@ namespace PackagedFoodFrontend.Controllers
             }
             return View();
         }
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> AddAddress(CustomerAddress address)
         {
-            // 1. Get the real CustomerId from the session
-            int? userId = HttpContext.Session.GetInt32("UserId");
+            int? sessionUserId = HttpContext.Session.GetInt32("UserId");
+            if (!sessionUserId.HasValue) return RedirectToAction("SignIn", "Home");
 
-            if (!userId.HasValue)
+            // 1. Find the real CustomerId (e.g., UserId 6 maps to CustomerId 2)
+            var customer = await _context.Customers
+                                         .FirstOrDefaultAsync(c => c.UserId == sessionUserId.Value);
+
+            if (customer == null)
             {
-                return RedirectToAction("SignIn", "Home");
+                ModelState.AddModelError("", "Customer profile not found.");
+                return View(address);
             }
 
-            // 2. Assign the ID before validation
-            address.CustomerId = userId.Value;
+            // 2. Assign the actual FK and clear validation for unused model fields
+            address.CustomerId = customer.CustomerId;
 
-            // 3. Remove validation for fields the user doesn't fill manually
             ModelState.Remove("CustomerId");
             ModelState.Remove("Customer");
+            ModelState.Remove("State");
+            ModelState.Remove("Country");
 
             if (ModelState.IsValid)
             {
                 try
                 {
-                    // 4. Save to DB
                     await _addressService.AddAsync(address);
-
                     TempData["Message"] = "Address saved successfully!";
-
-                    // 5. Success Redirect
                     return RedirectToAction("DeliveryAddress");
                 }
                 catch (Exception ex)
                 {
-                    ModelState.AddModelError("", "Unable to save to database. Error: " + ex.Message);
+                    var inner = ex.InnerException != null ? ex.InnerException.Message : ex.Message;
+                    ModelState.AddModelError("", "Database Error: " + inner);
                 }
             }
-
-            // If we reach here, something failed; reload the form with errors
             return View(address);
         }
 
-
+        #endregion
         public async Task<IActionResult> DeleteAddress(int id)
         {
             if (HttpContext.Session.GetInt32("UserId") == null) return RedirectToAction("SignIn", "Home");
@@ -189,7 +231,6 @@ namespace PackagedFoodFrontend.Controllers
             return RedirectToAction("DeliveryAddress");
         }
 
-        #endregion
 
         #region Helpers & Auth
 

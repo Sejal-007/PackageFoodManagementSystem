@@ -1,36 +1,32 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-//using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
-namespace PackageFoodManagementSystem.Repository.Models
 
+namespace PackageFoodManagementSystem.Repository.Models
 {
     public class Product
-
     {
         [Key]
-
         public int ProductId { get; set; }
 
         [Required]
-
         public required string ProductName { get; set; }
 
         [Required]
-
         [Column(TypeName = "decimal(18,2)")]
-
         public decimal Price { get; set; }
-
-        // <-- Add this line right here
 
         public int Quantity { get; set; }
 
         public required string Category { get; set; }
 
         public bool IsActive { get; set; } = true;
-       // [ValidateNever]
+
         public string? ImageData { get; set; }
 
+        // Added this collection to link Products to Batches
+        // This resolves the red lines in Details.cshtml
+        public virtual ICollection<Batch> Batches { get; set; } = new List<Batch>();
+        public int CategoryId { get; set; }
     }
-
 }
