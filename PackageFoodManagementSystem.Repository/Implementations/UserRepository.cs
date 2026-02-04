@@ -55,5 +55,38 @@ namespace PackageFoodManagementSystem.Repository.Implementations
 
         public async Task<int> CountByRoleAsync(string role, CancellationToken cancellationToken = default)
             => await _db.UserAuthentications.CountAsync(u => u.Role == role, cancellationToken);
+
+        public Task<UserAuthentication?> GetUserByEmailAsync(string email)
+            => _db.UserAuthentications.FirstOrDefaultAsync(u => u.Email == email);
+
+        public Task<UserAuthentication?> GetUserByIdAsync(int id)
+            => _db.UserAuthentications.FindAsync(id).AsTask();
+
+        public Task<List<UserAuthentication>> GetAllUsersAsync()
+        {
+            return _db.UserAuthentications.ToListAsync();
+        }
+
+
+
+        public async Task DeleteUserAsync(int id)
+        {
+            var user = await _db.UserAuthentications.FindAsync(id);
+            if (user != null)
+            {
+                var customers = _db.Customers.Where(c => c.UserId == id);
+                _db.Customers.RemoveRange(customers);
+                _db.UserAuthentications.Remove(user);
+            }
+        }
+
+        public async Task<(int TotalCustomers, int TotalStoreManagers, int TotalOrders)> GetDashboardStatsAsync()
+        {
+            var totalCustomers = await _db.UserAuthentications.CountAsync(u => u.Role == "User");
+            var totalStoreManagers = await _db.UserAuthentications.CountAsync(u => u.Role == "StoreManager");
+            var totalOrders = await _db.Orders.CountAsync();
+
+            return (totalCustomers, totalStoreManagers, totalOrders);
+        }
     }
 }
