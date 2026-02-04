@@ -63,5 +63,75 @@ namespace PackageFoodManagementSystem.Services.Implementations
 
         public Task<int> CountUsersByRoleAsync(string role, CancellationToken cancellationToken = default)
             => _userRepository.CountByRoleAsync(role, cancellationToken);
+
+        public async Task<UserAuthentication?> AuthenticateAsync(string email, string password)
+        {
+            var user = await _userRepository.GetUserByEmailAsync(email);
+            if (user == null || !PasswordHelper.VerifyPassword(password, user.Password))
+                return null;
+
+            return user;
+        }
+
+        public async Task<(bool Success, string? ErrorMessage)> RegisterUserAsync(UserAuthentication user)
+        {
+            try
+            {
+                user.Password = PasswordHelper.HashPassword(user.Password);
+                user.Role = "User";
+
+                await _userRepository.AddAsync(user);
+                await _userRepository.SaveChangesAsync();
+
+                var customer = new Customer
+                {
+                    UserId = user.Id,
+                    Name = user.Name,
+                    Email = user.Email,
+                    Phone = user.MobileNumber,
+                    Status = "Active",
+                    Addresses = new List<CustomerAddress>()
+                };
+
+                await _userRepository.AddAsync(customer);
+                await _userRepository.SaveChangesAsync();
+
+                return (true, null);
+            }
+            catch (Exception ex)
+            {
+                return (false, ex.Message);
+            }
+        }
+
+
+        public Task<List<UserAuthentication>> GetAllUsersAsync()
+            => _userRepository.GetAllUsersAsync();
+
+        public async Task<(bool Success, string? ErrorMessage)> UpdateUserAsync(UserAuthentication user)
+        {
+            var existingUser = await _userRepository.GetUserByIdAsync(user.Id);
+            if (existingUser == null) return (false, "User not found");
+
+            existingUser.Name = user.Name;
+            existingUser.Email = user.Email;
+            existingUser.MobileNumber = user.MobileNumber;
+            existingUser.Role = user.Role;
+
+            if (!string.IsNullOrEmpty(user.Password))
+                existingUser.Password = PasswordHelper.HashPassword(user.Password);
+
+            await _userRepository.SaveChangesAsync();
+            return (true, null);
+        }
+
+        public async Task DeleteUserAsync(int id)
+        {
+            await _userRepository.DeleteUserAsync(id);
+            await _userRepository.SaveChangesAsync();
+        }
+
+        public Task<(int TotalCustomers, int TotalStoreManagers, int TotalOrders)> GetAdminDashboardStatsAsync()
+            => _userRepository.GetDashboardStatsAsync();
     }
 }

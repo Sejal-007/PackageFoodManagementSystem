@@ -21,5 +21,11 @@ namespace PackageFoodManagementSystem.Services.Interfaces
         Task UpdateUserAsync(UserAuthentication user, CancellationToken cancellationToken = default); // ✅ NEW
         Task DeleteUserAsync(int id, CancellationToken cancellationToken = default);                  // ✅ NEW
         Task<int> CountUsersByRoleAsync(string role, CancellationToken cancellationToken = default);  // ✅ NEW
+        Task<UserAuthentication?> AuthenticateAsync(string email, string password);
+        Task<(bool Success, string? ErrorMessage)> RegisterUserAsync(UserAuthentication user);
+        Task<List<UserAuthentication>> GetAllUsersAsync();
+        Task<(bool Success, string? ErrorMessage)> UpdateUserAsync(UserAuthentication user);
+        Task DeleteUserAsync(int id);
+        Task<(int TotalCustomers, int TotalStoreManagers, int TotalOrders)> GetAdminDashboardStatsAsync();
     }
 }
