@@ -6,7 +6,7 @@ using PackageFoodManagementSystem.Services.Implementations;
 using System;
 using System.Linq;
 
-namespace PackagedFoodFrontend.Controllers
+namespace PackageFoodManagementSystem.Application.Controllers
 {
     [Authorize]
     public class PaymentController : Controller
