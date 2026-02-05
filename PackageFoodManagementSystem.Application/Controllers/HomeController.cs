@@ -12,10 +12,6 @@ using PackageFoodManagementSystem.Services.Interfaces;
 using System.Collections.Generic;
 using System.Security.Claims;
 using System.Threading.Tasks;
-using Microsoft.Extensions.Configuration;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.EntityFrameworkCore;
-using PackageFoodManagementSystem.Repository.Data;
 
 namespace PackagedFoodManagementSystem.Controllers
 {

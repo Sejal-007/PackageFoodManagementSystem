@@ -5,6 +5,7 @@ using PackageFoodManagementSystem.Repository.Data;
 using Microsoft.EntityFrameworkCore;
 using PackageFoodManagementSystem.Repository.Models;
 using System.Linq;
+using PackageFoodManagementSystem.Application.Controllers;
 
 namespace PackagedFoodManagementSystem.UnitTests.Controllers
 {
@@ -42,7 +43,7 @@ namespace PackagedFoodManagementSystem.UnitTests.Controllers
         [Test]
         public void Confirm_ReturnsBadRequest_WhenOrderNotFound()
         {
-            var res = _controller.Confirm(99);
+            var res = _controller.Confirm(99, "COD", null);
             Assert.IsInstanceOf<BadRequestObjectResult>(res);
         }
 
@@ -50,9 +51,11 @@ namespace PackagedFoodManagementSystem.UnitTests.Controllers
         public void Confirm_CreatesPayment_WhenOrderExists()
         {
             _context.Orders.Add(new Order { OrderID = 1, CustomerId = 1, CreatedByUserID = 1, OrderStatus = "Pending", TotalAmount = 0 });
+            // Add a corresponding Bill so PaymentController can create a Payment
+            _context.Bills.Add(new Bill { OrderID = 1, BillDate = System.DateTime.Now, FinalAmount = 100m, BillingStatus = "Unpaid" });
             _context.SaveChanges();
 
-            var res = _controller.Confirm(1);
+            var res = _controller.Confirm(1, "COD", null);
             Assert.IsInstanceOf<RedirectToActionResult>(res);
             var pay = _context.Payments.FirstOrDefault(p => p.OrderID == 1);
             Assert.IsNotNull(pay);

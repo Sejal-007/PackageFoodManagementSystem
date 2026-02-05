@@ -205,6 +205,35 @@ namespace PackageFoodManagementSystem.Services.Implementations
 
             => _userRepository.CountByRoleAsync(role, cancellationToken);
 
+        Task<UserAuthentication?> IUserService.AuthenticateAsync(string email, string password)
+        {
+            throw new NotImplementedException();
+        }
+
+        Task<(bool Success, string? ErrorMessage)> IUserService.RegisterUserAsync(UserAuthentication user)
+        {
+            throw new NotImplementedException();
+        }
+
+        Task<List<UserAuthentication>> IUserService.GetAllUsersAsync()
+        {
+            throw new NotImplementedException();
+        }
+
+        Task<(bool Success, string? ErrorMessage)> IUserService.UpdateUserAsync(UserAuthentication user)
+        {
+            throw new NotImplementedException();
+        }
+
+        Task IUserService.DeleteUserAsync(int id)
+        {
+            throw new NotImplementedException();
+        }
+
+        Task<(int TotalCustomers, int TotalStoreManagers, int TotalOrders)> IUserService.GetAdminDashboardStatsAsync()
+        {
+            throw new NotImplementedException();
+        }
     }
 }
 

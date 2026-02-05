@@ -31,8 +31,13 @@ namespace PackagedFoodManagementSystem.UnitTests.Controllers
             Assert.IsInstanceOf<ViewResult>(res);
         }
 
-        [Test]
         public void Index_FiltersByCategory_WhenProvided()
+        {
+            Index_FiltersByCategory_WhenProvided(_controller);
+        }
+
+        [Test]
+        public void Index_FiltersByCategory_WhenProvided(MenuController _controller)
         {
             var list = new List<Product>
             {
