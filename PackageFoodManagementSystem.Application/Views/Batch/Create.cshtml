@@ -1,21 +1,17 @@
 ﻿@model PackageFoodManagementSystem.Repository.Models.Batch
 
 @{
-
     ViewData["Title"] = "Add New Batch";
-
     Layout = "_StoreManagerLayout";
-
 }
 
 <div class="container d-flex justify-content-center mt-5" style="min-height: 80vh;">
     <div class="card shadow" style="width: 100%; max-width: 450px; border-radius: 15px;">
         <div class="card-body p-4">
             <h2 class="text-center fw-bold">Add New Batch</h2>
-            <p class="text-center text-muted">Enter batch details to update your inventory levels.</p>
+            <p class="text-center text-muted">Select a category to load associated products.</p>
 
             <form asp-action="Create" method="post">
-
                 @Html.AntiForgeryToken()
                 <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
@@ -35,23 +31,22 @@
                 </div>
 
                 <div class="mb-3">
-                    <label asp-for="ManufactureDate" class="form-label fw-bold">Manufacture Date</label>
-                    <input asp-for="ManufactureDate" type="date" class="form-control" required />
+                    <label asp-for="ManufactureDate" class="form-label fw-bold"></label>
+                    <input asp-for="ManufactureDate" type="date" class="form-control" />
                 </div>
 
                 <div class="mb-3">
-                    <label asp-for="ExpiryDate" class="form-label fw-bold">Expiry Date</label>
-                    <input asp-for="ExpiryDate" type="date" class="form-control" required />
+                    <label asp-for="ExpiryDate" class="form-label fw-bold"></label>
+                    <input asp-for="ExpiryDate" type="date" class="form-control" />
                 </div>
 
                 <div class="mb-4">
-                    <label asp-for="Quantity" class="form-label fw-bold">Quantity</label>
-                    <input asp-for="Quantity" type="number" class="form-control" placeholder="Enter quantity" min="1" required />
+                    <label asp-for="Quantity" class="form-label fw-bold"></label>
+                    <input asp-for="Quantity" type="number" class="form-control" placeholder="Enter quantity" min="1" />
                 </div>
 
                 <div class="d-grid gap-2">
                     <button type="submit" class="btn btn-primary fw-bold" style="background-color: #9c27b0; border: none; border-radius: 8px; padding: 10px;">
-
                         Save Batch
                     </button>
                     <a asp-action="Index" class="btn btn-link text-decoration-none text-muted text-center">Cancel</a>
@@ -64,60 +59,38 @@
 @section Scripts {
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
-
         $(document).ready(function () {
-
-            // Matches the id="CategoryDropdown" added above
-
             $('#CategoryDropdown').change(function () {
-
                 var selectedCategory = $(this).val();
-
                 var $productSelect = $('#ProductDropdown');
 
-                // Reset the product dropdown
-
-                $productSelect.empty().append('<option value="">-- Select Product --</option>');
+                // Clear and disable product dropdown by default
+                $productSelect.empty().append('<option value="">-- Select Product --</option>').prop('disabled', true);
 
                 if (selectedCategory) {
-
-                    // Hits the database for fresh products like 'UncleChips'
-
-                    $.getJSON('@Url.Action("GetProductsByCategory", "Batch")', { categoryId: selectedCategory }, function (data) {
-
-                        if (data && data.length > 0) {
-
-                            $productSelect.prop('disabled', false); // Enable the dropdown
-
-                            $.each(data, function (index, item) {
-
-                                $productSelect.append($('<option>', {
-
-                                    value: item.productId,
-
-                                    text: item.productName
-
-                                }));
-
-                            });
-
-                        } else {
-
-                            $productSelect.prop('disabled', true);
-
+                    $.ajax({
+                        url: '@Url.Action("GetProductsByCategory", "Batch")',
+                        type: 'GET',
+                        data: { categoryId: selectedCategory },
+                        success: function (data) {
+                            if (data && data.length > 0) {
+                                $productSelect.prop('disabled', false); // Enable it
+                                $.each(data, function (index, item) {
+                                    $productSelect.append($('<option>', {
+                                        value: item.productId,
+                                        text: item.productName
+                                    }));
+                                });
+                            } else {
+                                alert("No active products found for this category.");
+                            }
+                        },
+                        error: function () {
+                            alert("Error loading products. Please check the CategoryId in your database.");
                         }
-
                     });
-
-                } else {
-
-                    $productSelect.prop('disabled', true);
-
                 }
-
             });
-
         });
     </script>
-
 }

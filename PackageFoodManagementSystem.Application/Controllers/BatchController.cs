@@ -30,6 +30,20 @@ namespace PackageFoodManagementSystem.Controllers
             return View(batches);
         }
 
+        // --- AJAX METHOD FOR DROPDOWN ---
+        [HttpGet]
+        public JsonResult GetProductsByCategory(int categoryId)
+        {
+            var products = _context.Products
+                .Where(p => p.CategoryId == categoryId && p.IsActive == true)
+                .Select(p => new {
+                    productId = p.ProductId,
+                    productName = p.ProductName
+                })
+                .ToList();
+            return Json(products);
+        }
+
         [HttpGet]
         public IActionResult Create()
         {
@@ -54,49 +68,13 @@ namespace PackageFoodManagementSystem.Controllers
                 _context.Batches.Add(batch);
                 await _context.SaveChangesAsync();
 
-                // Recalculate Product Quantity
+                // Recalculate Product Quantity automatically
                 await UpdateProductTotalQuantity(batch.ProductId);
 
                 return RedirectToAction(nameof(Index));
             }
 
-            batch.Categories = _context.Categories.ToList();
-            return View(batch);
-        }
-
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, Batch batch)
-        {
-            if (id != batch.BatchId) return NotFound();
-
-            if (ModelState.IsValid)
-            {
-                try
-                {
-                    // Track original ProductId in case the user changes which product this batch belongs to
-                    var oldBatch = await _context.Batches.AsNoTracking().FirstOrDefaultAsync(b => b.BatchId == id);
-                    int oldProductId = oldBatch.ProductId;
-
-                    _context.Batches.Update(batch);
-                    await _context.SaveChangesAsync();
-
-                    // Update current product
-                    await UpdateProductTotalQuantity(batch.ProductId);
-
-                    // If ProductId was changed, update the old product's total too
-                    if (oldProductId != batch.ProductId)
-                    {
-                        await UpdateProductTotalQuantity(oldProductId);
-                    }
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!BatchExists(batch.BatchId)) return NotFound();
-                    else throw;
-                }
-                return RedirectToAction(nameof(Index));
-            }
+            ViewBag.Categories = new SelectList(_context.Categories.ToList(), "CategoryId", "CategoryName");
             return View(batch);
         }
 
@@ -110,25 +88,20 @@ namespace PackageFoodManagementSystem.Controllers
                 int productId = batch.ProductId;
                 _context.Batches.Remove(batch);
                 await _context.SaveChangesAsync();
-
-                // Recalculate after removal
                 await UpdateProductTotalQuantity(productId);
             }
             return RedirectToAction(nameof(Index));
         }
 
-        // --- NEW HELPER METHOD ---
         private async Task UpdateProductTotalQuantity(int productId)
         {
             var product = await _context.Products.FindAsync(productId);
             if (product != null)
             {
-                // Calculate Sum of all batches for this product
                 int totalBatchQuantity = await _context.Batches
                     .Where(b => b.ProductId == productId)
                     .SumAsync(b => b.Quantity);
 
-                // Update the product table
                 product.Quantity = totalBatchQuantity;
                 _context.Update(product);
                 await _context.SaveChangesAsync();
