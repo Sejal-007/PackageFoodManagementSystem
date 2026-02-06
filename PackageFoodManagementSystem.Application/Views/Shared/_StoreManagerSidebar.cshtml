@@ -40,19 +40,12 @@
 
         <li class="nav-item mb-2">
             <a asp-controller="Batch" asp-action="Index"
-               class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Batch" ? "active bg-white text-dark" : "text-white") d-flex align-items-center px-3 py-2 rounded-3">
-                <i class="fa-solid fa-boxes-stacked me-3" style="width: 0px;"></i>
-                <span>Manage Batches</span>
+               class="@(currentAction == "Index" ? "active" : "")">
+                <span>📦 Manage Batches</span>
             </a>
         </li>
 
-        <li>
-            <a asp-controller="StoreManager" asp-action="Compliance"
-               class="@(currentAction == "Compliance" ? "active" : "")">
-
-                ✔ Compliance
-            </a>
-        </li>
+       
         <li>
             <a asp-controller="StoreManager" asp-action="Reports"
                class="@(currentAction == "Reports" ? "active" : "")">

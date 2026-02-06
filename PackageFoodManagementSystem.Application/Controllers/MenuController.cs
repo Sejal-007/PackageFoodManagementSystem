@@ -19,30 +19,51 @@ namespace PackageFoodManagementSystem.Application.Controllers
             _cartService = cartService;
         }
 
+        
+
         // GET: Menu/Index
-        public async Task<IActionResult> Index(string category)
-        {
-            // FIX: Use _productService (matching the variable defined above)
-            var products = await _productService.GetAllProductsAsync();
+        public IActionResult Index(string? category, string? searchTerm)
 
-            if (!string.IsNullOrEmpty(category))
-            {
-                products = products.Where(p => p.Category == category).ToList();
-            }
+{
 
-            // FIX: Get current user ID and fetch the active cart
-            var userId = GetUserId();
-            var cart = await _cartService.GetActiveCartAsync(userId);
+     // 1. Fetch all products
 
-            // Map cart items to a dictionary for quick lookup in the view
-            var cartItems = cart?.CartItems?.ToDictionary(i => i.ProductId, i => i.Quantity)
-                            ?? new Dictionary<int, int>();
+     var products = _productService.GetAllProducts();
+ 
+     // 2. Filter by Search Term (New Logic)
 
-            ViewBag.CartItems = cartItems;
-            ViewBag.SelectedCategory = category;
+     if (!string.IsNullOrEmpty(searchTerm))
 
-            return View(products);
-        }
+     {
+
+         products = products.Where(p =>
+
+             p.ProductName.Contains(searchTerm, StringComparison.OrdinalIgnoreCase) ||
+
+             (p.Category != null && p.Category.Contains(searchTerm, StringComparison.OrdinalIgnoreCase))
+
+         ).ToList();
+ 
+         ViewBag.CurrentSearch = searchTerm;
+
+     }
+ 
+     // 3. Filter by Category
+
+     if (!string.IsNullOrEmpty(category))
+
+     {
+
+         products = products.Where(p => p.Category == category).ToList();
+
+         ViewBag.SelectedCategory = category;
+
+     }
+ 
+     return View(products);
+
+}
+ 
 
         // GET: Menu/Details/5
         public IActionResult Details(int id)
@@ -63,5 +84,7 @@ namespace PackageFoodManagementSystem.Application.Controllers
             var userIdClaim = User.FindFirstValue(ClaimTypes.NameIdentifier);
             return int.TryParse(userIdClaim, out int id) ? id : 0;
         }
+
+
     }
 }

@@ -1,110 +1,209 @@
 ﻿@model PackageFoodManagementSystem.Repository.Models.HomeModel
 @{
-    ViewData["Title"] = "Store Manager Dashboard";
-}
-
-@{
-ViewData["Title"] = "Dashboard";
-
+    ViewData["Title"] = "Dashboard";
     Layout = "~/Views/Shared/_StoreManagerlayout.cshtml";
-
 }
-<!-- Header -->
-<div class="topbar">
-    <h4>| Store Name</h4>
-    <input type="text" placeholder="Search" />
-    <div class="icons">
-        <a asp-controller="StoreManager" asp-action="Profile">
-            👤 
 
-        </a>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+@* Unique ID to isolate styles from the sidebar *@
+<div id="managerDashboardContent">
+
+    <div class="dash-header mb-4">
+        <h2 class="fw-bold">Welcome back, <span class="text-primary">Manager</span> 👋</h2>
+        <p class="text-muted">Here is what's happening in your store today.</p>
     </div>
-</div>
-<!-- Cards -->
-<div class="cards">
-    <div class="card-box">📦 Total Products</div>
-    <div class="card-box">✔ Available Stock</div>
-    <div class="card-box">🛒 Today's Orders</div>
-    <div class="card-box">📈 Total Sales</div>
-    <div class="card-box">⌛ Pending Orders</div>
-    <div class="card-box">📉 Low Stock Items</div>
-</div>
 
-<!-- ALERTS SECTION -->
-<div class="alerts-section">
-    <h5>⚠ Attention Required</h5>
-    <ul class="alerts-list">
-        <li class="alert-item danger">
-
-            🔴 5 products are low in stock
-        </li>
-        <li class="alert-item warning">
-
-            ⏳ 12 orders pending confirmation
-        </li>
-        <li class="alert-item danger">
-
-            ❌ 2 compliance checks pending
-        </li>
-        <li class="alert-item info">
-
-            🚚 3 deliveries delayed
-        </li>
-    </ul>
-</div>
-
-<!-- PERFORMANCE SNAPSHOT -->
-<div class="performance-section">
-    <h5>📊 Performance Snapshot</h5>
-    <div class="performance-cards">
-        <div class="perf-card success">
-
-            📈 Sales Up<br />
-            <span>+12% vs Yesterday</span>
+    <div class="stats-row">
+        <div class="info-card">
+            <div class="card-body">
+                <div class="icon-circle bg-light-blue"><i class="fa-solid fa-box"></i></div>
+                <div>
+                    <p class="label">Total Products</p>
+                    <h3 class="number">@ViewBag.TotalProducts</h3>
+                </div>
+            </div>
         </div>
-        <div class="perf-card warning">
-
-            📉 Returns<br />
-            <span>2 Today</span>
-        </div>
-        <div class="perf-card info">
-
-            📦 Inventory Usage<br />
-            <span>78%</span>
+        <div class="info-card">
+            <div class="card-body">
+                <div class="icon-circle bg-light-green"><i class="fa-solid fa-indian-rupee-sign"></i></div>
+                <div>
+                    <p class="label">Total Sales</p>
+                    <h3 class="number">@ViewBag.TotalSales</h3>
+                </div>
+            </div>
         </div>
     </div>
-</div>
 
+    <div class="row mt-4">
+        <div class="col-lg-7">
+            <div class="white-section shadow-sm">
+                <h5 class="section-title"><i class="fa-solid fa-triangle-exclamation text-danger me-2"></i> Attention Required</h5>
 
-<!-- QUICK NAVIGATION -->
-<!-- QUICK NAVIGATION -->
-<div class="quick-nav-section">
-    <h5>🚀 Quick Access</h5>
-    <div class="quick-nav-cards">
-        <a asp-controller="StoreManager"
-           asp-action="Orders"
-           class="quick-card">
+                <div class="alert-strip strip-danger">
+                    <i class="fa-solid fa-circle-exclamation"></i>
+                    <p><strong>@ViewBag.LowStockCount products</strong> are low in stock. Update inventory soon.</p>
+                </div>
 
-            🛒 Manage Orders
-        </a>
-        <a asp-controller="StoreManager"
-           asp-action="Inventory"
-           class="quick-card">
+                <div class="alert-strip strip-warning">
+                    <i class="fa-solid fa-clock"></i>
+                    <p><strong>@ViewBag.PendingOrders orders</strong> are waiting for confirmation.</p>
+                </div>
+            </div>
 
-            📦 View Inventory
-        </a>
-        <a asp-controller="StoreManager"
-           asp-action="Reports"
-           class="quick-card">
+            <div class="white-section shadow-sm mt-4">
+                <h5 class="section-title"><i class="fa-solid fa-rocket text-primary me-2"></i> Quick Actions</h5>
+                <div class="actions-grid">
+                    <a asp-action="Orders" class="action-btn">
+                        <i class="fa-solid fa-receipt"></i>
+                        <span>Orders</span>
+                    </a>
+                    <a asp-action="Inventory" class="action-btn">
+                        <i class="fa-solid fa-boxes-stacked"></i>
+                        <span>Inventory</span>
+                    </a>
+                    <a asp-action="Reports" class="action-btn">
+                        <i class="fa-solid fa-chart-bar"></i>
+                        <span>Reports</span>
+                    </a>
+                </div>
+            </div>
+        </div>
 
-            📊 View Reports
-        </a>
-        <a asp-controller="StoreManager"
-           asp-action="Compliance"
-           class="quick-card">
-
-            ✔ Compliance Status
-        </a>
+        <div class="col-lg-5">
+            <div class="white-section shadow-sm h-100">
+                <h5 class="section-title"><i class="fa-solid fa-chart-pie me-2"></i> Inventory Summary</h5>
+                <div class="mt-4 text-center">
+                    <div class="stock-circle">
+                        <h2 class="mb-0">@ViewBag.AvailableStock</h2>
+                        <small>Units in Stock</small>
+                    </div>
+                    <p class="mt-3 text-muted">Stock capacity is currently at 78%.</p>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 
+<style>
+    /* Scoping all styles to the Dashboard container ONLY */
+    #managerDashboardContent {
+        padding: 30px;
+        background-color: #f0f2f5;
+        min-height: 100vh;
+        font-family: 'Plus Jakarta Sans', sans-serif;
+    }
+
+        #managerDashboardContent .stats-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        #managerDashboardContent .info-card {
+            background: white;
+            border-radius: 20px;
+            padding: 20px;
+            border: none;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+        }
+
+        #managerDashboardContent .card-body {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        #managerDashboardContent .icon-circle {
+            width: 60px;
+            height: 60px;
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+        }
+
+        #managerDashboardContent .bg-light-blue {
+            background: #eef2ff;
+            color: #4e73df;
+        }
+
+        #managerDashboardContent .bg-light-green {
+            background: #e6fffa;
+            color: #1cc88a;
+        }
+
+        #managerDashboardContent .white-section {
+            background: white;
+            border-radius: 25px;
+            padding: 30px;
+        }
+
+        #managerDashboardContent .section-title {
+            font-weight: 800;
+            font-size: 1.1rem;
+            margin-bottom: 20px;
+        }
+
+        /* Attention Strips */
+        #managerDashboardContent .alert-strip {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 15px 20px;
+            border-radius: 15px;
+            margin-bottom: 15px;
+        }
+
+        #managerDashboardContent .strip-danger {
+            background: #fff5f5;
+            color: #c53030;
+            border-left: 5px solid #e74a3b;
+        }
+
+        #managerDashboardContent .strip-warning {
+            background: #fffdf5;
+            color: #975a16;
+            border-left: 5px solid #f6c23e;
+        }
+
+        /* Action Buttons (The Dashboard Grid) */
+        #managerDashboardContent .actions-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+        }
+
+        #managerDashboardContent .action-btn {
+            text-decoration: none;
+            background: #f8fafc;
+            padding: 25px 15px;
+            border-radius: 18px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+            color: #333;
+            font-weight: 700;
+            transition: 0.3s ease;
+        }
+
+            #managerDashboardContent .action-btn:hover {
+                background: #4e73df;
+                color: white;
+                transform: translateY(-5px);
+            }
+
+        #managerDashboardContent .stock-circle {
+            width: 150px;
+            height: 150px;
+            border: 10px solid #f6c23e;
+            border-radius: 50%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto;
+        }
+</style>

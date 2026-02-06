@@ -1,20 +1,14 @@
 ﻿@model PackageFoodManagementSystem.Repository.Models.Cart
 
 @{
-
     ViewData["Title"] = "My Basket";
-
     decimal subtotal = Model?.CartItems?.Sum(i => i.Quantity * i.Product.Price) ?? 0;
-
-    // Set to 0 to ensure free delivery
-
-    decimal deliveryFee = 0;
-
+    decimal deliveryFee = 0; // Set to 0 to ensure free delivery
 }
 
 @section Scripts {
+    @* We keep menu.js for the header badge updates, but use local scripts for basket logic *@
     <script src="~/js/menu.js"></script>
-
 }
 
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
@@ -22,17 +16,14 @@
 <div class="container my-5" id="cartContainer">
 
     @if (Model == null || Model.CartItems == null || !Model.CartItems.Any())
-
     {
         <div id="empty-basket" class="text-center py-5">
             <h2 class="fw-800">Your basket is <span class="text-warning">empty</span></h2>
+            <p class="text-muted">Looks like you haven't added anything yet.</p>
             <a href="/Menu/Index" class="btn btn-outline-dark px-5 rounded-pill mt-3">Start Shopping</a>
         </div>
-
     }
-
     else
-
     {
         <div class="row g-4">
             <div class="col-lg-8">
@@ -42,19 +33,19 @@
                 </div>
 
                 @foreach (var item in Model.CartItems)
-
                 {
                     <div class="basket-item card mb-3 p-3 shadow-sm d-flex flex-row align-items-center border-0" data-id="@item.ProductId">
-                        <img src="@item.Product.ImageData" class="rounded-3 me-3" style="width:80px; height:80px; object-fit:cover;">
+                        <img src="@item.Product.ImageData" class="rounded-3 me-3" style="width:80px; height:80px; object-fit:cover;" alt="@item.Product.ProductName">
 
                         <div class="flex-grow-1">
                             <h5 class="fw-bold mb-0">@item.Product.ProductName</h5>
                             <p class="text-muted small mb-2">Unit Price: ₹@item.Product.Price</p>
 
                             <div class="d-flex align-items-center gap-2">
-                                <button class="qty-btn" onclick="decrease(this)">-</button>
+                                @* Use local basket specific functions *@
+                                <button class="qty-btn" onclick="basketUpdate(@item.ProductId, -1)">-</button>
                                 <span class="fw-bold px-2 qty" id="cart-qty-@item.ProductId">@item.Quantity</span>
-                                <button class="qty-btn" onclick="increase(this)">+</button>
+                                <button class="qty-btn" onclick="basketUpdate(@item.ProductId, 1)">+</button>
                             </div>
                         </div>
 
@@ -65,7 +56,6 @@
                             </button>
                         </div>
                     </div>
-
                 }
             </div>
 
@@ -86,77 +76,51 @@
                         <span class="h3 fw-800 text-dark mb-0">₹@subtotal</span>
                     </div>
                     <a href="/Order/Checkout" class="btn btn-dark w-100 py-3 rounded-pill fw-800 shadow">
-
                         Proceed to Checkout <i class="fa-solid fa-arrow-right ms-2"></i>
                     </a>
                 </div>
             </div>
         </div>
-
     }
 </div>
 
 <script>
-
-    function updateQty(productId, change) {
-
+    // Renamed to avoid conflict with menu.js functions
+    function basketUpdate(productId, change) {
         const url = change > 0 ? '/Cart/Add' : '/Cart/Decrease';
 
         fetch(`${url}?productId=${productId}`, {
-
             method: 'POST',
-
-            credentials: 'include'
-
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest'
+            }
         })
-
         .then(res => {
-
             if (!res.ok) throw new Error("Server error");
-
-            location.reload();
-
+            return res.json();
         })
-
-        .catch(err => console.error(err));
-
-    }
-
-    function increase(btn) {
-
-        const productId = btn.closest('.basket-item').dataset.id;
-
-        updateQty(productId, 1);
-
-    }
-
-    function decrease(btn) {
-
-        const productId = btn.closest('.basket-item').dataset.id;
-
-        updateQty(productId, -1);
-
+        .then(data => {
+            if (data.success) {
+                // In the basket, we reload the whole page to update the Subtotal and Grand Total
+                location.reload();
+            }
+        })
+        .catch(err => console.error("Basket Error:", err));
     }
 
     async function removeDirect(pId) {
-
-        await fetch('/Cart/Remove', {
-
-            method: 'POST',
-
-            headers: { 'Content-Type': 'application/json' },
-
-            body: JSON.stringify({ productId: pId })
-
-        });
-
-        location.reload();
-
+        if(confirm("Remove this item from basket?")) {
+            await fetch('/Cart/Remove', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ productId: pId })
+            });
+            location.reload();
+        }
     }
 </script>
 
 <style>
-
     body {
         background: #f8fafc;
         font-family: 'Plus Jakarta Sans', sans-serif;
@@ -186,6 +150,10 @@
         background: white;
         font-weight: bold;
         cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: 0.2s;
     }
 
         .qty-btn:hover {

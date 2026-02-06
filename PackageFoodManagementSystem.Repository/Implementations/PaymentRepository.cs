@@ -27,7 +27,7 @@ namespace PackageFoodManagementSystem.Repository.Implementations
 
         {
 
-            _context.Payments.Add(payment);
+            _context.Payment.Add(payment);
 
         }
 
@@ -35,7 +35,7 @@ namespace PackageFoodManagementSystem.Repository.Implementations
 
         {
 
-            return _context.Payments.FirstOrDefault(p => p.BillID == billId);
+            return _context.Payment.FirstOrDefault(p => p.BillID == billId);
 
         }
 

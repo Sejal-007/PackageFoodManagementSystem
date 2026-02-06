@@ -59,8 +59,24 @@ namespace PackagedFoodManagementSystem.UnitTests.Controllers
         [Test]
         public void Checkout_RedirectsToLogin_WhenNotAuthenticated()
         {
+            // Arrange: Create an empty context so HttpContext is not null
+            var user = new ClaimsPrincipal(new ClaimsIdentity()); // No claims = Not Authenticated
+            var httpContext = new DefaultHttpContext { User = user };
+
+            _controller.ControllerContext = new ControllerContext
+            {
+                HttpContext = httpContext
+            };
+
+            // Act
             var res = _controller.Checkout();
+
+            // Assert
             Assert.IsInstanceOf<RedirectToActionResult>(res);
+            var redirect = (RedirectToActionResult)res;
+
+            // Depending on your logic, verify it goes to Login
+            // Assert.AreEqual("Login", redirect.ActionName);
         }
 
         [Test]

@@ -9,7 +9,7 @@
     <div class="card shadow" style="width: 100%; max-width: 450px; border-radius: 15px;">
         <div class="card-body p-4">
             <h2 class="text-center fw-bold">Add New Batch</h2>
-            <p class="text-center text-muted">Enter batch details to update your inventory levels.</p>
+            <p class="text-center text-muted">Select a category to load associated products.</p>
 
             <form asp-action="Create" method="post">
                 @Html.AntiForgeryToken()
@@ -17,12 +17,8 @@
 
                 <div class="mb-3">
                     <label class="form-label fw-bold">Select Category</label>
-                    <select id="CategoryDropdown" asp-for="CategoryId" class="form-select">
+                    <select id="CategoryDropdown" class="form-select" asp-items="ViewBag.Categories">
                         <option value="">-- Select Category --</option>
-                        <option value="1">Veg & Fruits</option>
-                        <option value="2">Dairy & Eggs</option>
-                        <option value="3">Snacks & Drinks</option>
-                        <option value="4">Meat & Fish</option>
                     </select>
                 </div>
 
@@ -35,18 +31,18 @@
                 </div>
 
                 <div class="mb-3">
-                    <label asp-for="ManufactureDate" class="form-label fw-bold">Manufacture Date</label>
-                    <input asp-for="ManufactureDate" type="date" class="form-control" required />
+                    <label asp-for="ManufactureDate" class="form-label fw-bold"></label>
+                    <input asp-for="ManufactureDate" type="date" class="form-control" />
                 </div>
 
                 <div class="mb-3">
-                    <label asp-for="ExpiryDate" class="form-label fw-bold">Expiry Date</label>
-                    <input asp-for="ExpiryDate" type="date" class="form-control" required />
+                    <label asp-for="ExpiryDate" class="form-label fw-bold"></label>
+                    <input asp-for="ExpiryDate" type="date" class="form-control" />
                 </div>
 
                 <div class="mb-4">
-                    <label asp-for="Quantity" class="form-label fw-bold">Quantity</label>
-                    <input asp-for="Quantity" type="number" class="form-control" placeholder="Enter quantity" min="1" required />
+                    <label asp-for="Quantity" class="form-label fw-bold"></label>
+                    <input asp-for="Quantity" type="number" class="form-control" placeholder="Enter quantity" min="1" />
                 </div>
 
                 <div class="d-grid gap-2">
@@ -64,42 +60,34 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
         $(document).ready(function () {
-            // Key = CategoryId, Value = Array of { id, name }
-            // Note: Update these IDs if your SQL table generated different primary keys
-                    const categoryData = {
-            "1": [ // Veg & Fruits
-                { id: 7, name: "Sweetcorn" }, { id: 8, name: "Grapes" }, { id: 25, name: "Carrot" },
-                { id: 28, name: "Brinjal" }, { id: 31, name: "Onions" }, { id: 32, name: "Apples" },
-                { id: 33, name: "Pomegranate" }, { id: 34, name: "Watermelon" }
-            ],
-            "2": [ // Dairy & Eggs (Check your DB for these IDs)
-                { id: 6, name: "Ice cream" }, { id: 9, name: "Milk" }, { id: 30, name: "Eggs" }
-            ],
-            "3": [ // Snacks & Drinks
-                { id: 1, name: "Bingo" }, { id: 2, name: "Kinderjoy" }, { id: 3, name: "Fruit Juice" },
-                { id: 4, name: "Hide and Seek" }, { id: 5, name: "Maggi" }
-            ],
-            "4": [ // Meat & Fish
-                { id: 24, name: "Chicken" }, { id: 26, name: "Crabs" }, { id: 27, name: "Prawns" }, { id: 29, name: "Fish" }
-            ]
-        };
-
             $('#CategoryDropdown').change(function () {
-                var categoryId = $(this).val();
-                var productSelect = $('#ProductDropdown');
+                var selectedCategory = $(this).val();
+                var $productSelect = $('#ProductDropdown');
 
-                // Reset and disable dropdown initially
-                productSelect.empty().append('<option value="">-- Select Product --</option>').prop('disabled', true);
+                // Clear and disable product dropdown by default
+                $productSelect.empty().append('<option value="">-- Select Product --</option>').prop('disabled', true);
 
-                if (categoryId && categoryData[categoryId]) {
-                    productSelect.prop('disabled', false);
-
-                    var products = categoryData[categoryId];
-                    $.each(products, function (index, product) {
-                        productSelect.append($('<option>', {
-                            value: product.id,   // This goes to the Database (ProductId)
-                            text: product.name   // This is what the User sees
-                        }));
+                if (selectedCategory) {
+                    $.ajax({
+                        url: '@Url.Action("GetProductsByCategory", "Batch")',
+                        type: 'GET',
+                        data: { categoryId: selectedCategory },
+                        success: function (data) {
+                            if (data && data.length > 0) {
+                                $productSelect.prop('disabled', false); // Enable it
+                                $.each(data, function (index, item) {
+                                    $productSelect.append($('<option>', {
+                                        value: item.productId,
+                                        text: item.productName
+                                    }));
+                                });
+                            } else {
+                                alert("No active products found for this category.");
+                            }
+                        },
+                        error: function () {
+                            alert("Error loading products. Please check the CategoryId in your database.");
+                        }
                     });
                 }
             });

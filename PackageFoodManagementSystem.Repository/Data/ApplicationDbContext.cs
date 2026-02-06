@@ -15,8 +15,8 @@ namespace PackageFoodManagementSystem.Repository.Data
         public DbSet<CustomerAddress> CustomerAddresses { get; set; }
         public DbSet<Order> Orders { get; set; }
         public DbSet<OrderItem> OrderItems { get; set; }
-        public DbSet<Bill> Bills { get; set; }
-        public DbSet<Payment> Payments { get; set; }
+        public DbSet<Bill> Bill { get; set; }
+        public DbSet<Payment> Payment { get; set; }
         public DbSet<Inventory> Inventories { get; set; }
         public DbSet<UserAuthentication> UserAuthentications { get; set; }
         public DbSet<Batch> Batches { get; set; }
@@ -49,8 +49,6 @@ namespace PackageFoodManagementSystem.Repository.Data
             modelBuilder.Entity<Product>()
                 .Property(p => p.Price)
                 .HasColumnType("decimal(18,2)");
-            modelBuilder.Entity<Bill>().ToTable("Bills");
-            modelBuilder.Entity<Payment>().ToTable("Payments");
 
 
             // Optional: If 'UserAuthentications' also gives an error, 

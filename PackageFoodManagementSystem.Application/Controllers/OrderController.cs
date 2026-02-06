@@ -57,47 +57,66 @@ namespace PackageFoodManagementSystem.Application.Controllers
         }
 
         [HttpPost]
+
         public IActionResult PlaceOrder(string deliveryAddress)
+
         {
-            try
+
+            int userId = int.Parse(User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier).Value);
+
+            // 1. Create the Order
+
+            var orderId = _orderService.CreateOrder(userId, deliveryAddress);
+
+            // 2. Create the Bill immediately so Payment page finds it
+
+            var existingBill = _context.Bill.FirstOrDefault(b => b.OrderID == orderId);
+
+            if (existingBill == null)
+
             {
-                int userId = GetUserId();
 
-                // 1. Create the Order (This call works now because the Service no longer sends 'Subtotal')
-                var orderId = _orderService.CreateOrder(userId, deliveryAddress);
+                // Calculate total from Cart/OrderItems
 
-                // 2. Create the Bill immediately so Payment page finds it
-                var existingBill = _context.Bills.FirstOrDefault(b => b.OrderID == orderId);
-                if (existingBill == null)
+                var subtotal = _context.OrderItems
+
+                    .Where(oi => oi.OrderID == orderId)
+
+                    .Sum(oi => oi.Quantity * oi.UnitPrice);
+
+                var newBill = new Bill
+
                 {
-                    var subtotal = _context.OrderItems
-                        .Where(oi => oi.OrderID == orderId)
-                        .Sum(oi => oi.Quantity * oi.UnitPrice);
 
-                    var newBill = new Bill
-                    {
-                        OrderID = orderId,
-                        BillDate = DateTime.Now,
-                        SubtotalAmount = subtotal,
-                        TaxAmount = 0,
-                        DiscountAmount = 0,
-                        FinalAmount = subtotal,
-                        BillingStatus = "Unpaid"
-                    };
+                    OrderID = orderId,
 
-                    _context.Bills.Add(newBill);
-                    _context.SaveChanges();
-                }
+                    BillDate = DateTime.Now,
 
-                // 3. Redirect to Payment
-                return RedirectToAction("Payment", "Payment", new { orderId = orderId });
+                    SubtotalAmount = subtotal,
+
+                    TaxAmount = 0,
+
+                    DiscountAmount = 0,
+
+                    FinalAmount = subtotal, // Matches your DB column 'FinalAmount'
+
+                    BillingStatus = "Unpaid"
+
+                };
+
+                _context.Bill.Add(newBill);
+
+                _context.SaveChanges();
+
             }
-            catch (Exception ex)
-            {
-                // Fixes the NullReferenceException in Error.cshtml
-                return View("Error", new ErrorViewModel { RequestId = HttpContext.TraceIdentifier });
-            }
+
+            // 3. Redirect to Payment
+
+            return RedirectToAction("Payment", "Payment", new { orderId = orderId });
+
         }
+
+
 
         public IActionResult Success()
         {

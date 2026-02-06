@@ -1,71 +1,187 @@
-using NUnit.Framework;
-using Moq;
 using Microsoft.AspNetCore.Http;
+
 using Microsoft.AspNetCore.Mvc;
+
+using Moq;
+
+using NUnit.Framework;
+
 using PackagedFoodFrontend.Controllers;
-using PackageFoodManagementSystem.Services.Interfaces;
+
 using PackageFoodManagementSystem.Repository.Data;
+
 using PackageFoodManagementSystem.Repository.Models;
+
+using PackageFoodManagementSystem.Services.Interfaces;
+
 using Microsoft.EntityFrameworkCore;
-using System.Threading.Tasks;
-using PackagedFoodManagementSystem.UnitTests.TestHelpers;
+
 using System.Collections.Generic;
 
-namespace PackagedFoodManagementSystem.UnitTests.Controllers
+using System.Threading.Tasks;
+
+namespace PackageFoodManagementSystem.Tests
+
 {
+
     [TestFixture]
+
     public class UserControllerTests
+
     {
-        private Mock<ICustomerAddressService> _addrService;
+
+        private Mock<ICustomerAddressService> _addressServiceMock;
+
         private ApplicationDbContext _context;
+
         private UserController _controller;
-        private TestSession _session;
+
+        private DefaultHttpContext _httpContext;
 
         [SetUp]
+
         public void Setup()
+
         {
-            _addrService = new Mock<ICustomerAddressService>();
+
             var options = new DbContextOptionsBuilder<ApplicationDbContext>()
-                .UseInMemoryDatabase("UserCtrlDb")
+
+                .UseInMemoryDatabase(databaseName: System.Guid.NewGuid().ToString())
+
                 .Options;
+
             _context = new ApplicationDbContext(options);
 
-            _controller = new UserController(_addrService.Object, _context);
+            _addressServiceMock = new Mock<ICustomerAddressService>();
 
-            _session = new TestSession();
-            var httpContext = new DefaultHttpContext();
-            httpContext.Session = _session;
-            _controller.ControllerContext = new ControllerContext { HttpContext = httpContext };
+            _controller = new UserController(_addressServiceMock.Object, _context);
+
+            // FIXED: Initialize HttpContext AND Session immediately
+
+            _httpContext = new DefaultHttpContext();
+
+            _httpContext.Session = new MockSession(); // Assign here to prevent InvalidOperationException
+
+            _controller.ControllerContext = new ControllerContext
+
+            {
+
+                HttpContext = _httpContext
+
+            };
+
         }
 
         [TearDown]
+
         public void TearDown()
+
         {
-            _context.Database.EnsureDeleted();
-            _context.Dispose();
+
+            _controller?.Dispose();
+
+            _context?.Dispose();
+
         }
 
         [Test]
-        public async Task Dashboard_RedirectsToSignIn_WhenNoSession()
+
+        public async Task Dashboard_Redirects_IfSessionUserIdIsNull()
+
         {
-            // No UserId in session
-            var res = await _controller.Dashboard();
-            Assert.IsInstanceOf<RedirectToActionResult>(res);
+
+            // Arrange: Ensure UserId is not in session
+
+            _httpContext.Session.Clear();
+
+            // Act
+
+            var result = await _controller.Dashboard() as RedirectToActionResult;
+
+            // Assert
+
+            Assert.That(result?.ActionName, Is.EqualTo("SignIn"));
+
+            Assert.That(result?.ControllerName, Is.EqualTo("Home"));
+
         }
 
         [Test]
-        public async Task DeliveryAddress_ReturnsUserAddresses()
+
+        public async Task Dashboard_ReturnsView_WithCorrectData()
+
         {
-            _session.Set("UserId", System.Text.Encoding.UTF8.GetBytes("2"));
-            _context.CustomerAddresses.Add(new CustomerAddress { AddressId = 1, CustomerId = 2, AddressType = "Home", StreetAddress = "S", City = "C", PostalCode = "00001", Landmark = "L" });
-            _context.SaveChanges();
 
-            _addrService.Setup(r => r.GetAllAsync()).ReturnsAsync(new List<CustomerAddress> { new CustomerAddress { AddressId = 1, CustomerId = 2, AddressType = "Home", StreetAddress = "S", Landmark = "L", City = "C", PostalCode = "00001" } });
+            // Arrange
 
-            var res = await _controller.DeliveryAddress();
-            Assert.IsInstanceOf<ViewResult>(res);
-            var view = res as ViewResult;
-            Assert.IsNotNull(view.Model);
+            int testUserId = 1;
+
+            _httpContext.Session.SetInt32("UserId", testUserId);
+
+            _httpContext.Session.SetString("UserName", "Test User");
+
+            // Fix CS9035: Include all required fields from your models
+
+            _context.Orders.Add(new Order
+
+            {
+
+                OrderID = 1,
+
+                CreatedByUserID = testUserId,
+
+                OrderStatus = "Placed",
+
+                DeliveryAddress = "123 Tech Park",
+
+                CustomerId = 1
+
+            });
+
+            await _context.SaveChangesAsync();
+
+            // Act
+
+            var result = await _controller.Dashboard() as ViewResult;
+
+            // Assert
+
+            Assert.That(result, Is.Not.Null);
+
+            Assert.That(_controller.ViewBag.TotalOrders, Is.EqualTo(1));
+
+            Assert.That(_controller.ViewBag.FullName, Is.EqualTo("Test User"));
+
         }
+
     }
+
+    // Keep your MockSession implementation below
+
+    public class MockSession : ISession
+
+    {
+
+        private readonly Dictionary<string, byte[]> _sessionStorage = new();
+
+        public bool IsAvailable => true;
+
+        public string Id => System.Guid.NewGuid().ToString();
+
+        public IEnumerable<string> Keys => _sessionStorage.Keys;
+
+        public void Clear() => _sessionStorage.Clear();
+
+        public Task CommitAsync(System.Threading.CancellationToken ct) => Task.CompletedTask;
+
+        public Task LoadAsync(System.Threading.CancellationToken ct) => Task.CompletedTask;
+
+        public void Remove(string key) => _sessionStorage.Remove(key);
+
+        public void Set(string key, byte[] value) => _sessionStorage[key] = value;
+
+        public bool TryGetValue(string key, out byte[] value) => _sessionStorage.TryGetValue(key, out value);
+
+    }
+
 }

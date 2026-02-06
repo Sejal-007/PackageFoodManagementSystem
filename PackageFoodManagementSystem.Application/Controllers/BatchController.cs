@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using System.Collections.Generic;
 using System.Linq;
+using System;
 
 namespace PackageFoodManagementSystem.Controllers
 {
@@ -29,34 +30,33 @@ namespace PackageFoodManagementSystem.Controllers
             return View(batches);
         }
 
-        // GET: Batch/Create
-        public IActionResult Create()
-        {
-            var categories = _context.Categories.ToList(); // Fetch from DB
-
-            var model = new Batch
-            {
-                Categories = categories, // This prevents the NullReferenceException
-                ManufactureDate = DateTime.Now,
-                ExpiryDate = DateTime.Now.AddMonths(6)
-            };
-
-            return View(model);
-        }
-
+        // --- AJAX METHOD FOR DROPDOWN ---
         [HttpGet]
         public JsonResult GetProductsByCategory(int categoryId)
         {
-            // Fetching from DB based on the Category ID selected in the UI
             var products = _context.Products
-                .Where(p => p.CategoryId == categoryId)
+                .Where(p => p.CategoryId == categoryId && p.IsActive == true)
                 .Select(p => new {
                     productId = p.ProductId,
                     productName = p.ProductName
                 })
                 .ToList();
-
             return Json(products);
+        }
+
+        [HttpGet]
+        public IActionResult Create()
+        {
+            var categories = _context.Categories.ToList();
+            ViewBag.Categories = new SelectList(categories, "CategoryId", "CategoryName");
+
+            var model = new Batch
+            {
+                Categories = categories,
+                ManufactureDate = DateTime.Now,
+                ExpiryDate = DateTime.Now.AddMonths(6)
+            };
+            return View(model);
         }
 
         [HttpPost]
@@ -67,49 +67,14 @@ namespace PackageFoodManagementSystem.Controllers
             {
                 _context.Batches.Add(batch);
                 await _context.SaveChangesAsync();
+
+                // Recalculate Product Quantity automatically
+                await UpdateProductTotalQuantity(batch.ProductId);
+
                 return RedirectToAction(nameof(Index));
             }
 
-            // Repopulate if validation fails
-            batch.Categories = _context.Categories.ToList();
-            ViewBag.Products = new SelectList(_context.Products.Where(p => p.CategoryId == batch.CategoryId), "ProductId", "ProductName", batch.ProductId);
-            return View(batch);
-        }
-
-        public IActionResult Edit(int id)
-        {
-            var batch = _context.Batches.Find(id);
-            if (batch == null) return NotFound();
-
-            batch.Categories = _context.Categories.ToList();
-            ViewBag.Products = new SelectList(_context.Products.Where(p => p.CategoryId == batch.CategoryId), "ProductId", "ProductName", batch.ProductId);
-
-            return View(batch);
-        }
-
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, Batch batch)
-        {
-            if (id != batch.BatchId) return NotFound();
-
-            if (ModelState.IsValid)
-            {
-                try
-                {
-                    _context.Batches.Update(batch);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!BatchExists(batch.BatchId)) return NotFound();
-                    else throw;
-                }
-                return RedirectToAction(nameof(Index));
-            }
-
-            batch.Categories = _context.Categories.ToList();
-            ViewBag.Products = new SelectList(_context.Products.Where(p => p.CategoryId == batch.CategoryId), "ProductId", "ProductName", batch.ProductId);
+            ViewBag.Categories = new SelectList(_context.Categories.ToList(), "CategoryId", "CategoryName");
             return View(batch);
         }
 
@@ -120,30 +85,29 @@ namespace PackageFoodManagementSystem.Controllers
             var batch = await _context.Batches.FindAsync(id);
             if (batch != null)
             {
+                int productId = batch.ProductId;
                 _context.Batches.Remove(batch);
                 await _context.SaveChangesAsync();
+                await UpdateProductTotalQuantity(productId);
             }
             return RedirectToAction(nameof(Index));
         }
 
-        private bool BatchExists(int id)
+        private async Task UpdateProductTotalQuantity(int productId)
         {
-            return _context.Batches.Any(e => e.BatchId == id);
+            var product = await _context.Products.FindAsync(productId);
+            if (product != null)
+            {
+                int totalBatchQuantity = await _context.Batches
+                    .Where(b => b.ProductId == productId)
+                    .SumAsync(b => b.Quantity);
+
+                product.Quantity = totalBatchQuantity;
+                _context.Update(product);
+                await _context.SaveChangesAsync();
+            }
         }
 
-        #region Ajax Methods
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> CreateAjax([FromBody] Batch batch)
-        {
-            if (batch == null) return Json(new { success = false, message = "Invalid data." });
-            if (ModelState.IsValid)
-            {
-                await _batchService.AddBatchAsync(batch);
-                return Json(new { success = true });
-            }
-            return Json(new { success = false, errors = "Model state is invalid" });
-        }
-        #endregion
+        private bool BatchExists(int id) => _context.Batches.Any(e => e.BatchId == id);
     }
 }
