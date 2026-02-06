@@ -1,8 +1,11 @@
 ﻿@model PackageFoodManagementSystem.Repository.Models.Batch
 
 @{
+
     ViewData["Title"] = "Add New Batch";
+
     Layout = "_StoreManagerLayout";
+
 }
 
 <div class="container d-flex justify-content-center mt-5" style="min-height: 80vh;">
@@ -12,17 +15,14 @@
             <p class="text-center text-muted">Enter batch details to update your inventory levels.</p>
 
             <form asp-action="Create" method="post">
+
                 @Html.AntiForgeryToken()
                 <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
                 <div class="mb-3">
                     <label class="form-label fw-bold">Select Category</label>
-                    <select id="CategoryDropdown" asp-for="CategoryId" class="form-select">
+                    <select id="CategoryDropdown" class="form-select" asp-items="ViewBag.Categories">
                         <option value="">-- Select Category --</option>
-                        <option value="1">Veg & Fruits</option>
-                        <option value="2">Dairy & Eggs</option>
-                        <option value="3">Snacks & Drinks</option>
-                        <option value="4">Meat & Fish</option>
                     </select>
                 </div>
 
@@ -51,6 +51,7 @@
 
                 <div class="d-grid gap-2">
                     <button type="submit" class="btn btn-primary fw-bold" style="background-color: #9c27b0; border: none; border-radius: 8px; padding: 10px;">
+
                         Save Batch
                     </button>
                     <a asp-action="Index" class="btn btn-link text-decoration-none text-muted text-center">Cancel</a>
@@ -63,46 +64,60 @@
 @section Scripts {
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
+
         $(document).ready(function () {
-            // Key = CategoryId, Value = Array of { id, name }
-            // Note: Update these IDs if your SQL table generated different primary keys
-                    const categoryData = {
-            "1": [ // Veg & Fruits
-                { id: 7, name: "Sweetcorn" }, { id: 8, name: "Grapes" }, { id: 25, name: "Carrot" },
-                { id: 28, name: "Brinjal" }, { id: 31, name: "Onions" }, { id: 32, name: "Apples" },
-                { id: 33, name: "Pomegranate" }, { id: 34, name: "Watermelon" }
-            ],
-            "2": [ // Dairy & Eggs (Check your DB for these IDs)
-                { id: 6, name: "Ice cream" }, { id: 9, name: "Milk" }, { id: 30, name: "Eggs" }
-            ],
-            "3": [ // Snacks & Drinks
-                { id: 1, name: "Bingo" }, { id: 2, name: "Kinderjoy" }, { id: 3, name: "Fruit Juice" },
-                { id: 4, name: "Hide and Seek" }, { id: 5, name: "Maggi" }
-            ],
-            "4": [ // Meat & Fish
-                { id: 24, name: "Chicken" }, { id: 26, name: "Crabs" }, { id: 27, name: "Prawns" }, { id: 29, name: "Fish" }
-            ]
-        };
+
+            // Matches the id="CategoryDropdown" added above
 
             $('#CategoryDropdown').change(function () {
-                var categoryId = $(this).val();
-                var productSelect = $('#ProductDropdown');
 
-                // Reset and disable dropdown initially
-                productSelect.empty().append('<option value="">-- Select Product --</option>').prop('disabled', true);
+                var selectedCategory = $(this).val();
 
-                if (categoryId && categoryData[categoryId]) {
-                    productSelect.prop('disabled', false);
+                var $productSelect = $('#ProductDropdown');
 
-                    var products = categoryData[categoryId];
-                    $.each(products, function (index, product) {
-                        productSelect.append($('<option>', {
-                            value: product.id,   // This goes to the Database (ProductId)
-                            text: product.name   // This is what the User sees
-                        }));
+                // Reset the product dropdown
+
+                $productSelect.empty().append('<option value="">-- Select Product --</option>');
+
+                if (selectedCategory) {
+
+                    // Hits the database for fresh products like 'UncleChips'
+
+                    $.getJSON('@Url.Action("GetProductsByCategory", "Batch")', { categoryId: selectedCategory }, function (data) {
+
+                        if (data && data.length > 0) {
+
+                            $productSelect.prop('disabled', false); // Enable the dropdown
+
+                            $.each(data, function (index, item) {
+
+                                $productSelect.append($('<option>', {
+
+                                    value: item.productId,
+
+                                    text: item.productName
+
+                                }));
+
+                            });
+
+                        } else {
+
+                            $productSelect.prop('disabled', true);
+
+                        }
+
                     });
+
+                } else {
+
+                    $productSelect.prop('disabled', true);
+
                 }
+
             });
+
         });
     </script>
+
 }

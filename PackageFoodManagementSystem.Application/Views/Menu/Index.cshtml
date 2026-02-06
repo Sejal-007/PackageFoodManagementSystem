@@ -1,143 +1,239 @@
 ﻿@model IEnumerable<PackageFoodManagementSystem.Repository.Models.Product>
 
+@{
+
+    ViewData["Title"] = "Menu";
+
+    // Define categories once at the top to avoid repeated logic
+
+    var categories = new Dictionary<string, string> {
+
+        { "Vegetables and Fruits", "Veg & Fruits" },
+
+        { "Dairy and Eggs", "Dairy & Eggs" },
+
+        { "Snacks and Drinks", "Snacks & Drinks" },
+
+        { "Meat and Seafoods", "Meat & Fish" }
+
+    };
+
+}
+
 @section Scripts {
     <script src="~/js/menu.js"></script>
 
 }
 
 <div class="container mt-5">
+
+    @* Header Section *@
     <div class="text-center mb-4">
-        <h2 class="fw-bold">Our <span style="color: #FF6B00;">Menu</span></h2>
+        <h2 class="fw-bold">Our <span class="text-orange">Menu</span></h2>
+
+        @* Search Bar *@
+        <div class="row justify-content-center mt-4 mb-4">
+            <div class="col-md-6 col-lg-5">
+                <form asp-controller="Menu" asp-action="Index" method="get" class="input-group shadow-sm" style="border-radius: 50px; overflow: hidden; border: 1px solid #ddd;">
+                    <input type="text" name="searchTerm" class="form-control border-0 ps-4"
+                           placeholder="Search for products..."
+                           value="@ViewBag.CurrentSearch" style="height: 48px; outline: none;">
+
+                    <input type="hidden" name="category" value="@ViewBag.SelectedCategory" />
+
+                    <button class="btn btn-warning px-4" type="submit" style="background-color: #FF6B00; border: none; color: white;">
+                        <i class="fa fa-search"></i>
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        @* Category Filters - FIXED: Logic extracted from product loop *@
         <div class="d-flex flex-wrap justify-content-center gap-2 mt-3">
             <a asp-action="Index" asp-route-category=""
-               class="btn @(string.IsNullOrEmpty(ViewBag.SelectedCategory) ? "btn-dark" : "btn-outline-dark") rounded-pill">All</a>
+               class="btn @(string.IsNullOrEmpty(ViewBag.SelectedCategory) ? "btn-dark" : "btn-outline-dark") rounded-pill px-4">All</a>
 
-            <a asp-action="Index" asp-route-category="Vegetables and Fruits"
-               class="btn @(ViewBag.SelectedCategory == "Vegetables and Fruits" ? "btn-warning" : "btn-outline-secondary") rounded-pill">Veg & Fruits</a>
+            @foreach (var cat in categories)
 
-            <a asp-action="Index" asp-route-category="Dairy and Eggs"
-               class="btn @(ViewBag.SelectedCategory == "Dairy and Eggs" ? "btn-warning" : "btn-outline-secondary") rounded-pill">Dairy & Eggs</a>
+            {
+                <a asp-action="Index" asp-route-category="@cat.Key"
+                   class="btn @(ViewBag.SelectedCategory == cat.Key ? "btn-warning" : "btn-outline-secondary") rounded-pill px-3">@cat.Value</a>
 
-            <a asp-action="Index" asp-route-category="Snacks and Drinks"
-               class="btn @(ViewBag.SelectedCategory == "Snacks and Drinks" ? "btn-warning" : "btn-outline-secondary") rounded-pill">Snacks & Drinks</a>
-
-            <a asp-action="Index" asp-route-category="Meat and Seafoods"
-               class="btn @(ViewBag.SelectedCategory == "Meat and Seafoods" ? "btn-warning" : "btn-outline-secondary") rounded-pill">Meat & Fish</a>
+            }
         </div>
     </div>
 
-    <div class="row">
+    @* Active Filter Indicators *@
 
-        @foreach (var item in Model)
-
-        {
-
-        }
-    </div>
-</div>
-<div class="container py-5">
-    <h1 class="text-center fw-bold mb-5"></h1>
-
-    @if (ViewBag.CurrentCategory != null)
+    @if (!string.IsNullOrEmpty(ViewBag.SelectedCategory) || !string.IsNullOrEmpty(ViewBag.CurrentSearch))
 
     {
-        <div class="d-flex justify-content-between align-items-center mb-4">
-            <h3>Showing: <span class="text-orange">@ViewBag.CurrentCategory</span></h3>
-            <a asp-action="Index" class="btn btn-outline-secondary btn-sm">Show All Products</a>
+        <div class="d-flex justify-content-between align-items-center mb-4 px-3">
+            <h5 class="text-muted">
+
+                @if (!string.IsNullOrEmpty(ViewBag.CurrentSearch))
+
+                {
+                    <span>Results for "@ViewBag.CurrentSearch"</span>
+
+                }
+
+                @if (!string.IsNullOrEmpty(ViewBag.SelectedCategory))
+
+                {
+                    <span> in <span class="text-orange">@ViewBag.SelectedCategory</span></span>
+
+                }
+            </h5>
+            <a asp-action="Index" class="btn btn-sm btn-outline-danger rounded-pill">Clear All</a>
         </div>
 
     }
 
-    @* The row uses g-4 for spacing. 6 items will naturally form 2 rows of 3 *@
+    @* Product Grid *@
     <div class="row g-4 justify-content-center">
 
         @foreach (var item in Model)
 
         {
 
-            @if (item.IsActive)
+            if (item.IsActive)
 
             {
                 <div class="col-12 col-md-6 col-lg-3">
-
-                    @* Added mx-auto and a max-width to make the card "Smaller" *@
                     <div class="card h-100 border-0 shadow-sm mx-auto p-2"
                          style="max-width: 280px; border-radius: 20px;"
                          data-product-id="@item.ProductId"
                          data-name="@item.ProductName"
                          data-price="@item.Price">
 
+                        @* Image Section *@
                         <div class="overflow-hidden mb-2" style="height: 160px; border-radius: 15px;">
 
                             @if (!string.IsNullOrEmpty(item.ImageData))
 
                             {
-                                <img src="@item.ImageData"
-                                     class="w-100 h-100"
-                                     style="object-fit: cover;"
-                                     alt="@item.ProductName">
+                                <img src="@item.ImageData" class="w-100 h-100" style="object-fit: cover;" alt="@item.ProductName">
 
                             }
 
                             else
 
                             {
-                                <img src="~/images/default-food.png"
-                                     class="w-100 h-100"
-                                     style="object-fit: cover;"
-                                     alt="No Image">
+                                <img src="/images/default-food.png" class="w-100 h-100" style="object-fit: cover;" alt="No Image">
 
                             }
                         </div>
 
                         <div class="card-body text-center p-2">
-                            <small class="text-muted text-uppercase mb-1 d-block" style="font-size: 0.7rem;">
-
-                                @item.Category
-                            </small>
+                            <small class="text-muted text-uppercase mb-1 d-block" style="font-size: 0.7rem;">@item.Category</small>
                             <h6 class="fw-bold mb-1">@item.ProductName</h6>
 
-                            @* Price Centered *@
-                            <p class="text-success fw-bold mb-3">₹@item.Price</p>
+                            <p class="text-success fw-bold mb-1">
 
-                            <div class="d-flex justify-content-center mb-2">
-                                <div class="d-flex align-items-center bg-light rounded-pill p-1 border">
-                                    <button class="btn btn-sm btn-success rounded-circle d-flex align-items-center justify-content-center"
-                                            style="width: 28px; height: 28px;"
-                                            onclick="decrease(this)">
-                                        <i class="fa fa-minus small" style="font-size: 10px;"></i>
-                                    </button>
+                                ₹@item.Price
+                                <span class="text-muted fw-normal" style="font-size: 0.8rem;">
 
-                                    <span class="qty fw-bold px-3" data-product-id="@item.ProductId" style="font-size: 14px;">0</span>
+                                    / @(item.Category switch {
 
-                                    <button class="btn btn-sm btn-success rounded-circle d-flex align-items-center justify-content-center"
-                                            style="width: 28px; height: 28px;"
-                                            onclick="increase(this)">
-                                        <i class="fa fa-plus small" style="font-size: 10px;"></i>
-                                    </button>
+                                    "Vegetables and Fruits" => "500g",
+
+                                                        "Dairy and Eggs" => "500ml/g",
+
+                                                        "Snacks and Drinks" => "1 Pkt",
+
+                                                        "Meat and Seafoods" => "500g",
+
+                                                        _ => "Unit"
+
+                                                        })
+                            </span>
+                        </p>
+
+                        @* Stock & Controls *@
+                        <div class="mt-2">
+
+                            @if (item.Quantity > 0)
+
+                            {
+                                <div class="d-flex justify-content-center">
+                                    <div class="d-flex align-items-center bg-light rounded-pill p-1 border">
+                                        <button class="btn btn-sm btn-success rounded-circle d-flex align-items-center justify-content-center"
+                                                style="width: 28px; height: 28px; background-color: #28a745; border: none;"
+                                                onclick="decrease(this)">
+                                            <i class="fa fa-minus small" style="font-size: 10px; color: white;"></i>
+                                        </button>
+
+                                        <span class="qty fw-bold px-3 product-qty-@item.ProductId"
+                                              data-product-id="@item.ProductId"
+                                              style="font-size: 14px;">0</span>
+
+                                        <button class="btn btn-sm btn-success rounded-circle d-flex align-items-center justify-content-center"
+                                                style="width: 28px; height: 28px; background-color: #28a745; border: none;"
+                                                onclick="increase(this)">
+                                            <i class="fa fa-plus small" style="font-size: 10px; color: white;"></i>
+                                        </button>
+                                    </div>
                                 </div>
-                            </div>
+
+                            }
+
+                            else
+
+                            {
+                                <span class="text-danger fw-bold" style="font-size: 0.8rem;">Out of Stock</span>
+
+                            }
                         </div>
                     </div>
                 </div>
-
-            }
+            </div>
 
         }
+
+                }
     </div>
 </div>
 
 <style>
 
-    /* Professional Hover Effect */
+    .text-orange { color: #FF6B00; }
 
     .card {
+
         transition: all 0.3s ease;
+
+        border: none;
+
     }
 
-        .card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 20px rgba(0,0,0,0.1) !important;
-        }
-</style>
+    .card:hover {
 
+        transform: translateY(-5px);
+
+        box-shadow: 0 10px 20px rgba(0,0,0,0.1) !important;
+
+    }
+
+    .form-control:focus {
+
+        box-shadow: none;
+
+        border-color: #FF6B00;
+
+    }
+
+    /* Ensuring image consistency */
+
+    .card img {
+
+        transition: transform 0.3s ease;
+
+    }
+
+    .card:hover img {
+
+        transform: scale(1.05);
+
+    }
+</style>

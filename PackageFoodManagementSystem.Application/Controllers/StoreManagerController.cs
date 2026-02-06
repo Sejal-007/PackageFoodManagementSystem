@@ -31,8 +31,38 @@ namespace PackageFoodManagementSystem.Application.Controllers
             _context = context;
         }
 
+        //public IActionResult Home()
+        //{
+        //    return View();
+        //}
+
         public IActionResult Home()
         {
+            // 1. Fetch real data using the singular table names from your Context
+            var totalProducts = _context.Products.Count();
+            var availableStock = _context.Products.Sum(p => p.Quantity);
+            var today = DateTime.Today;
+
+            // Today's Orders
+            var todayOrdersCount = _context.Orders.Count(o => o.OrderDate >= today);
+
+            // Total Sales (Sum of FinalAmount from Bill table)
+            var totalSales = _context.Bill.Sum(b => (decimal?)b.FinalAmount) ?? 0;
+
+            // Pending Orders (Status based on your OrderService logic)
+            var pendingOrders = _context.Orders.Count(o => o.OrderStatus == "Placed" || o.OrderStatus == "Pending");
+
+            // Low Stock (Items with quantity less than 5)
+            var lowStockCount = _context.Products.Count(p => p.Quantity < 5);
+
+            // Pass data to ViewBag
+            ViewBag.TotalProducts = totalProducts;
+            ViewBag.AvailableStock = availableStock;
+            ViewBag.TodayOrders = todayOrdersCount;
+            ViewBag.TotalSales = totalSales.ToString("C"); // Currency format
+            ViewBag.PendingOrders = pendingOrders;
+            ViewBag.LowStockCount = lowStockCount;
+
             return View();
         }
 

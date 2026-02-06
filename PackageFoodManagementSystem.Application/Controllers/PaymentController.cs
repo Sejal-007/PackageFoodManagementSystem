@@ -39,7 +39,7 @@ namespace PackageFoodManagementSystem.Application.Controllers
             if (order == null) return BadRequest("Order not found");
 
             // 2. Validate Bill exists
-            var bill = _context.Bills.FirstOrDefault(b => b.OrderID == orderId);
+            var bill = _context.Bill.FirstOrDefault(b => b.OrderID == orderId);
             if (bill == null) return BadRequest("Bill not found for this order.");
 
             // --- SIMULATED PAYMENT FAILURE LOGIC ---
@@ -71,7 +71,7 @@ namespace PackageFoodManagementSystem.Application.Controllers
                 AmountPaid = bill.FinalAmount 
             };
 
-            _context.Payments.Add(paymentEntry);
+            _context.Payment.Add(paymentEntry);
 
             // Update Billing Status if paid online
             if (paymentStatus == "Success")
@@ -101,6 +101,11 @@ namespace PackageFoodManagementSystem.Application.Controllers
         {
             ViewBag.OrderId = orderId;
             return View();
+        }
+
+        public object Confirm(int orderId)
+        {
+            throw new NotImplementedException();
         }
     }
 }

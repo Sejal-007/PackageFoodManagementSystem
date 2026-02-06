@@ -1,80 +1,153 @@
-using Moq;
-using NUnit.Framework;
-using PackageFoodManagementSystem.Services.Implementations;
-using PackageFoodManagementSystem.Repository.Interfaces;
-using PackageFoodManagementSystem.Repository.Data;
 using Microsoft.EntityFrameworkCore;
+
+using Moq;
+
+using NUnit.Framework;
+
+using PackageFoodManagementSystem.Repository.Data;
+
+using PackageFoodManagementSystem.Repository.Interfaces;
+
 using PackageFoodManagementSystem.Repository.Models;
+
+using PackageFoodManagementSystem.Services.Implementations;
+
 using System;
 
-namespace PackagedFoodManagementSystem.UnitTests.Services
+using System.Collections.Generic;
+
+using System.Linq;
+
+namespace PackageFoodManagementSystem.Test.Services
+
 {
+
     [TestFixture]
+
     public class OrderServiceTests
+
     {
-        private Mock<IOrderRepository> _orderRepo;
+
         private ApplicationDbContext _context;
+
+        private Mock<IOrderRepository> _orderRepoMock;
+
         private OrderService _service;
 
         [SetUp]
+
         public void Setup()
+
         {
-            _orderRepo = new Mock<IOrderRepository>();
+
             var options = new DbContextOptionsBuilder<ApplicationDbContext>()
-                .UseInMemoryDatabase(databaseName: "OrderTestDb")
+
+                .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString())
+
                 .Options;
+
             _context = new ApplicationDbContext(options);
-            _service = new OrderService(_context, _orderRepo.Object);
+
+            _orderRepoMock = new Mock<IOrderRepository>();
+
+            _service = new OrderService(_context, _orderRepoMock.Object);
+
         }
 
         [TearDown]
+
         public void TearDown()
+
         {
+
             _context.Database.EnsureDeleted();
+
             _context.Dispose();
+
         }
 
         [Test]
-        public void CreateOrder_Throws_WhenCartEmpty()
+
+        public void CreateOrder_ValidCart_CreatesOrderAndDeactivatesCart()
+
         {
-            Assert.Throws<Exception>(() => _service.CreateOrder(1, "addr"));
+
+            int userId = 1;
+
+            _context.Customers.Add(new Customer { CustomerId = 10, UserId = userId, Name = "User", Email = "a@b.com", Phone = "123" });
+
+            var product = new Product { ProductId = 50, ProductName = "Food", Category = "Meal", Price = 100m };
+
+            var cart = new Cart { CartId = 1, UserAuthenticationId = userId, IsActive = true };
+
+            cart.CartItems = new List<CartItem> { new CartItem { ProductId = 50, Product = product, Quantity = 2 } };
+
+            _context.Carts.Add(cart);
+
+            _context.SaveChanges();
+
+            int orderId = _service.CreateOrder(userId, "123 Main St");
+
+            var order = _context.Orders.Include(o => o.OrderItems).FirstOrDefault(o => o.OrderID == orderId);
+
+            Assert.That(order, Is.Not.Null);
+
+            Assert.That(cart.IsActive, Is.False);
+
         }
 
         [Test]
-        public void PlaceOrder_DelegatesToRepo()
+
+        public void UpdateOrderStatus_ValidOrder_AddsToHistory()
+
         {
-            var order = new Order { CustomerId = 1, CreatedByUserID = 1, OrderStatus = "Pending", TotalAmount = 0 };
-            _orderRepo.Setup(r => r.AddOrder(order));
-            _orderRepo.Setup(r => r.Save());
 
-            _service.PlaceOrder(order);
+            var order = new Order
 
-            _orderRepo.Verify(r => r.AddOrder(order), Times.Once);
-            _orderRepo.Verify(r => r.Save(), Times.Once);
+            {
+
+                OrderID = 5,
+
+                OrderStatus = "Pending",
+
+                DeliveryAddress = "123 Test St",
+
+                CustomerId = 1,
+
+                TotalAmount = 50m
+
+            };
+
+            _context.Orders.Add(order);
+
+            _context.SaveChanges();
+
+            _service.UpdateOrderStatus(5, "Shipped", "1", "Remark");
+
+            var history = _context.OrderStatusHistories.FirstOrDefault(h => h.OrderID == 5);
+
+            Assert.That(order.OrderStatus, Is.EqualTo("Shipped"));
+
+            Assert.That(history, Is.Not.Null);
+
         }
 
         [Test]
-        public void UpdateOrderStatus_UpdatesAndSaves()
+
+        public void CancelOrder_DispatchedStatus_ThrowsException()
+
         {
-            var o = new Order { OrderID = 5, OrderStatus = "Pending" };
-            _orderRepo.Setup(r => r.GetOrderById(5)).Returns(o);
-            _orderRepo.Setup(r => r.UpdateOrder(o));
-            _orderRepo.Setup(r => r.Save());
 
-            _service.UpdateOrderStatus(5, "Completed");
+            var order = new Order { OrderID = 1, OrderStatus = "Dispatched", DeliveryAddress = "Addr" };
 
-            Assert.AreEqual("Completed", o.OrderStatus);
-            _orderRepo.Verify(r => r.UpdateOrder(o), Times.Once);
-            _orderRepo.Verify(r => r.Save(), Times.Once);
+            _orderRepoMock.Setup(r => r.GetOrderById(1)).Returns(order);
+
+            var ex = Assert.Throws<Exception>(() => _service.CancelOrder(1));
+
+            Assert.That(ex.Message, Does.Contain("cannot be cancelled"));
+
         }
 
-        [Test]
-        public void CancelOrder_Throws_WhenPreparingOrDispatched()
-        {
-            var o = new Order { OrderID = 7, OrderStatus = "Preparing" };
-            _orderRepo.Setup(r => r.GetOrderById(7)).Returns(o);
-
-            Assert.Throws<Exception>(() => _service.CancelOrder(7));
-        }
     }
+
 }

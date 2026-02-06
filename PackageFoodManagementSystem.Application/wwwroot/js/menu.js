@@ -10,7 +10,9 @@ document.addEventListener("DOMContentLoaded", () => {
 function updateQty(productId, change, btn) {
     const url = change > 0 ? '/Cart/Add' : '/Cart/Decrease';
 
-    // Disable button to prevent rapid double-clicks
+    // 1. Find the specific span for this product
+    const qtySpans = document.querySelectorAll(`.qty[data-product-id="${productId}"]`);
+
     btn.disabled = true;
 
     fetch(`${url}?productId=${productId}`, {
@@ -23,19 +25,18 @@ function updateQty(productId, change, btn) {
         })
         .then(data => {
             if (data.success) {
-                // TARGETED UPDATE: Only update spans for this specific product
-                document.querySelectorAll(`.qty[data-product-id="${productId}"]`).forEach(span => {
+                // 2. Update ALL spans for this product immediately
+                qtySpans.forEach(span => {
                     span.innerText = data.newQty;
                 });
-
-                // Reload if on Basket page to update totals and summary
-                if (window.location.pathname.includes("MyBasket")) {
-                    location.reload();
-                }
 
                 // Update Global Cart Badge
                 const badge = document.getElementById('cart-badge');
                 if (badge) badge.innerText = data.cartCount;
+
+                if (window.location.pathname.includes("MyBasket")) {
+                    location.reload();
+                }
             }
         })
         .catch(err => console.error('Error:', err))

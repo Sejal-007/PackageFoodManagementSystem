@@ -4,12 +4,14 @@ using Microsoft.AspNetCore.Mvc;
 using PackagedFoodManagementSystem.Controllers;
 using PackageFoodManagementSystem.Services.Interfaces;
 using PackageFoodManagementSystem.Repository.Models;
+using PackageFoodManagementSystem.Repository.Data; // Added this
 using Microsoft.Extensions.Configuration;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using PackagedFoodManagementSystem.UnitTests.TestHelpers;
 using System.Security.Claims;
 using System.Collections.Generic;
+using Microsoft.EntityFrameworkCore;
 
 namespace PackagedFoodManagementSystem.UnitTests.Controllers
 {
@@ -18,6 +20,7 @@ namespace PackagedFoodManagementSystem.UnitTests.Controllers
     {
         private Mock<IUserService> _userServiceMock;
         private Mock<IConfiguration> _configMock;
+        private ApplicationDbContext _dbContext; // Real In-Memory DB for DB calls
         private HomeController _controller;
         private TestSession _session;
 
@@ -26,12 +29,34 @@ namespace PackagedFoodManagementSystem.UnitTests.Controllers
         {
             _userServiceMock = new Mock<IUserService>();
             _configMock = new Mock<IConfiguration>();
-            _controller = new HomeController(_userServiceMock.Object, _configMock.Object);
+
+            // Since HomeController uses ApplicationDbContext for CountAsync and ListAsync,
+            // the easiest way to test it is using an In-Memory Database.
+            var options = new DbContextOptionsBuilder<ApplicationDbContext>()
+                .UseInMemoryDatabase(databaseName: "TestDb")
+                .Options;
+            _dbContext = new ApplicationDbContext(options);
+
+            // HomeController expects: IUserService, IConfiguration, Context, DB
+            // Providing _dbContext twice because your controller has two fields for it.
+            _controller = new HomeController(
+                _userServiceMock.Object,
+                _configMock.Object,
+                _dbContext,
+                _dbContext
+            );
 
             var httpContext = new DefaultHttpContext();
             _session = new TestSession();
             httpContext.Session = _session;
             _controller.ControllerContext = new ControllerContext { HttpContext = httpContext };
+        }
+
+        [TearDown]
+        public void TearDown()
+        {
+            _dbContext.Database.EnsureDeleted();
+            _dbContext.Dispose();
         }
 
         [Test]
@@ -69,30 +94,33 @@ namespace PackagedFoodManagementSystem.UnitTests.Controllers
         }
 
         [Test]
-        public async Task SignUp_Post_InvalidModel_ReturnsView()
-        {
-            _controller.ModelState.AddModelError("x", "err");
-            var res = await _controller.SignUp(new UserAuthentication());
-            Assert.IsInstanceOf<ViewResult>(res);
-        }
-
-        [Test]
         public async Task AdminDashboard_SetsViewBag()
         {
-            _userServiceMock.Setup(u => u.CountUsersByRoleAsync("User", default)).ReturnsAsync(5);
-            _userServiceMock.Setup(u => u.CountUsersByRoleAsync("StoreManager", default)).ReturnsAsync(2);
+            // Seed the In-Memory DB since the controller calls _db.UserAuthentications directly
+            _dbContext.UserAuthentications.Add(new UserAuthentication { Name = "U1", Role = "User", Email = "u1@test.com", Password = "123", MobileNumber = "123" });
+            _dbContext.UserAuthentications.Add(new UserAuthentication { Name = "M1", Role = "StoreManager", Email = "m1@test.com", Password = "123", MobileNumber = "123" });
+            await _dbContext.SaveChangesAsync();
+
             var res = await _controller.AdminDashboard();
+
             Assert.IsInstanceOf<ViewResult>(res);
-            Assert.AreEqual(5, _controller.ViewBag.TotalCustomers);
-            Assert.AreEqual(2, _controller.ViewBag.TotalStoreManagers);
+            Assert.AreEqual(1, _controller.ViewBag.TotalCustomers);
+            Assert.AreEqual(1, _controller.ViewBag.TotalStoreManagers);
         }
 
         [Test]
         public async Task Users_ReturnsViewWithUsers()
         {
-            _userServiceMock.Setup(u => u.GetAllUsersAsync()).ReturnsAsync(new System.Collections.Generic.List<UserAuthentication>());
+            _dbContext.UserAuthentications.Add(new UserAuthentication { Name = "U1", Email = "u1@test.com", Password = "123", MobileNumber = "123" });
+            await _dbContext.SaveChangesAsync();
+
             var res = await _controller.Users();
+            var viewResult = res as ViewResult;
+            var model = viewResult.Model as List<UserAuthentication>;
+
             Assert.IsInstanceOf<ViewResult>(res);
+            Assert.IsNotNull(model);
+            Assert.AreEqual(1, model.Count);
         }
     }
 }

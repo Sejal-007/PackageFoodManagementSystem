@@ -55,24 +55,42 @@ namespace PackagedFoodManagementSystem.UnitTests.Controllers
         [Test]
         public void Add_Post_CallsService()
         {
-            var user = new ClaimsPrincipal(new ClaimsIdentity(new Claim[] { new Claim(ClaimTypes.NameIdentifier, "1") }, "test"));
+            // Arrange
+            var user = new ClaimsPrincipal(new ClaimsIdentity(new Claim[] {
+        new Claim(ClaimTypes.NameIdentifier, "1")
+    }));
             var http = new DefaultHttpContext { User = user };
             _controller.ControllerContext = new ControllerContext { HttpContext = http };
 
+            // Act
             var res = _controller.Add(5);
-            Assert.IsInstanceOf<OkResult>(res);
+
+            // Assert
+            // FIX: Changed from OkResult to JsonResult to match actual return type
+            Assert.IsInstanceOf<JsonResult>(res);
+
+            // Verify service call
             _cartService.Verify(s => s.AddItem(1, 5), Times.Once);
         }
 
         [Test]
         public void Decrease_Post_CallsService()
         {
-            var user = new ClaimsPrincipal(new ClaimsIdentity(new Claim[] { new Claim(ClaimTypes.NameIdentifier, "1") }, "test"));
+            // Arrange
+            var user = new ClaimsPrincipal(new ClaimsIdentity(new Claim[] {
+        new Claim(ClaimTypes.NameIdentifier, "1")
+    }));
             var http = new DefaultHttpContext { User = user };
             _controller.ControllerContext = new ControllerContext { HttpContext = http };
 
+            // Act
             var res = _controller.Decrease(5);
-            Assert.IsInstanceOf<OkResult>(res);
+
+            // Assert
+            // FIX: Changed from OkResult to JsonResult to match actual return type
+            Assert.IsInstanceOf<JsonResult>(res);
+
+            // Verify service call
             _cartService.Verify(s => s.DecreaseItem(1, 5), Times.Once);
         }
 
