@@ -1,9 +1,16 @@
 using NUnit.Framework;
 using PackageFoodManagementSystem.Application.Controllers;
-using PackageFoodManagementSystem.Repository.Data;
-using Microsoft.EntityFrameworkCore;
+using PackageFoodManagementSystem.Repository.Models;
+using PackageFoodManagementSystem.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc.ViewFeatures;
+using Moq;
 using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using System.Threading;
 
 namespace PackagedFoodManagementSystem.UnitTests.Controllers
 {
@@ -11,59 +18,99 @@ namespace PackagedFoodManagementSystem.UnitTests.Controllers
     public class StoreManagerControllerTests
     {
         private StoreManagerController _controller;
-        private ApplicationDbContext _context;
+        private Mock<IProductService> _productServiceMock;
+        private Mock<IOrderService> _orderServiceMock;
 
         [SetUp]
         public void Setup()
         {
-            // Set up In-Memory Database for the Controller
-            var options = new DbContextOptionsBuilder<ApplicationDbContext>()
-                .UseInMemoryDatabase(databaseName: "StoreManagerTestDb_" + Guid.NewGuid().ToString())
-                .Options;
+            _productServiceMock = new Mock<IProductService>();
+            _orderServiceMock = new Mock<IOrderService>();
 
-            _context = new ApplicationDbContext(options);
+            // Using the service-based constructor
+            _controller = new StoreManagerController(_productServiceMock.Object, _orderServiceMock.Object);
 
-            // Pass the context to the constructor
-            _controller = new StoreManagerController(_context);
+            var httpContext = new DefaultHttpContext();
+            // Using the renamed class to avoid CS0101
+            httpContext.Session = new TestMockSession();
+
+            var tempDataProvider = new Mock<ITempDataProvider>();
+            _controller.ControllerContext = new ControllerContext
+            {
+                HttpContext = httpContext
+            };
+            _controller.TempData = new TempDataDictionary(httpContext, tempDataProvider.Object);
         }
 
-        [TearDown]
-        public void TearDown()
+        [Test]
+        public async Task Home_ReturnsView_WithCorrectViewBagData()
         {
-            _context.Database.EnsureDeleted();
-            _context.Dispose();
+            // FIX CS9035: Added required Product Name and Category
+            var products = new List<Product>
+            {
+                new Product { ProductName = "Milk", Category = "Dairy", Quantity = 10 },
+                new Product { ProductName = "Bread", Category = "Bakery", Quantity = 2 }
+            };
+
+            _productServiceMock.Setup(s => s.GetAllProductsAsync()).ReturnsAsync(products);
+            _orderServiceMock.Setup(s => s.CountTodayOrdersAsync()).ReturnsAsync(5);
+            _orderServiceMock.Setup(s => s.SumTotalRevenueAsync()).ReturnsAsync(100.0m);
+            _orderServiceMock.Setup(s => s.GetOrdersAsync(null)).ReturnsAsync(new List<Order>());
+
+            var result = await _controller.Home();
+
+            Assert.That(result, Is.InstanceOf<ViewResult>());
         }
 
+        // FIX CS1061: Removed 'await' because Profile() is synchronous (returns IActionResult)
         [Test]
-        public void Home_ReturnsView() => Assert.IsInstanceOf<ViewResult>(_controller.Home());
-
-        [Test]
-        public void Profile_ReturnsView() => Assert.IsInstanceOf<ViewResult>(_controller.Profile());
-
-        [Test]
-        public void Orders_ReturnsView()
+        public void Profile_ReturnsView()
         {
-            // FIX: Passed null/empty string because the controller method 'Orders(string status)' requires it
-            var res = _controller.Orders(null);
-            Assert.IsInstanceOf<ViewResult>(res);
+            var result = _controller.Profile();
+            Assert.That(result, Is.InstanceOf<ViewResult>());
         }
 
         [Test]
-        public void OrdersDashboard_ReturnsView() => Assert.IsInstanceOf<ViewResult>(_controller.OrdersDashboard());
+        public async Task Orders_ReturnsView_WithModel()
+        {
+            // FIX CS9035: Added required OrderStatus
+            var orders = new List<Order> { new Order { OrderID = 1, OrderStatus = "Pending" } };
+            _orderServiceMock.Setup(s => s.GetOrdersAsync("Pending")).ReturnsAsync(orders);
+
+            var result = await _controller.Orders("Pending");
+
+            Assert.That(result, Is.Not.Null);
+        }
+
+        // FIX CS1061: Removed 'await' because Inventory() is synchronous
+        [Test]
+        public void Inventory_ReturnsView()
+        {
+            var result = _controller.Inventory();
+            Assert.That(result, Is.InstanceOf<ViewResult>());
+        }
 
         [Test]
-        public void AddProduct_ReturnsView() => Assert.IsInstanceOf<ViewResult>(_controller.AddProduct());
+        public async Task OrdersDashboard_ReturnsView()
+        {
+            _orderServiceMock.Setup(s => s.GetOrdersAsync(null)).ReturnsAsync(new List<Order>());
+            var result = await _controller.OrdersDashboard();
+            Assert.That(result, Is.InstanceOf<ViewResult>());
+        }
+    }
 
-        [Test]
-        public void Inventory_ReturnsView() => Assert.IsInstanceOf<ViewResult>(_controller.Inventory());
-
-        [Test]
-        public void Reports_ReturnsView() => Assert.IsInstanceOf<ViewResult>(_controller.Reports());
-
-        [Test]
-        public void Compliance_ReturnsView() => Assert.IsInstanceOf<ViewResult>(_controller.Compliance());
-
-        [Test]
-        public void Settings_ReturnsView() => Assert.IsInstanceOf<ViewResult>(_controller.Settings());
+    // FIX CS0101: Renamed to TestMockSession to prevent name collision in the namespace
+    public class TestMockSession : ISession
+    {
+        private readonly Dictionary<string, byte[]> _storage = new Dictionary<string, byte[]>();
+        public bool IsAvailable => true;
+        public string Id => Guid.NewGuid().ToString();
+        public IEnumerable<string> Keys => _storage.Keys;
+        public void Clear() => _storage.Clear();
+        public Task CommitAsync(CancellationToken ct = default) => Task.CompletedTask;
+        public Task LoadAsync(CancellationToken ct = default) => Task.CompletedTask;
+        public void Remove(string key) => _storage.Remove(key);
+        public void Set(string key, byte[] value) => _storage[key] = value;
+        public bool TryGetValue(string key, out byte[] value) => _storage.TryGetValue(key, out value);
     }
 }

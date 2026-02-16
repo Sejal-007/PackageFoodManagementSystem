@@ -4,34 +4,7 @@
     Layout = "~/Views/Shared/_AdminLayout.cshtml";
 }
 
-<style>
-    .stat-card {
-        transition: transform 0.2s;
-        text-decoration: none !important;
-        color: inherit;
-        cursor: pointer;
-    }
 
-        .stat-card:hover {
-            transform: translateY(-5px);
-        }
-
-    .badge-processing {
-        background-color: #fd7e14;
-    }
-
-    .badge-shipped {
-        background-color: #0d6efd;
-    }
-
-    .badge-delivered {
-        background-color: #198754;
-    }
-
-    .badge-placed {
-        background-color: #0dcaf0;
-    }
-</style>
 
 <div class="container-fluid px-4 mt-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
@@ -104,15 +77,31 @@
                                 <td class="fw-bold text-primary">₹@order.TotalAmount</td>
                                 <td>
                                     @{
+
                                         var badgeClass = order.OrderStatus switch
+
                                         {
+
                                             "Processing" => "badge-processing",
+
                                             "Shipped" => "badge-shipped",
+
                                             "Delivered" => "badge-delivered",
-                                            _ => "badge-placed"
+
+                                            "Cancelled" => "badge-cancelled", // Add this line
+
+                                            "Placed" => "badge-placed",
+
+                                            _ => "bg-secondary"
+
                                         };
+
                                     }
-                                    <span class="badge rounded-pill @badgeClass">@order.OrderStatus</span>
+                                    <span class="badge rounded-pill @badgeClass p-2 shadow-sm" style="min-width: 85px;">
+
+                                        @order.OrderStatus
+                                    </span>
+
                                 </td>
                                 <td>@order.OrderDate?.ToString("dd MMM yyyy")</td>
                                
@@ -148,3 +137,46 @@
         }
     }
 </script>
+
+
+
+<style>
+    .stat-card {
+        transition: transform 0.2s;
+        text-decoration: none !important;
+        color: inherit;
+        cursor: pointer;
+    }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+        }
+
+    .badge-processing {
+        background-color: #fd7e14;
+    }
+
+    .badge-shipped {
+        background-color: #0d6efd;
+    }
+
+    .badge-delivered {
+        background-color: #198754;
+    }
+
+    .badge-placed {
+        background-color: #0dcaf0;
+    }
+
+    .badge-cancelled {
+        background-color: #dc3545; /* Bootstrap Red */
+
+        color: white;
+    }
+
+    .badge-placed {
+        background-color: #ffc107; /* Bootstrap Yellow */
+
+        color: #000; /* Dark text for better readability */
+    }
+</style>

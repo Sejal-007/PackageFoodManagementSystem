@@ -18,7 +18,7 @@ namespace PackageFoodManagementSystem.Repository.Models
         [Required]
         public string StreetAddress { get; set; }
 
-        public string Landmark { get; set; }
+        public string? Landmark { get; set; } // Make Landmark nullable because it may be optional
 
         [Required]
         public string City { get; set; }

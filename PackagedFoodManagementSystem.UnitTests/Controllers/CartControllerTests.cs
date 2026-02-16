@@ -1,14 +1,14 @@
 using Moq;
 using NUnit.Framework;
 using Microsoft.AspNetCore.Mvc;
-using PackageFoodManagementSystem.Application.Controllers;
-using PackageFoodManagementSystem.Services.Interfaces;
-using PackageFoodManagementSystem.Repository.Data;
-using Microsoft.EntityFrameworkCore;
-using PackageFoodManagementSystem.Repository.Models;
-using System.Security.Claims;
 using Microsoft.AspNetCore.Http;
+using PackageFoodManagementSystem.Controllers; // Adjust namespace if needed
+using PackageFoodManagementSystem.Repository.Models;
+using PackageFoodManagementSystem.Services.Interfaces;
+using PackageFoodManagementSystem.Application.DTOs;
 using System.Collections.Generic;
+using System.Security.Claims;
+using System.Threading.Tasks;
 using System.Linq;
 
 namespace PackagedFoodManagementSystem.UnitTests.Controllers
@@ -16,106 +16,118 @@ namespace PackagedFoodManagementSystem.UnitTests.Controllers
     [TestFixture]
     public class CartControllerTests
     {
-        private ApplicationDbContext _context;
-        private Mock<ICartService> _cartService;
+        private Mock<ICartService> _cartMock;
         private CartController _controller;
+        private const int TestUserId = 1;
 
         [SetUp]
         public void Setup()
         {
-            var options = new DbContextOptionsBuilder<ApplicationDbContext>()
-                .UseInMemoryDatabase("CartCtrlDb")
-                .Options;
-            _context = new ApplicationDbContext(options);
-            _cartService = new Mock<ICartService>();
-            _controller = new CartController(_context, _cartService.Object);
-        }
+            _cartMock = new Mock<ICartService>();
+            _controller = new CartController(_cartMock.Object);
 
-        [TearDown]
-        public void TearDown()
-        {
-            _context.Database.EnsureDeleted();
-            _context.Dispose();
-        }
+            // Mocking the Authenticated User Claim
+            var claims = new List<Claim>
+            {
+                new Claim(ClaimTypes.NameIdentifier, TestUserId.ToString())
+            };
+            var identity = new ClaimsIdentity(claims, "TestAuth");
+            var user = new ClaimsPrincipal(identity);
 
-        [Test]
-        public void MyBasket_ReturnsViewWithCart_WhenHasCart()
-        {
-            var user = new ClaimsPrincipal(new ClaimsIdentity(new Claim[] { new Claim(ClaimTypes.NameIdentifier, "1") }, "test"));
-            var http = new DefaultHttpContext { User = user };
-            _controller.ControllerContext = new ControllerContext { HttpContext = http };
-
-            _context.Carts.Add(new Cart { UserAuthenticationId = 1, IsActive = true, CartItems = new List<CartItem> { new CartItem { ProductId = 1, Quantity = 1 } } });
-            _context.SaveChanges();
-
-            var res = _controller.MyBasket();
-            Assert.IsInstanceOf<ViewResult>(res);
+            _controller.ControllerContext = new ControllerContext
+            {
+                HttpContext = new DefaultHttpContext { User = user }
+            };
         }
 
         [Test]
-        public void Add_Post_CallsService()
+        public async Task MyBasket_ReturnsViewWithCartData()
         {
             // Arrange
-            var user = new ClaimsPrincipal(new ClaimsIdentity(new Claim[] {
-        new Claim(ClaimTypes.NameIdentifier, "1")
-    }));
-            var http = new DefaultHttpContext { User = user };
-            _controller.ControllerContext = new ControllerContext { HttpContext = http };
+            var cart = new Cart { UserAuthenticationId = TestUserId, CartItems = new List<CartItem>() };
+            _cartMock.Setup(s => s.GetActiveCartAsync(TestUserId)).ReturnsAsync(cart);
 
             // Act
-            var res = _controller.Add(5);
+            var result = await _controller.MyBasket();
 
             // Assert
-            // FIX: Changed from OkResult to JsonResult to match actual return type
-            Assert.IsInstanceOf<JsonResult>(res);
-
-            // Verify service call
-            _cartService.Verify(s => s.AddItem(1, 5), Times.Once);
+            var viewResult = result as ViewResult;
+            Assert.That(viewResult, Is.Not.Null);
+            Assert.That(viewResult.Model, Is.EqualTo(cart));
         }
 
         [Test]
-        public void Decrease_Post_CallsService()
+        public async Task Add_ValidProduct_ReturnsJsonWithUpdatedQty()
         {
             // Arrange
-            var user = new ClaimsPrincipal(new ClaimsIdentity(new Claim[] {
-        new Claim(ClaimTypes.NameIdentifier, "1")
-    }));
-            var http = new DefaultHttpContext { User = user };
-            _controller.ControllerContext = new ControllerContext { HttpContext = http };
+            int productId = 101;
+            var cart = new Cart
+            {
+                CartItems = new List<CartItem> { new CartItem { ProductId = productId, Quantity = 2 } }
+            };
+            _cartMock.Setup(s => s.GetActiveCartAsync(TestUserId)).ReturnsAsync(cart);
 
             // Act
-            var res = _controller.Decrease(5);
+            var result = await _controller.Add(productId);
 
             // Assert
-            // FIX: Changed from OkResult to JsonResult to match actual return type
-            Assert.IsInstanceOf<JsonResult>(res);
-
-            // Verify service call
-            _cartService.Verify(s => s.DecreaseItem(1, 5), Times.Once);
+            _cartMock.Verify(s => s.AddItem(TestUserId, productId), Times.Once);
+            Assert.That(result, Is.InstanceOf<JsonResult>());
         }
 
         [Test]
-        public void GetItemQty_ReturnsZero_WhenNoCart()
+        public async Task Decrease_ValidProduct_ReturnsJsonWithUpdatedQty()
         {
-            var user = new ClaimsPrincipal(new ClaimsIdentity(new Claim[] { new Claim(ClaimTypes.NameIdentifier, "2") }, "test"));
-            var http = new DefaultHttpContext { User = user };
-            _controller.ControllerContext = new ControllerContext { HttpContext = http };
+            // Arrange
+            int productId = 101;
+            var cart = new Cart
+            {
+                CartItems = new List<CartItem> { new CartItem { ProductId = productId, Quantity = 1 } }
+            };
+            _cartMock.Setup(s => s.GetActiveCartAsync(TestUserId)).ReturnsAsync(cart);
 
-            var res = _controller.GetItemQty(10);
-            Assert.IsInstanceOf<JsonResult>(res);
+            // Act
+            var result = await _controller.Decrease(productId);
+
+            // Assert
+            _cartMock.Verify(s => s.DecreaseItem(TestUserId, productId), Times.Once);
+            Assert.That(result, Is.InstanceOf<JsonResult>());
         }
 
         [Test]
-        public void Remove_Post_CallsService()
+        public async Task GetTotalItems_ReturnsCorrectSum()
         {
-            var user = new ClaimsPrincipal(new ClaimsIdentity(new Claim[] { new Claim(ClaimTypes.NameIdentifier, "1") }, "test"));
-            var http = new DefaultHttpContext { User = user };
-            _controller.ControllerContext = new ControllerContext { HttpContext = http };
+            // Arrange
+            var cart = new Cart
+            {
+                CartItems = new List<CartItem>
+                {
+                    new CartItem { Quantity = 2 },
+                    new CartItem { Quantity = 3 }
+                }
+            };
+            _cartMock.Setup(s => s.GetActiveCartAsync(TestUserId)).ReturnsAsync(cart);
 
-            var req = new PackageFoodManagementSystem.Application.DTOs.CartRequest { ProductId = 3 };
-            var res = _controller.Remove(req);
-            Assert.IsInstanceOf<OkResult>(res);
-            _cartService.Verify(s => s.Remove(1, 3), Times.Once);
+            // Act
+            var result = await _controller.GetTotalItems();
+
+            // Assert
+            var jsonResult = result as JsonResult;
+            Assert.That(jsonResult.Value, Is.EqualTo(5));
+        }
+
+        [Test]
+        public void Remove_CallsServiceAndReturnsOk()
+        {
+            // Arrange
+            var request = new CartRequest { ProductId = 101 };
+
+            // Act
+            var result = _controller.Remove(request);
+
+            // Assert
+            _cartMock.Verify(s => s.Remove(TestUserId, 101), Times.Once);
+            Assert.That(result, Is.InstanceOf<OkResult>());
         }
     }
 }
