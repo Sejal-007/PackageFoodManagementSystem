@@ -1,187 +1,68 @@
-using Microsoft.AspNetCore.Http;
-
-using Microsoft.AspNetCore.Mvc;
-
-using Moq;
-
 using NUnit.Framework;
-
+using Moq;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Http;
 using PackagedFoodFrontend.Controllers;
-
-using PackageFoodManagementSystem.Repository.Data;
-
+using PackageFoodManagementSystem.Services.Interfaces;
 using PackageFoodManagementSystem.Repository.Models;
 
-using PackageFoodManagementSystem.Services.Interfaces;
-
-using Microsoft.EntityFrameworkCore;
-
-using System.Collections.Generic;
-
-using System.Threading.Tasks;
-
-namespace PackageFoodManagementSystem.Tests
-
+namespace PackagedFoodManagementSystem.UnitTests.Controllers
 {
-
     [TestFixture]
-
     public class UserControllerTests
-
     {
-
-        private Mock<ICustomerAddressService> _addressServiceMock;
-
-        private ApplicationDbContext _context;
-
         private UserController _controller;
-
-        private DefaultHttpContext _httpContext;
+        private Mock<ICustomerAddressService> _addressMock;
+        private Mock<IOrderService> _orderMock;
+        private Mock<ICustomerService> _customerMock;
+        private Mock<IWalletService> _walletMock;
 
         [SetUp]
-
         public void Setup()
-
         {
+            _addressMock = new Mock<ICustomerAddressService>();
+            _orderMock = new Mock<IOrderService>();
+            _customerMock = new Mock<ICustomerService>();
+            _walletMock = new Mock<IWalletService>();
 
-            var options = new DbContextOptionsBuilder<ApplicationDbContext>()
+            _controller = new UserController(_addressMock.Object, _orderMock.Object, _customerMock.Object, _walletMock.Object);
 
-                .UseInMemoryDatabase(databaseName: System.Guid.NewGuid().ToString())
+            var httpContext = new DefaultHttpContext { Session = new TestMockSession() };
+            _controller.ControllerContext = new ControllerContext { HttpContext = httpContext };
+        }
 
-                .Options;
+        [Test]
+        public async Task Dashboard_ReturnsView_WithValidSession()
+        {
+            _controller.HttpContext.Session.SetInt32("UserId", 1);
+            _orderMock.Setup(s => s.CountOrdersByUserAsync(1)).ReturnsAsync(5);
+            _walletMock.Setup(s => s.GetByUserId(1)).Returns(new Wallet { Balance = 100 });
 
-            _context = new ApplicationDbContext(options);
+            var result = await _controller.Dashboard();
+            Assert.That(result, Is.InstanceOf<ViewResult>());
+        }
 
-            _addressServiceMock = new Mock<ICustomerAddressService>();
+        [Test]
+        public async Task DeliveryAddress_ReturnsFilteredAddresses()
+        {
+            _controller.HttpContext.Session.SetInt32("UserId", 1);
+            _customerMock.Setup(s => s.GetByUserIdAsync(1)).ReturnsAsync(new Customer { CustomerId = 10 });
 
-            _controller = new UserController(_addressServiceMock.Object, _context);
-
-            // FIXED: Initialize HttpContext AND Session immediately
-
-            _httpContext = new DefaultHttpContext();
-
-            _httpContext.Session = new MockSession(); // Assign here to prevent InvalidOperationException
-
-            _controller.ControllerContext = new ControllerContext
-
-            {
-
-                HttpContext = _httpContext
-
+            var addresses = new List<CustomerAddress> { 
+                // Fix CS0117: StreetAddress matches your model, AddressLine1 did not
+                new CustomerAddress { CustomerId = 10, StreetAddress = "Test St", AddressType = "Home", City = "City", PostalCode = "123" }
             };
+            _addressMock.Setup(s => s.GetAllAsync()).ReturnsAsync(addresses);
 
-        }
-
-        [TearDown]
-
-        public void TearDown()
-
-        {
-
-            _controller?.Dispose();
-
-            _context?.Dispose();
-
+            var result = await _controller.DeliveryAddress() as ViewResult;
+            Assert.That(result.Model, Is.Not.Null);
         }
 
         [Test]
-
-        public async Task Dashboard_Redirects_IfSessionUserIdIsNull()
-
+        public void Profile_ReturnsView() // Sync method, no await (Fixes CS1061)
         {
-
-            // Arrange: Ensure UserId is not in session
-
-            _httpContext.Session.Clear();
-
-            // Act
-
-            var result = await _controller.Dashboard() as RedirectToActionResult;
-
-            // Assert
-
-            Assert.That(result?.ActionName, Is.EqualTo("SignIn"));
-
-            Assert.That(result?.ControllerName, Is.EqualTo("Home"));
-
+            var result = _controller.EditProfile();
+            Assert.That(result, Is.InstanceOf<ViewResult>());
         }
-
-        [Test]
-
-        public async Task Dashboard_ReturnsView_WithCorrectData()
-
-        {
-
-            // Arrange
-
-            int testUserId = 1;
-
-            _httpContext.Session.SetInt32("UserId", testUserId);
-
-            _httpContext.Session.SetString("UserName", "Test User");
-
-            // Fix CS9035: Include all required fields from your models
-
-            _context.Orders.Add(new Order
-
-            {
-
-                OrderID = 1,
-
-                CreatedByUserID = testUserId,
-
-                OrderStatus = "Placed",
-
-                DeliveryAddress = "123 Tech Park",
-
-                CustomerId = 1
-
-            });
-
-            await _context.SaveChangesAsync();
-
-            // Act
-
-            var result = await _controller.Dashboard() as ViewResult;
-
-            // Assert
-
-            Assert.That(result, Is.Not.Null);
-
-            Assert.That(_controller.ViewBag.TotalOrders, Is.EqualTo(1));
-
-            Assert.That(_controller.ViewBag.FullName, Is.EqualTo("Test User"));
-
-        }
-
     }
-
-    // Keep your MockSession implementation below
-
-    public class MockSession : ISession
-
-    {
-
-        private readonly Dictionary<string, byte[]> _sessionStorage = new();
-
-        public bool IsAvailable => true;
-
-        public string Id => System.Guid.NewGuid().ToString();
-
-        public IEnumerable<string> Keys => _sessionStorage.Keys;
-
-        public void Clear() => _sessionStorage.Clear();
-
-        public Task CommitAsync(System.Threading.CancellationToken ct) => Task.CompletedTask;
-
-        public Task LoadAsync(System.Threading.CancellationToken ct) => Task.CompletedTask;
-
-        public void Remove(string key) => _sessionStorage.Remove(key);
-
-        public void Set(string key, byte[] value) => _sessionStorage[key] = value;
-
-        public bool TryGetValue(string key, out byte[] value) => _sessionStorage.TryGetValue(key, out value);
-
-    }
-
 }

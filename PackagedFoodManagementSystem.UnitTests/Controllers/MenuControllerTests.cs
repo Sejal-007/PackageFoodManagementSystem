@@ -2,78 +2,120 @@ using Moq;
 using NUnit.Framework;
 using Microsoft.AspNetCore.Mvc;
 using PackageFoodManagementSystem.Application.Controllers;
-using PackageFoodManagementSystem.Services.Interfaces;
 using PackageFoodManagementSystem.Repository.Models;
+using PackageFoodManagementSystem.Services.Interfaces;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using System.Security.Claims;
 
-namespace PackagedFoodManagementSystem.UnitTests.Controllers
+[TestFixture]
+public class MenuControllerTests
 {
-    [TestFixture]
-    public class MenuControllerTests
+    private Mock<IProductService> _mockProductService;
+    private Mock<ICartService> _mockCartService;
+    private MenuController _controller;
+
+    [SetUp]
+    public void Setup()
     {
-        private Mock<IProductService> _serviceMock;
-        private Mock<ICartService> _cartServiceMock; // New Mock
-        private MenuController _controller;
+        _mockProductService = new Mock<IProductService>();
+        _mockCartService = new Mock<ICartService>();
+        _controller = new MenuController(_mockProductService.Object, _mockCartService.Object);
+    }
 
-        [SetUp]
-        public void Setup()
+    [Test]
+    public void Index_NoFilters_ReturnsAllProducts()
+    {
+        // Arrange
+        var products = new List<Product>
         {
-            _serviceMock = new Mock<IProductService>();
-            _cartServiceMock = new Mock<ICartService>();
+            new Product { ProductId = 1, ProductName = "Apple", Category = "Fruit" },
+            new Product { ProductId = 2, ProductName = "Bread", Category = "Bakery" }
+        };
+        _mockProductService.Setup(s => s.GetAllProducts()).Returns(products);
 
-            // Pass both mocks to the constructor
-            _controller = new MenuController(_serviceMock.Object, _cartServiceMock.Object);
+        // Act
+        var result = _controller.Index(null, null) as ViewResult;
+        var model = result.Model as IEnumerable<Product>;
 
-            // Set up a fake user so GetUserId() doesn't crash the test
-            var user = new ClaimsPrincipal(new ClaimsIdentity(new Claim[] {
-                new Claim(ClaimTypes.NameIdentifier, "1")
-            }));
+        // Assert
+        Assert.That(result, Is.Not.Null);
+        Assert.That(model.Count(), Is.EqualTo(2));
+    }
 
-            _controller.ControllerContext = new ControllerContext
-            {
-                HttpContext = new DefaultHttpContext { User = user }
-            };
-        }
-
-        [Test]
-        public async Task Index_ReturnsAllProducts_WhenNoCategory()
+    [Test]
+    public void Index_WithSearchTerm_FiltersProducts()
+    {
+        // Arrange
+        var products = new List<Product>
         {
-            // Arrange
-            var list = new List<Product> { new Product { ProductName = "A", Category = "C" } };
-            _serviceMock.Setup(s => s.GetAllProductsAsync()).ReturnsAsync(list);
-            _cartServiceMock.Setup(c => c.GetActiveCartAsync(It.IsAny<int>())).ReturnsAsync(new Cart());
+            new Product { ProductId = 1, ProductName = "Apple", Category = "Fruit" },
+            new Product { ProductId = 2, ProductName = "Banana", Category = "Fruit" }
+        };
+        _mockProductService.Setup(s => s.GetAllProducts()).Returns(products);
 
-            // Act
-            var res = await _controller.Index(null);
+        // Act
+        var result = _controller.Index(null, "Apple") as ViewResult;
+        var model = result.Model as IEnumerable<Product>;
 
-            // Assert
-            Assert.IsInstanceOf<ViewResult>(res);
-        }
+        // Assert
+        Assert.That(model.Count(), Is.EqualTo(1));
+        Assert.That(model.First().ProductName, Is.EqualTo("Apple"));
+        Assert.That(_controller.ViewBag.CurrentSearch, Is.EqualTo("Apple"));
+    }
 
-        [Test]
-        public async Task Index_FiltersByCategory_WhenProvided()
+    [Test]
+    public void Index_WithCategory_FiltersProducts()
+    {
+        // Arrange
+        var products = new List<Product>
+    {
+        // Added Category to every Product because it is 'required' in your model
+        new Product { ProductId = 1, ProductName = "Apple", Category = "Fruit" },
+        new Product { ProductId = 2, ProductName = "Carrot", Category = "Vegetable" }
+    };
+        _mockProductService.Setup(s => s.GetAllProducts()).Returns(products);
+
+        // Act
+        var result = _controller.Index("Fruit", null) as ViewResult;
+        var model = result.Model as IEnumerable<Product>;
+
+        // Assert
+        Assert.That(model.Count(), Is.EqualTo(1));
+        Assert.That(model.First().Category, Is.EqualTo("Fruit"));
+        Assert.That(_controller.ViewBag.SelectedCategory, Is.EqualTo("Fruit"));
+    }
+
+    [Test]
+    public void Details_ProductExists_ReturnsViewWithProduct()
+    {
+        // 1. Arrange
+        var product = new Product
         {
-            // Arrange
-            var list = new List<Product>
-            {
-                new Product { ProductName = "A", Category = "C1" },
-                new Product { ProductName = "B", Category = "C2" }
-            };
-            _serviceMock.Setup(s => s.GetAllProductsAsync()).ReturnsAsync(list);
-            _cartServiceMock.Setup(c => c.GetActiveCartAsync(It.IsAny<int>())).ReturnsAsync(new Cart());
+            ProductId = 1,
+            ProductName = "Apple",
+            Category = "Fruit" // satisfy 'required' constraint
+        };
+        _mockProductService.Setup(s => s.GetProductById(1)).Returns(product);
 
-            // Act
-            var res = await _controller.Index("C2") as ViewResult;
+        // 2. Act
+        // REMOVED 'await' because MenuController.Details is synchronous
+        var result = _controller.Details(1) as ViewResult;
 
-            // Assert
-            Assert.IsNotNull(res);
-            var model = res.Model as IEnumerable<Product>;
-            Assert.AreEqual(1, model.Count());
-            Assert.IsTrue(model.All(p => p.Category == "C2"));
-        }
+        // 3. Assert
+        Assert.That(result, Is.Not.Null);
+        Assert.That(result.Model, Is.EqualTo(product));
+    }
+
+    [Test]
+    public void Details_ProductDoesNotExist_ReturnsNotFound()
+    {
+        // Arrange
+        _mockProductService.Setup(s => s.GetProductById(999)).Returns((Product)null);
+
+        // Act
+        var result = _controller.Details(999);
+
+        // Assert
+        Assert.That(result, Is.InstanceOf<NotFoundResult>());
     }
 }

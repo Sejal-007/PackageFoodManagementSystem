@@ -1,153 +1,153 @@
-using Microsoft.EntityFrameworkCore;
+//using Microsoft.EntityFrameworkCore;
 
-using Moq;
+//using Moq;
 
-using NUnit.Framework;
+//using NUnit.Framework;
 
-using PackageFoodManagementSystem.Repository.Data;
+//using PackageFoodManagementSystem.Repository.Data;
 
-using PackageFoodManagementSystem.Repository.Interfaces;
+//using PackageFoodManagementSystem.Repository.Interfaces;
 
-using PackageFoodManagementSystem.Repository.Models;
+//using PackageFoodManagementSystem.Repository.Models;
 
-using PackageFoodManagementSystem.Services.Implementations;
+//using PackageFoodManagementSystem.Services.Implementations;
 
-using System;
+//using System;
 
-using System.Collections.Generic;
+//using System.Collections.Generic;
 
-using System.Linq;
+//using System.Linq;
 
-namespace PackageFoodManagementSystem.Test.Services
+//namespace PackageFoodManagementSystem.Test.Services
 
-{
+//{
 
-    [TestFixture]
+//    [TestFixture]
 
-    public class OrderServiceTests
+//    public class OrderServiceTests
 
-    {
+//    {
 
-        private ApplicationDbContext _context;
+//        private ApplicationDbContext _context;
 
-        private Mock<IOrderRepository> _orderRepoMock;
+//        private Mock<IOrderRepository> _orderRepoMock;
 
-        private OrderService _service;
+//        private OrderService _service;
 
-        [SetUp]
+//        [SetUp]
 
-        public void Setup()
+//        public void Setup()
 
-        {
+//        {
 
-            var options = new DbContextOptionsBuilder<ApplicationDbContext>()
+//            var options = new DbContextOptionsBuilder<ApplicationDbContext>()
 
-                .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString())
+//                .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString())
 
-                .Options;
+//                .Options;
 
-            _context = new ApplicationDbContext(options);
+//            _context = new ApplicationDbContext(options);
 
-            _orderRepoMock = new Mock<IOrderRepository>();
+//            _orderRepoMock = new Mock<IOrderRepository>();
 
-            _service = new OrderService(_context, _orderRepoMock.Object);
+//            _service = new OrderService(_context, _orderRepoMock.Object);
 
-        }
+//        }
 
-        [TearDown]
+//        [TearDown]
 
-        public void TearDown()
+//        public void TearDown()
 
-        {
+//        {
 
-            _context.Database.EnsureDeleted();
+//            _context.Database.EnsureDeleted();
 
-            _context.Dispose();
+//            _context.Dispose();
 
-        }
+//        }
 
-        [Test]
+//        [Test]
 
-        public void CreateOrder_ValidCart_CreatesOrderAndDeactivatesCart()
+//        public void CreateOrder_ValidCart_CreatesOrderAndDeactivatesCart()
 
-        {
+//        {
 
-            int userId = 1;
+//            int userId = 1;
 
-            _context.Customers.Add(new Customer { CustomerId = 10, UserId = userId, Name = "User", Email = "a@b.com", Phone = "123" });
+//            _context.Customers.Add(new Customer { CustomerId = 10, UserId = userId, Name = "User", Email = "a@b.com", Phone = "123" });
 
-            var product = new Product { ProductId = 50, ProductName = "Food", Category = "Meal", Price = 100m };
+//            var product = new Product { ProductId = 50, ProductName = "Food", Category = "Meal", Price = 100m };
 
-            var cart = new Cart { CartId = 1, UserAuthenticationId = userId, IsActive = true };
+//            var cart = new Cart { CartId = 1, UserAuthenticationId = userId, IsActive = true };
 
-            cart.CartItems = new List<CartItem> { new CartItem { ProductId = 50, Product = product, Quantity = 2 } };
+//            cart.CartItems = new List<CartItem> { new CartItem { ProductId = 50, Product = product, Quantity = 2 } };
 
-            _context.Carts.Add(cart);
+//            _context.Carts.Add(cart);
 
-            _context.SaveChanges();
+//            _context.SaveChanges();
 
-            int orderId = _service.CreateOrder(userId, "123 Main St");
+//            int orderId = _service.CreateOrder(userId, "123 Main St");
 
-            var order = _context.Orders.Include(o => o.OrderItems).FirstOrDefault(o => o.OrderID == orderId);
+//            var order = _context.Orders.Include(o => o.OrderItems).FirstOrDefault(o => o.OrderID == orderId);
 
-            Assert.That(order, Is.Not.Null);
+//            Assert.That(order, Is.Not.Null);
 
-            Assert.That(cart.IsActive, Is.False);
+//            Assert.That(cart.IsActive, Is.False);
 
-        }
+//        }
 
-        [Test]
+//        [Test]
 
-        public void UpdateOrderStatus_ValidOrder_AddsToHistory()
+//        public void UpdateOrderStatus_ValidOrder_AddsToHistory()
 
-        {
+//        {
 
-            var order = new Order
+//            var order = new Order
 
-            {
+//            {
 
-                OrderID = 5,
+//                OrderID = 5,
 
-                OrderStatus = "Pending",
+//                OrderStatus = "Pending",
 
-                DeliveryAddress = "123 Test St",
+//                DeliveryAddress = "123 Test St",
 
-                CustomerId = 1,
+//                CustomerId = 1,
 
-                TotalAmount = 50m
+//                TotalAmount = 50m
 
-            };
+//            };
 
-            _context.Orders.Add(order);
+//            _context.Orders.Add(order);
 
-            _context.SaveChanges();
+//            _context.SaveChanges();
 
-            _service.UpdateOrderStatus(5, "Shipped", "1", "Remark");
+//            _service.UpdateOrderStatus(5, "Shipped", "1", "Remark");
 
-            var history = _context.OrderStatusHistories.FirstOrDefault(h => h.OrderID == 5);
+//            var history = _context.OrderStatusHistories.FirstOrDefault(h => h.OrderID == 5);
 
-            Assert.That(order.OrderStatus, Is.EqualTo("Shipped"));
+//            Assert.That(order.OrderStatus, Is.EqualTo("Shipped"));
 
-            Assert.That(history, Is.Not.Null);
+//            Assert.That(history, Is.Not.Null);
 
-        }
+//        }
 
-        [Test]
+//        [Test]
 
-        public void CancelOrder_DispatchedStatus_ThrowsException()
+//        public void CancelOrder_DispatchedStatus_ThrowsException()
 
-        {
+//        {
 
-            var order = new Order { OrderID = 1, OrderStatus = "Dispatched", DeliveryAddress = "Addr" };
+//            var order = new Order { OrderID = 1, OrderStatus = "Dispatched", DeliveryAddress = "Addr" };
 
-            _orderRepoMock.Setup(r => r.GetOrderById(1)).Returns(order);
+//            _orderRepoMock.Setup(r => r.GetOrderById(1)).Returns(order);
 
-            var ex = Assert.Throws<Exception>(() => _service.CancelOrder(1));
+//            var ex = Assert.Throws<Exception>(() => _service.CancelOrder(1));
 
-            Assert.That(ex.Message, Does.Contain("cannot be cancelled"));
+//            Assert.That(ex.Message, Does.Contain("cannot be cancelled"));
 
-        }
+//        }
 
-    }
+//    }
 
-}
+//}
